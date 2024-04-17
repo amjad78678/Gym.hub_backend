@@ -44,5 +44,6 @@ app.use("/api/admin",adminRoutes)
 app.use("/api/trainer", trainerRoutes)
 
 
+
 export {httpServer}
 
