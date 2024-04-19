@@ -67,9 +67,86 @@ class UserController {
             const user=await this.userUseCase.verifyOtpUser(req.app.locals.userData)
             req.app.locals.userData=null
             res.status(user.status).json(user.data)
+        }else{
+          res.status(400).json({status:false,message:'Invalid Otp'})
         }
 
   
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async login(req: Request, res: Response) {
+      
+    try {
+        
+       const {email,password}=req.body
+
+       const user=await this.userUseCase.login(email,password)
+
+       if(user.data.token!=''){
+        res.cookie('userJwt',user.data.token,{
+            httpOnly:true,
+            sameSite:'none',
+            secure: process.env.NODE_ENV !== 'development',
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        })
+       }
+
+       res.status(user.status).json(user.data)
+
+
+    } catch (error) {
+        const err: Error = error as Error;
+        res.status(400).json({
+          message: err.message,
+          stack: process.env.NODE_ENV === "production" ? null : err.stack,
+        });
+        console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async resendOtp(req: Request,res: Response){
+
+    try {
+      
+      const otp=this.generateOtp.createOtp()
+      req.app.locals.otp=otp
+      this.generateEmail.sendEmail(req.app.locals.userData.email,otp)
+      console.log(otp)
+
+      setTimeout(() => {
+        req.app.locals.otp = this.generateOtp.createOtp();
+    }, 2 * 60000);
+
+    res.status(200).json({message:'Otp sented successfully'})
+
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async logout(req: Request,res: Response){
+
+    try {
+      
+      res.cookie('userJwt','',{
+        httpOnly:true,
+        expires: new Date(0),
+      })
+      res.status(200).json({message:'Logged out successfully'})
+      
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
