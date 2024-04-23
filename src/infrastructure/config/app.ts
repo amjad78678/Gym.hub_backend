@@ -1,13 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
-dotenv.config({
-  path: "./.env",
-});
+dotenv.config();
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import session from "express-session";
 import http from "http";
 import path from "path";
+import morgan from "morgan"
 
 //Routes root
 import userRoutes from "../routes/userRoutes";
@@ -22,6 +21,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true}));
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(cookieParser());
+app.use(morgan('combined'));
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,

@@ -4,7 +4,7 @@ import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
 
 class UserUseCase {
-  private UserRepository: UserRepository;
+  private UserRepository: UserRepository;   
   private EncryptPassword:EncryptPassword
   private JwtToken: JWTToken;
 
@@ -14,7 +14,8 @@ class UserUseCase {
     this.JwtToken=jwtToken
   }
 
-  async signUp(email: string){   
+
+    async signUp(email: string){   
 
     const userExists = await this.UserRepository.findByEmail(email)
 

@@ -4,15 +4,7 @@ import asyncHandler from "express-async-handler";
 import GenerateOtp from "../../infrastructure/services/generateOtp";
 import GenerateEmail from "../../infrastructure/services/sendEmail";
 
-//it is extended from express session
-declare module "express-session" {
-  interface SessionData {
-    forgotEmail?: string;
-    forgotOtp?: number;
-    forgotClubEmail?: string;
-    forgotClubOtp?: number;
-  }
-}
+
 
 class UserController {
   private userUseCase: UserUseCase;
@@ -35,6 +27,10 @@ class UserController {
 
       const verifyUser = await this.userUseCase.signUp(req.body.email);
 
+      if(verifyUser.data.status==true &&  req.body.isGoogle){
+        const user=await this.userUseCase.verifyOtpUser(req.body)
+        res.status(user.status).json(user.data)
+      }
       if (verifyUser.data.status == true) {
         req.app.locals.userData = req.body;
         const otp = this.generateOtp.createOtp();
@@ -66,6 +62,7 @@ class UserController {
         if(req.body.otp===req.app.locals.otp){
             const user=await this.userUseCase.verifyOtpUser(req.app.locals.userData)
             req.app.locals.userData=null
+            req.app.locals.otp=null
             res.status(user.status).json(user.data)
         }else{
           res.status(400).json({status:false,message:'Invalid Otp'})
@@ -156,6 +153,8 @@ class UserController {
       console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
+
+
 }
 
 export default UserController;
