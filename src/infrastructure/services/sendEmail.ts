@@ -56,6 +56,168 @@ class GenerateEmail implements GENERATEMAIL {
 
 
     }
+    sendGymAcceptEmail(email: string): void {
+        
+         
+        const mailData=`
+        <!DOCTYPE html>
+<html>
+<head>
+    <title>Gym Acceptance Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gym Acceptance Notification</h1>
+        </div>
+        <div class="content">
+            <p>Dear Gym Owner,</p>
+            <p>We are pleased to inform you that your gym has been successfully accepted by our admin team. You can now log in and manage your gym details through our website.</p>
+            <p>To get started, please follow the link below to log in:</p>
+            <a href="https://yourwebsite.com/login" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; display: inline-block;">Log In</a>
+            <p>Once logged in, you can edit your gym details, view bookings, and manage your gym's schedule. If you have any questions or need further assistance, please do not hesitate to contact our support team.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you for choosing our platform. We're here to help!</p>
+        </div>
+    </div>
+</body>
+</html>
+
+        
+        `;
+
+        let mailTransporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure:false,
+            requireTLS:true,
+            auth:{
+                user:process.env.NODEMAILER_USER,
+                pass:process.env.NODEMAILER_PASS
+            }
+        })
+
+        let details={
+            from: process.env.NODEMAILER_USER,
+            to: email,
+            subject: 'Gym Acceptance Notification (GymHub)',
+            html:mailData
+        }
+
+        mailTransporter.sendMail(details,(err)=>{
+            if(err){
+                return console.log(err.message);
+            }
+        })
+
+    }
+    sendGymRejectEmail(email: string,reason: string): void {
+        
+         
+        const mailData=`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Gym Rejection Notification</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    border-radius: 5px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .content {
+                    margin-bottom: 20px;
+                }
+                .footer {
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #6c757d;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Gym Rejection Notification</h1>
+                </div>
+                <div class="content">
+                    <p>Dear Gym Owner,</p>
+                    <p>We regret to inform you that your gym application has been reviewed and was not accepted by our admin team. We understand this may be disappointing, and we appreciate your interest in our platform.</p>
+                    <p>The reason for the rejection is as follows:</p>
+                    <blockquote>
+                    ${reason}
+                    </blockquote>
+                    <p>We encourage you to review the feedback and consider any necessary adjustments to your application. If you have any questions or need further assistance, please do not hesitate to contact our support team.</p>
+                </div>
+                <div class="footer">
+                    <p>Thank you for your interest in our platform. We're here to help!</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        
+        
+        `;
+
+        let mailTransporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure:false,
+            requireTLS:true,
+            auth:{
+                user:process.env.NODEMAILER_USER,
+                pass:process.env.NODEMAILER_PASS
+            }
+        })
+
+        let details={
+            from: process.env.NODEMAILER_USER,
+            to: email,
+            subject: 'Gym Rejection Notification (GymHub)',
+            html:mailData
+        }
+
+        mailTransporter.sendMail(details,(err)=>{
+            if(err){
+                return console.log(err.message);
+            }
+        })
+
+    }
 }
 
 

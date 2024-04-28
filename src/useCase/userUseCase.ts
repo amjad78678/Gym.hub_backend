@@ -1,4 +1,5 @@
 import User from "../domain/user";
+import GymRepository from "../infrastructure/repository/gymRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
@@ -7,11 +8,13 @@ class UserUseCase {
   private UserRepository: UserRepository;   
   private EncryptPassword:EncryptPassword
   private JwtToken: JWTToken;
+  private _GymRepository: GymRepository
 
-  constructor(UserRepository: UserRepository,encryptPassword: EncryptPassword,jwtToken: JWTToken) {
+  constructor(UserRepository: UserRepository,encryptPassword: EncryptPassword,jwtToken: JWTToken,gymRepository: GymRepository) {
     this.UserRepository = UserRepository;
     this.EncryptPassword=encryptPassword
     this.JwtToken=jwtToken
+    this._GymRepository=gymRepository
   }
 
 
@@ -99,6 +102,7 @@ class UserUseCase {
         return {
             status: 400,
             data: {
+                success: false,
                 message: 'Invalid email or password!',
                 token:''
             }
@@ -110,12 +114,28 @@ class UserUseCase {
         return {
             status: 400,
             data: {
+                success: false,
                 message: 'Invalid email or password!',
                 token:''
             }
         }
     }
 
+  }
+
+
+  async getGymList (){
+
+
+    const gymList=await this._GymRepository.findAllGyms()
+    return {
+        status: 200,
+        data: {
+            success: false,
+            message: gymList,
+        }
+    }
+      
   }
 
 

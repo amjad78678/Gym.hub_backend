@@ -6,7 +6,7 @@ interface Image {
   public_id: string;
 }
 
-const imageSchema: Schema = new Schema<Image>({
+const imageSchema: Schema = new Schema<Image | Document>({
   imageUrl: String,
   public_id: String,
 });
@@ -52,6 +52,32 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       type: { type: String },
       coordinates: [Number],
     },
+    isBlocked:{
+      type: Boolean,
+      default: false
+    },
+    isDeleted:{
+     type: Boolean,
+     default: false
+    },
+    description:{
+      type: String,
+      required:true
+    },
+    subscriptions: {
+      quarterlyFee: {
+        type: Number,
+        required: true
+      },
+      monthlyFee: {
+        type: Number,
+        required:true
+      },
+      yearlyFee: {
+        type: Number,
+        required: true
+      }
+   },
 
     images: [imageSchema],
   },
@@ -60,6 +86,6 @@ const gymSchema: Schema = new Schema<Gym | Document>(
 
 gymSchema.index({ location: "2dsphere" });
 
-const GymModel = mongoose.model("Gym", gymSchema);
+const GymModel: Model<Gym & Document>  =  mongoose.model <Gym & Document> ("Gym", gymSchema);
 
 export default GymModel;

@@ -21,7 +21,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true}));
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(cookieParser());
-app.use(morgan('combined'));
+app.use(morgan('tiny'));
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,

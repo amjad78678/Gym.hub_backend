@@ -102,6 +102,8 @@ async gymOtpVerification(req: Request, res: Response) {
       console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
+
+
 }
 
 export default GymController;

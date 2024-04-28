@@ -6,6 +6,7 @@ import GenerateOtp from '../services/generateOtp';
 import GenerateEmail from '../services/sendEmail';
 import EncryptPassword from '../services/bcryptPassword';
 import JWTToken from '../services/generateToken';
+import GymRepository from '../repository/gymRepository';
 
 
 
@@ -19,11 +20,12 @@ const jwtToken=new JWTToken()
 
 //repositories
 const userRepository  = new UserRepository()
+const gymRepository = new GymRepository()
 
 
 
 //useCases
-const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken)                                                                                                                                                                                                                              
+const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository)                                                                                                                                                                                                                              
 
 
 //controllers
@@ -38,6 +40,7 @@ router.post('/verify',(req,res)=> userController.userOtpVerification(req,res))
 router.post('/resend_otp',(req,res)=> userController.resendOtp(req,res))
 router.post('/login',(req,res)=> userController.login(req,res))
 router.post('/logout',(req,res)=> userController.logout(req,res))
+router.get('/gym_list',(req,res)=> userController.getGymList(req,res))
 
 
 

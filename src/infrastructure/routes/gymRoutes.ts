@@ -18,7 +18,7 @@ const gymRepository=new GymRepository()
 
 
 //useCases
-const gymUseCase=new GymUseCase(gymRepository,encryptPassword)
+const gymUseCase=new GymUseCase(gymRepository,encryptPassword,generateEmail)
 
 
 //controllers
@@ -32,6 +32,7 @@ const router = express.Router();
 router.post('/gym_register',(req,res)=>gymController.gymRegister(req,res))
 router.post('/gym_otp_verify',(req,res)=>gymController.gymOtpVerification(req,res))
 router.post('/resend_otp',(req,res)=>gymController.resendOtp(req,res))
+
 
 
 export default router
