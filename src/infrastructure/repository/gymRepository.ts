@@ -29,6 +29,12 @@ class GymRepository implements iGymRepo {
         const gymData = await GymModel.findByIdAndUpdate(_id, {isVerified: status});
 
      }
+     async findByIdAndGetSubscriptions(_id: string): Promise<any> {
+
+        const gymData = await GymModel.aggregate([{$match:{_id: _id}},{$project:{subscriptions:1}}])
+
+        return gymData
+     }
 
 }
 

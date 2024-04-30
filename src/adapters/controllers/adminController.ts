@@ -104,7 +104,7 @@ class AdminController {
   }
   }
 
-  async adminLogout(req: Request, res: Response) {
+  async adminLogout(req: Request, res: Response) { 
     try {
       
       res.cookie('adminJWT', '', {

@@ -41,6 +41,8 @@ router.post('/resend_otp',(req,res)=> userController.resendOtp(req,res))
 router.post('/login',(req,res)=> userController.login(req,res))
 router.post('/logout',(req,res)=> userController.logout(req,res))
 router.get('/gym_list',(req,res)=> userController.getGymList(req,res))
+router.get('/gym_details/:id',(req,res)=> userController.getGymDetails(req,res))
+
 
 
 

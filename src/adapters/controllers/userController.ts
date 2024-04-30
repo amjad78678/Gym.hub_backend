@@ -171,6 +171,25 @@ class UserController {
     }
   }
 
+  async getGymDetails (req: Request, res: Response) {
+    try {
+      
+      console.log('hellobro')
+
+      const gymDetails=await this.userUseCase.getGymDetails(req.params.id)
+      res.status(gymDetails.status).json(gymDetails.data)
+
+    } catch (error) {
+      
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
 
 }
 
