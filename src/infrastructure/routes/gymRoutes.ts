@@ -39,6 +39,10 @@ router.post('/resend_otp',(req,res)=>gymController.resendOtp(req,res))
 router.post('/logout',(req,res)=>gymController.logout(req,res))
 router.patch('/edit_gym_subscription',protect,(req,res)=>gymController.editGymSubscription(req,res))
 router.get('/fetch_gym_subscription',protect,(req,res)=>gymController.fetchGymSubscription(req,res))
+router.post('/forgot_password',(req,res)=>gymController.forgotPassword(req,res))
+router.post('/verify_forgot',(req,res)=>gymController.verifyForgot(req,res))
+router.patch('/update_password',(req,res)=>gymController.updatePassword(req,res))
+router.post('/resend_forgot_otp',(req,res)=>gymController.resendForgotOtp(req,res))
 
 
 

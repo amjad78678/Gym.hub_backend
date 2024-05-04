@@ -65,13 +65,13 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       required:true
     },
     subscriptions: {
-      quarterlyFee: {
+      Daily: {
         type: Number,
       },
-      monthlyFee: {
+      Monthly: {
         type: Number,
       },
-      yearlyFee: {
+      Yearly: {
         type: Number,
       }
    },

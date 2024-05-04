@@ -20,8 +20,7 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
 
     token=req.cookies.gymJwt;
 
-
-    console.log('token',token)
+    console.log('tokeninAuth',token)   
 
     if(token){
 
@@ -30,7 +29,11 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
 
             const decodedData=jwt.verify(token,process.env.JWT_SECRET_KEY as string) as JwtPayload;
 
+            console.log('tokenDecoded',decodedData)
+
             const gym=await _gymRepo.findById(decodedData.userId as string);
+
+            console.log('tokenGym',gym)
 
             if(decodedData && (!decodedData.role || decodedData.role !== 'gym')){
 
@@ -42,7 +45,10 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
                 req.gymId = gym._id ;
 
                 if(gym.isBlocked){
+
+                     
                     return res.status(401).json({ message: 'Gym have been blocked by admin!' });
+
                 } else {
                     next();
                 }

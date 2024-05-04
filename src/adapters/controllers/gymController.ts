@@ -94,11 +94,13 @@ class GymController {
   }
 
   async gymLogin(req: Request, res: Response) {
-    try {
+    try { 
       const gym = await this._GymUseCase.gymLogin(req.body);
 
       if (gym) {
-        if (gym.data.status == true) {
+        if (gym.data.token !== "") {
+          console.log('iam Undu ivde',gym.data.token)
+
           res.cookie("gymJwt", gym.data.token, {
             httpOnly: true,
             sameSite: "none",
@@ -141,7 +143,7 @@ class GymController {
     try {
       
        
-      let gymId=req.gymId || ""
+     let gymId=req.gymId || ""
       const gym = await this._GymUseCase.editGymSubscription(gymId,req.body);
 
        res.status(gym.status).json(gym.data);
@@ -166,6 +168,8 @@ class GymController {
     const subscriptions=await this._GymUseCase.fetchGymSubscription(req.gymId as string);
      
     console.log('iam mangatholi',subscriptions.data.message)
+
+    
        if(subscriptions){
         res.status(subscriptions.status).json(subscriptions.data.message) 
 
@@ -180,6 +184,112 @@ class GymController {
       console.log("iam stack", err.stack, "---", "iam message", err.message);
      }
    }
+
+
+   async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+
+      const result = await this._GymUseCase.forgotPassword(email);
+      if (result.data.success) {
+        req.app.locals.forgotEmail = email;
+        const otp = this._GenerateOtp.createOtp();
+        console.log(otp);
+
+        req.app.locals.forgotOtp = otp;
+        setTimeout(() => {
+          req.app.locals.forgotOtp = this._GenerateOtp.createOtp();
+        }, 2 * 60000);
+
+        this._GenerateEmail.sendEmail(email, otp);
+      }
+
+      res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async verifyForgot(req: Request, res: Response) {
+    try {
+      console.log("bodyotp", req.body.otp);
+      console.log("session", req.app.locals.forgotOtp);
+
+      const { forgotOtp } = req.app.locals;
+      const { otp } = req.body;
+
+      if (forgotOtp === otp) {
+        res.status(200).json({ message: "Otp verified successfully" });
+      } else {
+        res.status(400).json({ message: "Invalid Otp" });
+      }
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async updatePassword(req: Request, res: Response) {
+    try {
+      const forgotEmail = req.app.locals.forgotEmail;
+      const password = req.body.password;
+
+      const result = await this._GymUseCase.updatePassword(
+        forgotEmail,
+        password
+      );
+
+      if (result) {
+        req.app.locals.otp = null;
+        req.app.locals.forgotEmail = null;
+        res.status(result.status).json(result.data);
+      }
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async resendForgotOtp(req: Request, res: Response) {
+    try {
+
+
+      const otp=this._GenerateOtp.createOtp();
+      console.log(otp);
+      req.app.locals.forgotOtp = otp;
+      setTimeout(() => {
+        req.app.locals.forgotOtp = this._GenerateOtp.createOtp();
+      }, 2 * 60000);
+
+      this._GenerateEmail.sendEmail(req.app.locals.forgotEmail, otp);
+
+     
+      res.status(200).json({ message: "Otp sent successfully" });
+
+
+
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
 }
 
 export default GymController;

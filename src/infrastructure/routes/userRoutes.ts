@@ -7,6 +7,7 @@ import GenerateEmail from '../services/sendEmail';
 import EncryptPassword from '../services/bcryptPassword';
 import JWTToken from '../services/generateToken';
 import GymRepository from '../repository/gymRepository';
+import { protect } from '../middleware/gymAuth';
 
 
 
@@ -42,6 +43,10 @@ router.post('/login',(req,res)=> userController.login(req,res))
 router.post('/logout',(req,res)=> userController.logout(req,res))
 router.get('/gym_list',(req,res)=> userController.getGymList(req,res))
 router.get('/gym_details/:id',(req,res)=> userController.getGymDetails(req,res))
+router.post('/forgot_password',(req,res)=>userController.forgotPassword(req,res))
+router.post('/verify_forgot',(req,res)=>userController.verifyForgot(req,res))
+router.patch('/update_password',(req,res)=>userController.updatePassword(req,res))
+router.post('/resend_forgot_otp',(req,res)=>userController.resendForgotOtp(req,res))
 
 
 

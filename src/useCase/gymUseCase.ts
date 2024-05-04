@@ -53,7 +53,6 @@ class GymUseCase {
       );
 
       const newGym = { ...gym, password: hashedPassword };
-
       const gymData = await this._GymRepository.save(newGym);
     }
 
@@ -70,6 +69,7 @@ class GymUseCase {
     if (gymData.email && gymData.password) {
       const gym = await this._GymRepository.findByEmail(gymData.email);
 
+      
       if (gym) {
         if (gym.isBlocked) {
           return {
@@ -89,7 +89,11 @@ class GymUseCase {
           );
 
           if (passwordMatch) {
-            const token = this._JwtToken.generateToken(gym._id, "gym");
+            
+           console.log('gymIdAfterUsecase',gym?._id)
+
+            const token = await this._JwtToken.generateToken(gym._id, "gym");
+            console.log("iam token", token);
 
             return {
               status: 200,
@@ -148,7 +152,6 @@ class GymUseCase {
         gymData.subscriptions.yearlyFee = subscriptionData.amount;
        }
        
-
       await this._GymRepository.save(gymData);
 
       return {
@@ -197,6 +200,63 @@ class GymUseCase {
    }
 
 
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this._GymRepository.findByEmail(email);
+
+    if (!user) {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "User not found!",
+        },
+      };
+    } else if (user?.isBlocked) {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "You have been blocked by admin!",
+        },
+      };
+    } else {
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: "Verification otp sent to your email!",
+        },
+      };
+    }
+  }
+
+  async updatePassword(email: string, password: string) {
+    const user = await this._GymRepository.findByEmail(email);
+
+    const hashedPassword = await this._EncyptPassword.encryptPassword(password);
+
+    if (user && user.password) {
+      user.password = hashedPassword;
+      await this._GymRepository.save(user);
+
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: user,
+        },
+      }
+    }else {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "User not found!",
+        },
+      };
+    }
   }
 }
 export default GymUseCase;

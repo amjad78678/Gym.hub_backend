@@ -26,10 +26,21 @@ class UserRepository implements UserRepo {
         return userData
     }
 
-    findAllUsers(): Promise<{}[] | null> {
+   async findAllUsers(): Promise<{}[] | null> {
 
-        const userData = UserModel.find().select('')
+        const userData = await UserModel.find().select('')
         return userData
+    }
+
+   async findByIdAndUpdate(id: string,isBlocked: boolean, isDeleted: boolean){
+
+
+  const user =  await UserModel.findByIdAndUpdate(id,{isBlocked,isDeleted},{new: true})
+
+  return user;
+
+        
+
     }
 
 
