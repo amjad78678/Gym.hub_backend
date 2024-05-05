@@ -97,18 +97,23 @@ class GymController {
     try { 
       const gym = await this._GymUseCase.gymLogin(req.body);
 
+      console.log('iam gym',gym)
       if (gym) {
-        if (gym.data.token !== "") {
+        if (gym.data.token != "") {
           console.log('iam Undu ivde',gym.data.token)
 
-          res.cookie("gymJwt", gym.data.token, {
+          res.cookie("gymJWT", gym.data.token, {
             httpOnly: true,
-            sameSite: "none",
             secure: process.env.NODE_ENV !== "development",
-            maxAge: 30 * 24 * 60 * 60 * 1000,
+            sameSite:'none',
+            maxAge:60 * 60 * 24 * 365,
+        
           });
-        }
 
+           req.app.locals.gymId=gym.data.gymId
+
+        }
+     
         res.status(gym.status).json(gym.data);
       }
     } catch (error) {
@@ -123,10 +128,13 @@ class GymController {
 
   async logout(req: Request, res: Response) {
     try {
-      res.cookie("gymJwt", "", {
+
+      res.cookie("gymJWT", "", {
         httpOnly: true,
-        expires: new Date(0),
+        expires: new Date(0)
       });
+      req.app.locals.gymId = undefined;
+
 
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
@@ -142,7 +150,6 @@ class GymController {
   async editGymSubscription (req: Request, res: Response) {
     try {
       
-       
      let gymId=req.gymId || ""
       const gym = await this._GymUseCase.editGymSubscription(gymId,req.body);
 
@@ -164,14 +171,15 @@ class GymController {
    async fetchGymSubscription (req: Request, res: Response) {
      try {
       
-
-    const subscriptions=await this._GymUseCase.fetchGymSubscription(req.gymId as string);
+    console.log('iamin fetch sub controller',req.params)
+    const gymId=req.params.gymId
+    const subscriptions=await this._GymUseCase.fetchGymSubscription(gymId as string);
      
     console.log('iam mangatholi',subscriptions.data.message)
 
     
        if(subscriptions){
-        res.status(subscriptions.status).json(subscriptions.data.message) 
+       res.status(subscriptions.status).json(subscriptions.data.message) 
 
     }
 

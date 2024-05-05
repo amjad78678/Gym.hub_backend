@@ -68,7 +68,7 @@ class GymUseCase {
   async gymLogin(gymData: any) {
     if (gymData.email && gymData.password) {
       const gym = await this._GymRepository.findByEmail(gymData.email);
-
+      let token=''
       
       if (gym) {
         if (gym.isBlocked) {
@@ -90,10 +90,12 @@ class GymUseCase {
 
           if (passwordMatch) {
             
-           console.log('gymIdAfterUsecase',gym?._id)
+           console.log('gymId in Usecase',gym?._id)
 
-            const token = await this._JwtToken.generateToken(gym._id, "gym");
-            console.log("iam token", token);
+           const gymId = gym._id
+          if(gymId) token = this._JwtToken.generateToken(gymId, "gym");
+
+            console.log("iam token in usecase", token);
 
             return {
               status: 200,
@@ -101,6 +103,7 @@ class GymUseCase {
                 status: true,
                 message: "Login successful",
                 gym: gym,
+                gymId:gym._id,
                 token,
               },
             };
@@ -145,11 +148,11 @@ class GymUseCase {
       console.log("subscr data", subscriptionData);
  
       if (subscriptionData.subscription == "quarterlyFee") {
-        gymData.subscriptions.quarterlyFee = subscriptionData.amount; 
+        gymData.subscriptions.Daily = subscriptionData.amount; 
        } else if (subscriptionData.subscription == "monthlyFee") {
-        gymData.subscriptions.monthlyFee = subscriptionData.amount; 
+        gymData.subscriptions.Monthly = subscriptionData.amount; 
        } else if (subscriptionData.subscription == "yearlyFee") {
-        gymData.subscriptions.yearlyFee = subscriptionData.amount;
+        gymData.subscriptions.Yearly = subscriptionData.amount;
        }
        
       await this._GymRepository.save(gymData);
@@ -176,10 +179,11 @@ class GymUseCase {
 
   async fetchGymSubscription(gymId: string){
 
+    console.log('gymId',gymId)
+
    const gymData = await this._GymRepository.findByIdAndGetSubscriptions(gymId);
 
-
-
+   console.log(gymData)
 
    if(gymData){
     return {

@@ -1,6 +1,7 @@
 import iGymRepo from "../../useCase/interface/gymRepo"
 import Gym from "../../domain/gym"
 import GymModel from "../db/gymModel"
+import mongoose from "mongoose";
 
 
 class GymRepository implements iGymRepo {
@@ -31,7 +32,7 @@ class GymRepository implements iGymRepo {
      }
      async findByIdAndGetSubscriptions(_id: string): Promise<any> {
 
-        const gymData = await GymModel.aggregate([{$match:{_id: _id}},{$project:{subscriptions:1}}])
+        const gymData = await GymModel.aggregate([{$match:{_id:new mongoose.Types.ObjectId(_id)}},{$project:{subscriptions:1}}])
 
         return gymData
      }
