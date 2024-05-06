@@ -5,23 +5,28 @@ import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import GenerateEmail from "../infrastructure/services/sendEmail";
 import JWTToken from "../infrastructure/services/generateToken";
 import { consumers } from "stream";
+import TrainerRepository from "../infrastructure/repository/trainerRepository";
+import Trainer from "../domain/trainer";
 
 class GymUseCase {
   private _GymRepository: GymRepository;
   private _EncyptPassword: EncryptPassword;
   private _GenerateEmail: GenerateEmail;
   private _JwtToken: JWTToken;
+  private _TrainerRepository: TrainerRepository;
 
   constructor(
     GymRepository: GymRepository,
     encryptPassword: EncryptPassword,
     generateEmail: GenerateEmail,
-    jwtToken: JWTToken
+    jwtToken: JWTToken,
+    trainerRepository: TrainerRepository
   ) {
     this._GymRepository = GymRepository;
     this._EncyptPassword = encryptPassword;
     this._GenerateEmail = generateEmail;
     this._JwtToken = jwtToken;
+    this._TrainerRepository = trainerRepository;
   }
 
   async gymSignUp(gym: Gym) {
@@ -260,6 +265,69 @@ class GymUseCase {
           message: "User not found!",
         },
       };
+    }
+  }
+
+
+  async fetchGymTrainers (gymId: string) {
+    
+    const trainers= await this._TrainerRepository.findById(gymId);
+
+    if(trainers){
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: trainers
+        },
+      }
+    }else{
+      return {
+        status: 400,
+        data: {
+          status: false, 
+          message: "Trainer not found"
+        },
+      }
+    }
+  }
+
+  async addGymTrainer (gymId: string, trainerData: Trainer) {
+
+   const hashedPassword = await this._EncyptPassword.encryptPassword(trainerData.password);
+    const newTrainerData={...trainerData, password: hashedPassword}
+    const trainer = await this._TrainerRepository.save(gymId, newTrainerData);
+
+    return {
+      status: 200,
+      data: {
+        status: true,
+        message: 'Trainer added successfully',
+      },
+    }
+  }
+
+  async updateGymTrainer ( trainerId: string, trainerData: Trainer) {
+    
+
+    const trainer = await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
+
+    if(trainer){
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: "Trainer updated successfully",
+        },
+      }
+    }else{
+      return {
+        status: 400,
+        data: {
+          status: false,
+          message: "Trainer not found",
+        },
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 import GenerateOtp from "../../infrastructure/services/generateOtp";
 import GenerateEmail from "../../infrastructure/services/sendEmail";
+import CloudinaryUpload from "../../infrastructure/utils/cloudinaryUpload";
 import GymUseCase from "../../useCase/gymUseCase";
 import { Request, Response } from "express";
 
@@ -7,15 +8,18 @@ class GymController {
   private _GymUseCase: GymUseCase;
   private _GenerateOtp: GenerateOtp;
   private _GenerateEmail: GenerateEmail;
+  private _CloudinaryUpload: CloudinaryUpload;
 
   constructor(
     gymUseCase: GymUseCase,
     generateOtp: GenerateOtp,
-    generateEmail: GenerateEmail
+    generateEmail: GenerateEmail,
+    cloudinaryUpload: CloudinaryUpload
   ) {
     this._GymUseCase = gymUseCase;
     this._GenerateOtp = generateOtp;
     this._GenerateEmail = generateEmail;
+    this._CloudinaryUpload = cloudinaryUpload;
   }
 
   async gymRegister(req: Request, res: Response) {
@@ -94,26 +98,24 @@ class GymController {
   }
 
   async gymLogin(req: Request, res: Response) {
-    try { 
+    try {
       const gym = await this._GymUseCase.gymLogin(req.body);
 
-      console.log('iam gym',gym)
+      console.log("iam gym", gym);
       if (gym) {
         if (gym.data.token != "") {
-          console.log('iam Undu ivde',gym.data.token)
+          console.log("iam Undu ivde", gym.data.token);
 
           res.cookie("gymJWT", gym.data.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
-            sameSite:'none',
-            maxAge:60 * 60 * 24 * 365,
-        
+            sameSite: "none",
+            maxAge: 60 * 60 * 24 * 365,
           });
 
-           req.app.locals.gymId=gym.data.gymId
-
+          req.app.locals.gymId = gym.data.gymId;
         }
-     
+
         res.status(gym.status).json(gym.data);
       }
     } catch (error) {
@@ -128,73 +130,63 @@ class GymController {
 
   async logout(req: Request, res: Response) {
     try {
-
       res.cookie("gymJWT", "", {
         httpOnly: true,
-        expires: new Date(0)
+        expires: new Date(0),
       });
       req.app.locals.gymId = undefined;
-
 
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
-        message: err.message,  
+        message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
       console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
-  
-  async editGymSubscription (req: Request, res: Response) {
+
+  async editGymSubscription(req: Request, res: Response) {
     try {
-      
-     let gymId=req.gymId || ""
-      const gym = await this._GymUseCase.editGymSubscription(gymId,req.body);
+      let gymId = req.gymId || "";
+      const gym = await this._GymUseCase.editGymSubscription(gymId, req.body);
 
-       res.status(gym.status).json(gym.data);
-
-
+      res.status(gym.status).json(gym.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
-        message: err.message,  
+        message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
       console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
+  async fetchGymSubscription(req: Request, res: Response) {
+    try {
+      console.log("iamin fetch sub controller", req.params);
+      const gymId = req.gymId || "";
+      const subscriptions = await this._GymUseCase.fetchGymSubscription(
+        gymId as string
+      );
 
+      console.log("iam mangatholi", subscriptions.data.message);
 
-   async fetchGymSubscription (req: Request, res: Response) {
-     try {
-      
-    console.log('iamin fetch sub controller',req.params)
-    const gymId=req.params.gymId
-    const subscriptions=await this._GymUseCase.fetchGymSubscription(gymId as string);
-     
-    console.log('iam mangatholi',subscriptions.data.message)
-
-    
-       if(subscriptions){
-       res.status(subscriptions.status).json(subscriptions.data.message) 
-
-    }
-
-     } catch (error) {
+      if (subscriptions) {
+        res.status(subscriptions.status).json(subscriptions.data.message);
+      }
+    } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
-        message: err.message,  
+        message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
       console.log("iam stack", err.stack, "---", "iam message", err.message);
-     }
-   }
+    }
+  }
 
-
-   async forgotPassword(req: Request, res: Response) {
+  async forgotPassword(req: Request, res: Response) {
     try {
       const { email } = req.body;
 
@@ -273,9 +265,7 @@ class GymController {
 
   async resendForgotOtp(req: Request, res: Response) {
     try {
-
-
-      const otp=this._GenerateOtp.createOtp();
+      const otp = this._GenerateOtp.createOtp();
       console.log(otp);
       req.app.locals.forgotOtp = otp;
       setTimeout(() => {
@@ -284,11 +274,90 @@ class GymController {
 
       this._GenerateEmail.sendEmail(req.app.locals.forgotEmail, otp);
 
-     
       res.status(200).json({ message: "Otp sent successfully" });
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
 
+  async fetchGymTrainers(req: Request, res: Response) {
+    try {
 
+      const gymId = req.gymId || "";
+      const trainers = await this._GymUseCase.fetchGymTrainers(gymId);
 
+      res.status(trainers.status).json(trainers.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async addGymTrainer(req: Request, res: Response) {
+    try {
+      console.log("iam req.body from addgym", req.body);
+      const gymId = req.gymId || "";
+      if (req.file) {
+        const image = await this._CloudinaryUpload.upload(
+          req.file.path,
+          "trainers"
+        );
+        const trainerData = { ...req.body, imageUrl: image.secure_url };
+        const response = await this._GymUseCase.addGymTrainer(
+          gymId,
+          trainerData
+        );
+        res.status(response.status).json(response.data);
+      } else {
+        const response = await this._GymUseCase.addGymTrainer(gymId, req.body);
+        res.status(response.status).json(response.data);
+      }
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async updateGymTrainer(req: Request, res: Response) {
+    try {
+      const trainerId = req.body._id;
+
+      if (req.file) {
+        const image = await this._CloudinaryUpload.upload(
+          req.file.path,
+          "trainers"
+        );
+        const trainerData = { ...req.body };
+        delete trainerData._id;
+        trainerData.imageUrl = image.secure_url;
+        const response = await this._GymUseCase.updateGymTrainer(
+          trainerId,
+          trainerData
+        );
+        res.status(response.status).json(response.data);
+      } else {
+        const trainerData = { ...req.body };
+        delete trainerData._id;
+
+        const response = await this._GymUseCase.updateGymTrainer(
+          trainerId,
+          trainerData
+        );
+        res.status(response.status).json(response.data);
+      }
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({

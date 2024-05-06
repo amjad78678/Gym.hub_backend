@@ -29,7 +29,6 @@ class UserController {
   async signUp(req: Request, res: Response) {
     try {
       console.log("iam body", req.body);
-
       const verifyUser = await this.userUseCase.signUp(req.body.email);
 
       if (verifyUser.data.status == true && req.body.isGoogle) {
@@ -83,14 +82,14 @@ class UserController {
     }
   }
 
-  async login(req: Request, res: Response) { 
+  async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
 
       const user = await this.userUseCase.login(email, password);
 
       if (user.data.token != "") {
-        res.cookie("userJwt", user.data.token, {
+        res.cookie("userJWT", user.data.token, {
           httpOnly: true,
           sameSite: "none",
           secure: process.env.NODE_ENV !== "development",
@@ -111,7 +110,7 @@ class UserController {
 
   async resendOtp(req: Request, res: Response) {
     try {
-      const otp = this.generateOtp.createOtp();
+      const otp = this.generateOtp.createOtp(); 
       req.app.locals.otp = otp;
       this.generateEmail.sendEmail(req.app.locals.userData.email, otp);
       console.log(otp);
@@ -133,7 +132,7 @@ class UserController {
 
   async logout(req: Request, res: Response) {
     try {
-      res.cookie("userJwt", "", {
+      res.cookie("userJWT", "", {
         httpOnly: true,
         expires: new Date(0),
       });
@@ -257,9 +256,7 @@ class UserController {
 
   async resendForgotOtp(req: Request, res: Response) {
     try {
-
-
-      const otp=this.generateOtp.createOtp();
+      const otp = this.generateOtp.createOtp();
       console.log(otp);
       req.app.locals.forgotOtp = otp;
       setTimeout(() => {
@@ -268,11 +265,7 @@ class UserController {
 
       this.generateEmail.sendEmail(req.app.locals.forgotEmail, otp);
 
-     
       res.status(200).json({ message: "Otp sent successfully" });
-
-
-
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
