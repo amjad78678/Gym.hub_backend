@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import JWT from '../../useCase/interface/jwt';
-
+ 
 class JWTToken implements JWT {
     generateToken(userId: string, role: string): string {
         

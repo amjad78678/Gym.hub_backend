@@ -8,6 +8,7 @@ import { consumers } from "stream";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import Trainer from "../domain/trainer";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import SharpImages from "../infrastructure/services/sharpImages";
 
 class GymUseCase {
   private _GymRepository: GymRepository;
@@ -16,6 +17,7 @@ class GymUseCase {
   private _JwtToken: JWTToken;
   private _TrainerRepository: TrainerRepository;
   private _CloudinaryUpload: CloudinaryUpload
+  private _SharpImages: SharpImages
 
   constructor(
     GymRepository: GymRepository,
@@ -23,7 +25,9 @@ class GymUseCase {
     generateEmail: GenerateEmail,
     jwtToken: JWTToken,
     trainerRepository: TrainerRepository,
-    cloadinaryUpload: CloudinaryUpload
+    cloadinaryUpload: CloudinaryUpload,
+    sharpImages: SharpImages,
+
   ) {
     this._GymRepository = GymRepository;
     this._EncyptPassword = encryptPassword;
@@ -31,6 +35,7 @@ class GymUseCase {
     this._JwtToken = jwtToken;
     this._TrainerRepository = trainerRepository;
     this._CloudinaryUpload = cloadinaryUpload;
+    this._SharpImages = sharpImages
   }
 
   async gymSignUp(gym: Gym,gymImageFiles: any) {
@@ -48,20 +53,23 @@ class GymUseCase {
 
 
     const files = gymImageFiles as Express.Multer.File[];
-      if(gymImageFiles?.length){
-        const imageUrls=[]
 
-        for(let i=0;i<files.length;i++){
-  
-          let filePath = files[i].path;
-          const result = await this._CloudinaryUpload.upload(filePath, "gymImages");
-          imageUrls.push({
-            imageUrl: result.secure_url,
-            public_id: result.public_id
-          })
-        }
-  
-        console.log('imagdfl',imageUrls) 
+      if(files?.length){
+
+        const imageUrls = await Promise.all(files.map(async (file) => {
+          const filePath = file.path;
+          const res = await this._SharpImages.sharpenImage(file, 400, 400,filePath);
+          console.log('res',res)
+          if(res){
+
+            return {
+              imageUrl:res?.secure_url,
+              public_id: res?.public_id, 
+            };
+          }
+        }));
+      
+        console.log('iam image urls',imageUrls);
 
         if(imageUrls.length === 4){
           const obj = {

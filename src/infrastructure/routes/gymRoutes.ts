@@ -10,6 +10,7 @@ import { protect } from '../middleware/gymAuth';
 import TrainerRepository from '../repository/trainerRepository';
 import { ImageUpload } from '../middleware/multer';
 import CloudinaryUpload from '../utils/cloudinaryUpload';
+import SharpImages from '../services/sharpImages';
   
 
     
@@ -19,6 +20,7 @@ const generateOtp = new GenerateOtp()
 const generateEmail=new GenerateEmail()
 const jwtToken=new JWTToken()
 const cloudinaryUpload = new CloudinaryUpload()
+const sharpImages = new SharpImages()
 
 //repositories
 const gymRepository=new GymRepository()
@@ -26,7 +28,7 @@ const trainerRepository=new TrainerRepository()
 
 
 //useCases
-const gymUseCase=new GymUseCase(gymRepository,encryptPassword,generateEmail,jwtToken,trainerRepository,cloudinaryUpload)
+const gymUseCase = new GymUseCase(gymRepository, encryptPassword, generateEmail, jwtToken, trainerRepository, cloudinaryUpload, sharpImages);
 
 
 //controllers
