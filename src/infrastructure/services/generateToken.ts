@@ -7,7 +7,9 @@ class JWTToken implements JWT {
         const SECRETKEY=process.env.JWT_SECRET_KEY;
 
         if(SECRETKEY){
-            const token: string = jwt.sign({userId,role},SECRETKEY);
+            const token: string = jwt.sign({userId,role},SECRETKEY,{
+                expiresIn: '30d'
+            });
             return token
         }
         

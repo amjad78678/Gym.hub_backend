@@ -26,7 +26,7 @@ const trainerRepository=new TrainerRepository()
 
 
 //useCases
-const gymUseCase=new GymUseCase(gymRepository,encryptPassword,generateEmail,jwtToken,trainerRepository)
+const gymUseCase=new GymUseCase(gymRepository,encryptPassword,generateEmail,jwtToken,trainerRepository,cloudinaryUpload)
 
 
 //controllers
@@ -37,12 +37,12 @@ const gymController=new GymController(gymUseCase,generateOtp,generateEmail,cloud
 const router = express.Router();
 
 
-router.post('/gym_register',(req,res)=>gymController.gymRegister(req,res))
+router.post('/gym_register',ImageUpload.array('images', 4),(req,res)=>gymController.gymRegister(req,res))
 router.post('/gym_login',(req,res)=>gymController.gymLogin(req,res))
 router.post('/gym_otp_verify',(req,res)=>gymController.gymOtpVerification(req,res))
 router.post('/resend_otp',(req,res)=>gymController.resendOtp(req,res))
 router.post('/logout',(req,res)=>gymController.logout(req,res))
-router.patch('/edit_gym_subscription',(req,res)=>gymController.editGymSubscription(req,res))
+router.patch('/edit_gym_subscription',protect,(req,res)=>gymController.editGymSubscription(req,res))
 router.get('/fetch_gym_subscription',protect,(req,res)=>gymController.fetchGymSubscription(req,res))
 router.post('/forgot_password',(req,res)=>gymController.forgotPassword(req,res))
 router.post('/verify_forgot',(req,res)=>gymController.verifyForgot(req,res))

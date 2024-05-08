@@ -24,23 +24,69 @@ class GymController {
 
   async gymRegister(req: Request, res: Response) {
     try {
-      const gym = await this._GymUseCase.gymSignUp(req.body);
 
-      if (gym.data.status == true) {
-        req.app.locals.gymData = req.body;
-        const otp = this._GenerateOtp.createOtp();
-        req.app.locals.otp = otp;
-        this._GenerateEmail.sendEmail(req.body.email, otp);
-        console.log(otp);
+      console.log('iam req.body',req.body)
+      console.log('iam reqfiles',req.files?.length)
 
-        setTimeout(() => {
-          req.app.locals.otp = this._GenerateOtp.createOtp();
-        }, 2 * 60000);
 
-        res.status(gym.status).json(gym.data);
-      } else {
-        res.status(gym.status).json(gym.data);
-      }
+    //  const files = req.files as Express.Multer.File[];
+    //   if(req.files?.length){
+    //     const imageUrls=[]
+
+    //     for(let i=0;i<files.length;i++){
+  
+    //       let filePath = files[i].path;
+    //       const result = await this._CloudinaryUpload.upload(filePath, "gymImages");
+    //       imageUrls.push(result.secure_url)
+    //     }
+  
+    //     console.log('imagdfl',imageUrls)
+
+    //     if(imageUrls.length === 4){
+    //       const obj = {
+    //         gymName: req.body.gymName,
+    //         email: req.body.email,
+    //         contactNumber: req.body.contactNumber,
+    //         state: req.body.state,
+    //         city: req.body.city,
+    //         pincode: req.body.pincode,
+    //         subscriptions: {
+    //           Daily: req.body.dailyFee,
+    //           Monthly: req.body.monthlyFee,
+    //           Yearly: req.body.yearlyFee,
+    //         },
+    //         description: req.body.description,
+    //         businessId: req.body.businessId,
+    //         password: req.body.password,
+    //         confirmPassword: req.body.confirmPassword,
+    //         location: {
+    //           type: "Point",
+    //           coordinates: [req.body.long, req.body.lat] as [number, number],
+    //         },
+    //         images: imageUrls,
+    //       };
+      
+      
+      
+        const gym = await this._GymUseCase.gymSignUp(req.body,req.files);
+        if(gym){
+          if (gym?.data.status == true) {
+            req.app.locals.gymData = gym.data.gymData;
+            const otp = this._GenerateOtp.createOtp();
+            req.app.locals.otp = otp;
+            this._GenerateEmail.sendEmail(req.body.email, otp);
+            console.log(otp);
+    
+            setTimeout(() => {
+              req.app.locals.otp = this._GenerateOtp.createOtp();
+            }, 2 * 60000);
+    
+            res.status(gym.status).json(gym.data);
+          } else {
+            res.status(gym.status).json(gym.data);
+          }
+        }
+      
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -149,9 +195,9 @@ class GymController {
 
   async editGymSubscription(req: Request, res: Response) {
     try {
+      console.log('iam reqbody',req.body)
       let gymId = req.gymId || "";
       const gym = await this._GymUseCase.editGymSubscription(gymId, req.body);
-
       res.status(gym.status).json(gym.data);
     } catch (error) {
       const err: Error = error as Error;

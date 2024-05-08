@@ -4,7 +4,7 @@ import Gym from "../../domain/gym";
 interface Image {
   imageUrl: string;
   public_id: string;
-}
+} 
 
 const imageSchema: Schema = new Schema<Image | Document>({
   imageUrl: String,

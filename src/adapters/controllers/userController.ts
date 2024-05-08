@@ -163,7 +163,6 @@ class UserController {
 
   async getGymDetails(req: Request, res: Response) {
     try {
-      console.log("hellobro");
 
       const gymDetails = await this.userUseCase.getGymDetails(req.params.id);
       res.status(gymDetails.status).json(gymDetails.data);

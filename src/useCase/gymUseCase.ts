@@ -7,6 +7,7 @@ import JWTToken from "../infrastructure/services/generateToken";
 import { consumers } from "stream";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import Trainer from "../domain/trainer";
+import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 
 class GymUseCase {
   private _GymRepository: GymRepository;
@@ -14,22 +15,25 @@ class GymUseCase {
   private _GenerateEmail: GenerateEmail;
   private _JwtToken: JWTToken;
   private _TrainerRepository: TrainerRepository;
+  private _CloudinaryUpload: CloudinaryUpload
 
   constructor(
     GymRepository: GymRepository,
     encryptPassword: EncryptPassword,
     generateEmail: GenerateEmail,
     jwtToken: JWTToken,
-    trainerRepository: TrainerRepository
+    trainerRepository: TrainerRepository,
+    cloadinaryUpload: CloudinaryUpload
   ) {
     this._GymRepository = GymRepository;
     this._EncyptPassword = encryptPassword;
     this._GenerateEmail = generateEmail;
     this._JwtToken = jwtToken;
     this._TrainerRepository = trainerRepository;
+    this._CloudinaryUpload = cloadinaryUpload;
   }
 
-  async gymSignUp(gym: Gym) {
+  async gymSignUp(gym: Gym,gymImageFiles: any) {
     const gymExists = await this._GymRepository.findByEmail(gym.email);
 
     if (gymExists) {
@@ -42,13 +46,60 @@ class GymUseCase {
       };
     }
 
-    return {
-      status: 200,
-      data: {
-        status: true,
-        message: "Verification otp sent to your email!",
-      },
-    };
+
+    const files = gymImageFiles as Express.Multer.File[];
+      if(gymImageFiles?.length){
+        const imageUrls=[]
+
+        for(let i=0;i<files.length;i++){
+  
+          let filePath = files[i].path;
+          const result = await this._CloudinaryUpload.upload(filePath, "gymImages");
+          imageUrls.push({
+            imageUrl: result.secure_url,
+            public_id: result.public_id
+          })
+        }
+  
+        console.log('imagdfl',imageUrls) 
+
+        if(imageUrls.length === 4){
+          const obj = {
+            gymName: gym.gymName,
+            email: gym.email,
+            contactNumber: gym.contactNumber,
+            state: gym.state,
+            city: gym.city,
+            pincode: gym.pincode,
+            subscriptions: {
+              Daily: gym.dailyFee,
+              Monthly: gym.monthlyFee,
+              Yearly: gym.yearlyFee,
+            },
+            description: gym.description,
+            businessId: gym.businessId,
+            password: gym.password,
+            confirmPassword: gym.confirmPassword,
+            location: {
+              type: "Point",
+              coordinates: [gym.long, gym.lat] as [number, number],
+            },
+            images: imageUrls,
+          };
+
+
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: "Verification otp sent to your email!",
+          gymData: obj,
+        },
+      };
+    }
+
+  }
+
   }
 
   async gymOtpVerification(gym: Gym) {
@@ -152,11 +203,11 @@ class GymUseCase {
     if (gymData) {
       console.log("subscr data", subscriptionData);
  
-      if (subscriptionData.subscription == "quarterlyFee") {
+      if (subscriptionData.subscription == "Daily") {
         gymData.subscriptions.Daily = subscriptionData.amount; 
-       } else if (subscriptionData.subscription == "monthlyFee") {
+       } else if (subscriptionData.subscription == "Monthly") {
         gymData.subscriptions.Monthly = subscriptionData.amount; 
-       } else if (subscriptionData.subscription == "yearlyFee") {
+       } else if (subscriptionData.subscription == "Yearly") {
         gymData.subscriptions.Yearly = subscriptionData.amount;
        }
        

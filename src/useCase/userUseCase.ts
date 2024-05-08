@@ -134,7 +134,6 @@ class UserUseCase {
   async getGymDetails(id: string) {
     const gymDetails = await this._GymRepository.findById(id);
 
-    console.log("gymDeti", gymDetails);
 
     return {
       status: 200,

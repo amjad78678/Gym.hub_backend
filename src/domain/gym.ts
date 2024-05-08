@@ -1,5 +1,5 @@
 interface Gym {
-  _id: string;
+  _id?: string;
   gymName?: string;
   email: string;
   contactNumber?: number;
@@ -9,7 +9,7 @@ interface Gym {
   businessId?: string;
   isBlocked?: boolean;
   isDeleted?: boolean;
-  quarterlyFee?: number;
+  dailyFee?: number;
   monthlyFee?: number;
   yearlyFee?: number;
   description?: string;
@@ -20,10 +20,9 @@ interface Gym {
       type: string;
       coordinates: [number, number];
   };
-  images?: {
-      imageUrl: string;
-      public_id: string;
-  }[];
+  lat?: number;
+  long?: number;
+  images?: string[];
   subscriptions?: any;
 }
 

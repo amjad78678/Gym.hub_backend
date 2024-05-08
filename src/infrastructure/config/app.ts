@@ -12,6 +12,8 @@ import userRoutes from "../routes/userRoutes";
 import gymRoutes from "../routes/gymRoutes";
 import adminRoutes from "../routes/adminRoutes";
 import trainerRoutes from "../routes/trainerRoutes";
+import paymentRoutes from "../routes/paymentRoutes";
+
 
 export const createServer = () => {
   try {
@@ -23,7 +25,7 @@ export const createServer = () => {
       cors({
         origin: process.env.CORS_ORIGIN,
         credentials: true,
-      }) 
+      })
     );
     app.use(cookieParser());
     app.use(morgan("tiny"));
@@ -34,17 +36,15 @@ export const createServer = () => {
     app.use("/api/gym", gymRoutes);
     app.use("/api/admin", adminRoutes);
     app.use("/api/trainer", trainerRoutes);
+    app.use("/api/payment", paymentRoutes );
 
     app.use((req, res) =>
       res.status(404).json({ success: false, message: "Not Found" })
     );
 
     return httpServer;
-
   } catch (error) {
-
     const err: Error = error as Error;
     console.log(err.message);
   }
 };
-

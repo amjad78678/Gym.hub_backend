@@ -13,9 +13,12 @@ declare global {
 }
 
 const protect = async (req: Request, res: Response, next: NextFunction) => {
+  console.log('in protect middleware')
   let token;
 
   const authHeader = req.headers.authorization;
+
+  console.log('authHeader',authHeader)
 
   if (!authHeader) {
     return res.status(401).send("Authorization header is missing");
@@ -29,12 +32,16 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
     token = tokens[0].split(" ")[1];
   }
 
+  console.log('token',token)
+
   if (token) {
     try {
       const decodedData = jwt.verify(
         token,
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
+
+      console.log('decodedData',decodedData)
 
       const user = await _userRepo.findById(decodedData.userId as string);
 
