@@ -52,6 +52,9 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       type: { type: String },
       coordinates: [Number],
     },
+    address: {
+      type: String,
+    },
     isBlocked:{
       type: Boolean,
       default: false

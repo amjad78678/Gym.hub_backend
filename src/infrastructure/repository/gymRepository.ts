@@ -20,10 +20,26 @@ class GymRepository implements iGymRepo {
         const gymData = await GymModel.findById(_id);
         return gymData
      }
-     async findAllGyms(): Promise<Gym[] | null> {
-        const gymData = await GymModel.find();
-        return gymData
-     }
+     async findNearGym(latitude: number, longitude: number): Promise<Gym[] | null> {
+      const gymData = await GymModel.find({
+         location: {
+           $near: {
+             $geometry: {
+               type: "Point",
+               coordinates: [longitude, latitude]
+             },
+             $maxDistance: 200000.0
+           }
+         }
+       })
+    
+      return gymData;
+    }
+
+    async findAllGyms(): Promise<Gym[] | null> {
+      const gymData = await GymModel.find();
+      return gymData
+   }
 
      async editGymStatus(_id: string, status: boolean): Promise<any> {
         

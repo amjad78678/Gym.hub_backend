@@ -58,7 +58,7 @@ class GymUseCase {
 
         const imageUrls = await Promise.all(files.map(async (file) => {
           const filePath = file.path;
-          const res = await this._SharpImages.sharpenImage(file, 400, 400,filePath);
+          const res = await this._SharpImages.sharpenImage(file, 6000, 4000,filePath);
           console.log('res',res)
           if(res){
 
@@ -92,6 +92,7 @@ class GymUseCase {
               type: "Point",
               coordinates: [gym.long, gym.lat] as [number, number],
             },
+            address: gym.address,
             images: imageUrls,
           };
 
@@ -157,7 +158,7 @@ class GymUseCase {
            console.log('gymId in Usecase',gym?._id)
 
            const gymId = gym._id
-          if(gymId) token = this._JwtToken.generateToken(gymId, "gym");
+          if(gymId) token =  this._JwtToken.generateToken(gymId, "gym");
 
             console.log("iam token in usecase", token);
 

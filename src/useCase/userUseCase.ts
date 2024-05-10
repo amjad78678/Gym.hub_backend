@@ -64,6 +64,7 @@ class UserUseCase {
     };
   }
 
+
   async login(email: string, password: string) {
     const user = await this.UserRepository.findByEmail(email);
     let token = "";
@@ -120,16 +121,38 @@ class UserUseCase {
     }
   }
 
-  async getGymList() {
-    const gymList = await this._GymRepository.findAllGyms();
-    return {
-      status: 200,
-      data: {
-        success: false,
-        message: gymList,
-      },
-    };
-  }
+  async getGymList(latitude: any,longitude: any) {
+    console.log('iam in usecase',latitude,longitude)
+
+
+      const gymList = await this._GymRepository.findNearGym(latitude,longitude);
+
+      console.log('usecase gymlist',gymList)
+      return {
+        status: 200,
+        data: {
+          success: false,
+          message: gymList,
+        },
+      };
+
+
+
+      
+    }
+
+    async getGymListNormal () {
+
+      const gymList = await this._GymRepository.findAllGyms();
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: gymList,
+        }
+      }
+    }
+
 
   async getGymDetails(id: string) {
     const gymDetails = await this._GymRepository.findById(id);

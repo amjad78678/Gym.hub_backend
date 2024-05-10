@@ -120,7 +120,7 @@ class AdminUseCase {
     };
   }
 
-  async adminLogin(email: string, password: string) {
+  async adminLogin(email: string, password: string) { 
     if (
       email == process.env.ADMIN_EMAIL &&
       password == process.env.ADMIN_PASSWORD
@@ -175,7 +175,7 @@ class AdminUseCase {
     const updatedUser =  await this._UserRepository.findByIdAndUpdate(id,isBlocked,isDeleted)
 
     console.log('isBlocked',isBlocked)
-    console.log('isDeleted',isDeleted)
+    console.log('isDeleted',isDeleted) 
 
     console.log("iam updated user", updatedUser)
 

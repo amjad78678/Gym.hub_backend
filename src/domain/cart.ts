@@ -6,7 +6,8 @@ interface Cart extends Document {
     date: string;
     expiryDate: string;
     subscriptionType: 'Daily' | 'Monthly' | 'Yearly';
-    price: number;
+    amount: number;
+    totalPrice: number;
 }
 
 export default Cart

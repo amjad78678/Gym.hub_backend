@@ -16,7 +16,7 @@ class SharpImages implements iSharpen {
         .resize(width, height)
         .toBuffer();
         
-        const result = await cloudinaryUpload.uploadBuffer(buffer,image.path,'ilhnxgqy') as CloudinaryResponse
+        const result = await cloudinaryUpload.uploadBuffer(buffer,image.path,'ilhnxgqy','gymImages') as CloudinaryResponse
 
         return result 
     

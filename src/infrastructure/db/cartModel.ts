@@ -11,7 +11,8 @@ const CartSchema = new Schema<Cart>({
     subscriptionType: { type: String, enum: {
         values: ["Daily", "Monthly", "Yearly"],
     } },
-    price: { type: Number, required: true },
+    amount: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
 }, {
     timestamps: true,
 });

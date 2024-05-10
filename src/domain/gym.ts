@@ -22,6 +22,7 @@ interface Gym {
   };
   lat?: number;
   long?: number;
+  address?: string;
   images?: string[];
   subscriptions?: any;
 }

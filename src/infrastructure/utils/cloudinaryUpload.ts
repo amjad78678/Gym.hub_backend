@@ -17,9 +17,9 @@ class CloudinaryUpload {
 
     }
 
-    async uploadBuffer (buffer: Buffer,filePath: string,uploadPreset: string){
+    async uploadBuffer (buffer: Buffer,filePath: string,uploadPreset: string,folder: string){
         const result = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({ upload_preset: uploadPreset }, (error, result) => {
+            cloudinary.uploader.upload_stream({ upload_preset: uploadPreset, folder: folder }, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {

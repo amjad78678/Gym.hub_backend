@@ -14,7 +14,7 @@ constructor (subscriptionCase: SubscriptionUseCase) {
 async addNewSubscription(req: Request, res: Response) {
     try {
         
-
+console.log('newSubscksdjfksjfksdjkfjksj')
         const userId = req.userId || ""
  
         const data = {...req.body,userId:userId }

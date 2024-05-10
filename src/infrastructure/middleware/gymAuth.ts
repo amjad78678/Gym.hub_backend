@@ -14,27 +14,21 @@ declare global {
 }
 
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-  let token;
 
 
-  const authHeader = req.headers.authorization;
+  const gymToken = req.headers.authorization?.split(" ")[1];
 
-  if (!authHeader) {
+  if (!gymToken) {
     return res.status(401).send("Authorization header is missing");
   }
 
-  const tokens = authHeader.split(",").map((token) => token.trim());
 
-  if (tokens.length === 2) {
-    token = tokens[1].split(" ")[1];
-  } else {
-    token = tokens[0].split(" ")[1];
-  }
 
-  if (token) {
+
+  if (gymToken) {
     try {
       const decodedData = jwt.verify(
-        token,
+        gymToken,
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
 

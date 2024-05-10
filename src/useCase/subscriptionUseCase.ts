@@ -43,7 +43,7 @@ class SubscriptionUseCase {
     if (
       verifyCart &&
       verifyCart.gymId._id == gymId &&
-      verifyCart.price == price
+      verifyCart.totalPrice == price
     ) {
       console.log("verifyCart", "nammal verigy cart aayittund", verifyCart);
 

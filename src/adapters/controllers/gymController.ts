@@ -156,10 +156,9 @@ class GymController {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
             sameSite: "none",
-            maxAge: 60 * 60 * 24 * 365,
+            maxAge: 30 * 24 * 60 * 60 * 1000,
           });
 
-          req.app.locals.gymId = gym.data.gymId;
         }
 
         res.status(gym.status).json(gym.data);
@@ -180,7 +179,6 @@ class GymController {
         httpOnly: true,
         expires: new Date(0),
       });
-      req.app.locals.gymId = undefined;
 
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
