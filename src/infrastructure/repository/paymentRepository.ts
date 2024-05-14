@@ -40,12 +40,43 @@ class PaymentRepository implements iPayment {
         ],
         mode: 'payment',
         success_url: `${CLIENT_URL}/success`,
-        cancel_url: `${CLIENT_URL}/cancel`,
+        cancel_url: `${CLIENT_URL}/cancel/checkout`,
     });
     
 
   return session.id;
 
+}
+
+async confirmAddMoneyToWalletPayment(walletData: any): Promise<any> {
+
+    const {userId,wallet}=walletData
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+        {
+          price_data: {
+            currency: "inr",
+            product_data: {
+              name: "Add Money To Wallet",
+              images: [
+                "https://partner.visa.com/content/dam/gpp/homepage/card-lab-header-v2-2x.png",
+              ],
+              description: `An amount of ₹${wallet} will be credited to your wallet after this payment.`,
+            },
+            unit_amount: wallet * 100,
+          },
+
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${CLIENT_URL}/profile/subscriptions`,
+      cancel_url: `${CLIENT_URL}/cancel/add_money`,
+  })
+
+  return session.id
 }
 
 }

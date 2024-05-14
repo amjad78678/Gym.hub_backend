@@ -1,42 +1,51 @@
-import { Request, Response } from 'express';
-import SubscriptionUseCase from '../../useCase/subscriptionUseCase';
-
-
-
+import { Request, Response } from "express";
+import SubscriptionUseCase from "../../useCase/subscriptionUseCase";
+import UserRepository from "../../infrastructure/repository/userRepository";
 
 class PaymentController {
-   
-    private _subscriptionUseCase: SubscriptionUseCase
+  private _SubscriptionUseCase: SubscriptionUseCase;
+  private _UserRepository: UserRepository;
 
-    constructor(subscriptionCase: SubscriptionUseCase) {
-         this._subscriptionUseCase = subscriptionCase
+
+  constructor(subscriptionCase: SubscriptionUseCase, userRepository: UserRepository) {
+    this._SubscriptionUseCase = subscriptionCase;
+    this._UserRepository = userRepository;
+  }
+
+  async confirmPayment(req: Request, res: Response) {
+    let event = req.body;
+
+    if (event.type === "checkout.session.completed") {
+      const paymentDataUser = req.app.locals.paymentDataUser;
+
+      console.log("paymentData user", paymentDataUser);
+      if (paymentDataUser != null) {
+        await this._SubscriptionUseCase.addNewSubscription(paymentDataUser);
+        req.app.locals.paymentDataUser = null;
+      }
+
+      res.status(200).json({ success: true });
     }
+  }
 
+  async addWalletPayment(req: Request, res: Response) {
+    let event = req.body;
 
-   
+    if (event.type === "checkout.session.completed") {
+      const walletData = req.app.locals.walletData;
+      const user = await this._UserRepository.findById(walletData.userId);
+      if (user) {
+        user.wallet = (user.wallet || 0) + walletData.wallet;
+        user.walletHistory.push(walletData.walletHistory);
 
-    async confirmPayment(req: Request, res: Response) {
-        
-        let event = req.body
-        console.log('Iam in confirm payment',req.body)
+        await this._UserRepository.save(user);
 
-        if(event.type === "checkout.session.completed"){
-            const paymentDataUser = req.app.locals.paymentDataUser
+        req.app.locals.walletData = null;
 
-            if(paymentDataUser != null){
-                await this._subscriptionUseCase.addNewSubscription(paymentDataUser)
-                req.app.locals.paymentDataUser = null
-            }
-
-            res.status(200).json({ success: true })
-            
-        }
-
-
-
-
+        res.status(200).json({ success: true });
+      }
     }
-
+  }
 }
 
-export default PaymentController
+export default PaymentController;

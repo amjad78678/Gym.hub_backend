@@ -11,6 +11,9 @@ import TrainerRepository from '../repository/trainerRepository';
 import { ImageUpload } from '../middleware/multer';
 import CloudinaryUpload from '../utils/cloudinaryUpload';
 import SharpImages from '../services/sharpImages';
+import CouponController from '../../adapters/controllers/couponController';
+import CouponUseCase from '../../useCase/couponUseCase';
+import CouponRepository from '../repository/couponRepository';
   
 
     
@@ -25,14 +28,17 @@ const sharpImages = new SharpImages()
 //repositories
 const gymRepository=new GymRepository()
 const trainerRepository=new TrainerRepository()
+const couponRepository = new CouponRepository()
 
 
 //useCases
 const gymUseCase = new GymUseCase(gymRepository, encryptPassword, generateEmail, jwtToken, trainerRepository, cloudinaryUpload, sharpImages);
+const couponUseCase = new CouponUseCase(couponRepository)
 
 
 //controllers
 const gymController=new GymController(gymUseCase,generateOtp,generateEmail,cloudinaryUpload)
+const couponController = new CouponController(couponUseCase)
 
 
 
@@ -53,6 +59,9 @@ router.post('/resend_forgot_otp',(req,res)=>gymController.resendForgotOtp(req,re
 router.get('/fetch_gym_trainers',(protect),(req,res)=>gymController.fetchGymTrainers(req,res))
 router.post('/add_gym_trainer',(protect),ImageUpload.single('imageUrl'),(req,res)=>gymController.addGymTrainer(req,res))
 router.put('/update_gym_trainer',(protect),ImageUpload.single('imageUrl'),(req,res)=>gymController.updateGymTrainer(req,res))
+router.get('/fetch_coupons',(protect),(req,res)=>couponController.getAllCoupons(req,res))
+router.post('/add_coupon',(protect),(req,res)=>couponController.addCoupon(req,res))
+router.put('/update_coupon',(protect),(req,res)=>couponController.editCoupon(req,res))
 
 
  

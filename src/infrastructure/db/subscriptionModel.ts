@@ -15,7 +15,12 @@ const SubscriptionSchema = new Schema<Subscription>({
         values: ["online", "wallet"],
     }},
     price: { type: Number, required: true },
-    coupon: { type: Boolean },
+    coupon: {
+       name: { type: String },
+       discount: { type: Number },
+       isApplied: { type: Boolean, default: false },
+
+    },
     qrCode: { type: String },
 }, {
     timestamps: true,

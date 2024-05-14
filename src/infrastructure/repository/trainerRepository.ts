@@ -7,7 +7,10 @@ class TrainerRepository implements iTrainerRepo {
     const trainers = await TrainerModel.find({ gymId: _id }).populate("gymId");
     return trainers;
   }
-
+async findByIdTrainer(_id: string): Promise<Trainer | null> {
+  const trainer = await TrainerModel.findById(_id)
+  return trainer
+}
   async findOne(email: string): Promise<Trainer | null> {
     const trainer = await TrainerModel.findOne({ email });
     return trainer;

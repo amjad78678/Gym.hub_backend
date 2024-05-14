@@ -1,25 +1,37 @@
 import User from "../domain/user";
 import GymRepository from "../infrastructure/repository/gymRepository";
+import PaymentRepository from "../infrastructure/repository/paymentRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
-
+interface iWallet {
+  userId: string,
+  wallet: number,
+  walletHistory: {
+    amount: number,
+    date: Date,
+    description: string
+  }
+}
 class UserUseCase {
   private UserRepository: UserRepository;
   private EncryptPassword: EncryptPassword;
   private JwtToken: JWTToken;
   private _GymRepository: GymRepository;
+  private _PaymentRepository: PaymentRepository;
 
   constructor(
     UserRepository: UserRepository,
     encryptPassword: EncryptPassword,
     jwtToken: JWTToken,
-    gymRepository: GymRepository
+    gymRepository: GymRepository,
+    paymentRepository: PaymentRepository
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
     this.JwtToken = jwtToken;
     this._GymRepository = gymRepository;
+    this._PaymentRepository = paymentRepository;
   }
 
   async signUp(email: string) {
@@ -55,6 +67,21 @@ class UserUseCase {
 
     const userData = await this.UserRepository.save(newUser);
 
+  if(user.isGoogle){
+    const userId = userData._id;
+
+    let token = this.JwtToken.generateToken(userId, "user");
+
+     return {
+       status: 200,
+       data: {
+         status: true,
+         message: "User created successfully",
+         user,
+         token,
+       },
+     };
+  }else{
     return {
       status: 200,
       data: {
@@ -63,6 +90,9 @@ class UserUseCase {
       },
     };
   }
+  }
+
+   
 
 
   async login(email: string, password: string) {
@@ -222,6 +252,32 @@ class UserUseCase {
         },
       };
     }
+  }
+  async getUserDetails(id: string) {
+    const user = await this.UserRepository.findById(id);
+    return {
+      status: 200,
+      data: user
+    }
+  }
+
+
+
+  async addMoneyToWallet (walletData: iWallet) {
+
+
+
+    const sessionId = await this._PaymentRepository.confirmAddMoneyToWalletPayment(walletData)
+    
+    return {
+      status: 200,
+      data: {
+        success: true,
+        stripeId: sessionId,
+      },
+    };
+
+    
   }
 }
 

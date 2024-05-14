@@ -3,23 +3,27 @@ import GymRepository from "../infrastructure/repository/gymRepository";
 import JWTToken from "../infrastructure/services/generateToken";
 import GenerateEmail from "../infrastructure/services/sendEmail";
 import UserRepository from "../infrastructure/repository/userRepository";
+import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 
 class AdminUseCase {
   private _GymRepository: GymRepository;
   private _UserRepository: UserRepository;
   private _GenerateEmail: GenerateEmail;
   private _JwtToken: JWTToken;
+  private _SubscriptionRepository: SubscriptionRepository;
 
   constructor(
     gymRepository: GymRepository,
     generateEmail: GenerateEmail,
     jwtToken: JWTToken,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    subscriptionRepository: SubscriptionRepository
   ) {
     this._GymRepository = gymRepository;
     this._GenerateEmail = generateEmail;
     this._JwtToken = jwtToken;
     this._UserRepository = userRepository;
+    this._SubscriptionRepository = subscriptionRepository;
   }
 
   async getGymDetails() {
@@ -200,6 +204,18 @@ class AdminUseCase {
     }
 
 
+  }
+
+  async fetchSubscriptions() {
+    const subscriptions = await this._SubscriptionRepository.findAllSubscriptions();
+    console.log('iam subscription',subscriptions)
+    return {
+      status: 200,
+      data :{
+      success: true,
+      subscriptions
+      }
+    }
   }
 }
 export default AdminUseCase;

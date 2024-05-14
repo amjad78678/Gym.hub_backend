@@ -8,7 +8,11 @@ interface Subscription extends Document {
     subscriptionType: 'Daily' | 'Monthly' | 'Yearly';
     paymentType: 'online' | 'wallet';
     qrCode?: string;
-    coupon?: boolean;
+    coupon?: {
+        name: string;
+        discount: number;
+        isApplied: boolean;
+    };
     price: number;
 }
 

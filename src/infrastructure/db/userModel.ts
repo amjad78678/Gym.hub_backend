@@ -39,6 +39,15 @@ const userSchema: Schema = new Schema<User | Document>(
       type: Boolean,
       default: false,
     },
+    wallet: {
+      type: Number,
+      default: 0,
+    },
+    walletHistory: [{
+      date: { type: Date },
+      amount: { type: Number },
+      description: { type: String },
+    }],
     profilePic: {
       type: String,
       default:

@@ -12,6 +12,12 @@ class SubscriptionRepository implements iSubscriptionRepo {
 
     }
 
+    async findAllSubscriptions(): Promise<Subscription[]> {
+
+        const subscriptions = await SubscriptionModel.find().populate("gymId").populate("userId")
+        return subscriptions
+    }
+
 }
 
 export default SubscriptionRepository

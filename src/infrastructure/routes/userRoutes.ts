@@ -15,6 +15,9 @@ import SubscriptionController from '../../adapters/controllers/subscriptionContr
 import SubscriptionUseCase from '../../useCase/subscriptionUseCase';
 import PaymentRepository from '../repository/paymentRepository';
 import SubscriptionRepository from '../repository/subscriptionRepository';
+import CouponRepository from '../repository/couponRepository';
+import CouponUseCase from '../../useCase/couponUseCase';
+import CouponController from '../../adapters/controllers/couponController';
 
 
 
@@ -32,19 +35,22 @@ const gymRepository = new GymRepository()
 const cartRepository = new CartRepository()
 const paymentRepository = new PaymentRepository()
 const subscriptionRepository = new SubscriptionRepository()
+const couponRepository = new CouponRepository()
 
 
 
 //useCases
-const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository)
-const cartCase = new CartUseCase(cartRepository)
-const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository)                                                                                                                                                                                                                              
+const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository)
+const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository)
+const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository)       
+const couponCase = new CouponUseCase(couponRepository)                                                                                                                                                                                                                       
 
 
 //controllers
 const userController=new UserController(userCase,generateOtp,generateEmail)
 const cartController=new CartController(cartCase)
-const subscriptionController = new SubscriptionController(subscriptionCase)
+const subscriptionController = new SubscriptionController(subscriptionCase,couponCase)
+const couponController = new CouponController(couponCase)
 
  
 const router = express.Router();
@@ -65,6 +71,9 @@ router.post('/resend_forgot_otp',(req,res)=>userController.resendForgotOtp(req,r
 router.post('/add_to_cart',protect,(req,res)=>cartController.addToCart(req,res))
 router.get('/get_checkout_details',protect,(req,res)=>cartController.getCheckoutDetails(req,res))
 router.post('/add_new_subscription',protect,(req,res)=>subscriptionController.addNewSubscription(req,res))
+router.post('/validate_coupon',protect,(req,res)=>couponController.validateCoupon(req,res))
+router.get('/user_details',protect,(req,res)=>userController.getUserDetails(req,res))
+router.post('/add_money_wallet',protect,(req,res)=>userController.addMoneyToWallet(req,res))
 
 
 

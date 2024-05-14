@@ -10,6 +10,8 @@ interface User {
   isDeleted?: boolean;
   isGoogle?: boolean;
   profilePic?: string;
+  wallet?: number;
+  walletHistory?: any;
 }
 
 export default User;

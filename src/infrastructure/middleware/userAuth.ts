@@ -16,16 +16,13 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
 
   const userToken = req.headers.authorization?.split(" ")[1];
 
-  console.log('authHeader',userToken)
 
   if (!userToken) {
-    return res.status(401).send("Authorization header is missing");
+    return res.status(401)
+    .json({ message: "Not authorized, invalid token" });
   }
 
 
-
-
-  console.log('token',userToken)
 
   if (userToken) {
     try {
@@ -34,7 +31,6 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
 
-      console.log('decodedData',decodedData)
 
       const user = await _userRepo.findById(decodedData.userId as string);
 

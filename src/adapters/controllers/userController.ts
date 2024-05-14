@@ -19,7 +19,7 @@ class UserController {
   constructor(
     userUseCase: UserUseCase,
     generateOtp: GenerateOtp,
-    generateEmail: GenerateEmail
+    generateEmail: GenerateEmail,
   ) {
     this.userUseCase = userUseCase;
     this.generateOtp = generateOtp;
@@ -34,8 +34,7 @@ class UserController {
       if (verifyUser.data.status == true && req.body.isGoogle) {
         const user = await this.userUseCase.verifyOtpUser(req.body);
         res.status(user.status).json(user.data);
-      }
-      if (verifyUser.data.status == true) {
+      }else if (verifyUser.data.status == true) {
         req.app.locals.userData = req.body;
         const otp = this.generateOtp.createOtp();
         req.app.locals.otp = otp;
@@ -291,7 +290,43 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
+    }
+  }
+
+  async getUserDetails(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const userData = await this.userUseCase.getUserDetails(userId);
+      res.status(userData.status).json(userData.data);
+
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async addMoneyToWallet(req: Request, res: Response) {
+    try {
+      
+    console.log('iam adding money')
+    const userId=req.userId || ""
+
+    const body = {...req.body,userId}
+
+    req.app.locals.walletData = body
+    
+    const result = await this.userUseCase.addMoneyToWallet(body);
+    return res.status(result.status).json(result.data);
+
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
     }
   }
 }

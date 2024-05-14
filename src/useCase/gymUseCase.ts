@@ -369,10 +369,19 @@ class GymUseCase {
 
   async updateGymTrainer ( trainerId: string, trainerData: Trainer) {
     
+    if(trainerData.imageUrl!=='null'){
+      console.log('iam imageUrl',trainerData.imageUrl,typeof(trainerData.imageUrl))
+      const trainer = await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
 
-    const trainer = await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
+    }else{
+      console.log('ivde imageUrl imlla')
+      const trainer = await this._TrainerRepository.findByIdTrainer(trainerId);
+      console.log('imagedata',trainer)
+      const trainerDetails={...trainerData, imageUrl: trainer?.imageUrl}
+      const trainerData1= await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerDetails);
+    }
 
-    if(trainer){
+  
       return {
         status: 200,
         data: {
@@ -380,15 +389,7 @@ class GymUseCase {
           message: "Trainer updated successfully",
         },
       }
-    }else{
-      return {
-        status: 400,
-        data: {
-          status: false,
-          message: "Trainer not found",
-        },
-      }
-    }
+   
   }
 }
 export default GymUseCase;

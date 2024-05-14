@@ -11,8 +11,7 @@ class CartController {
   async addToCart(req: Request, res: Response) {
     try {
 
-        console.log(req.userId)
-        console.log('body',req.body)
+       console.log('body',req.body)
        const userId= req.userId || ""
 
        const data = {...req.body,userId:userId}

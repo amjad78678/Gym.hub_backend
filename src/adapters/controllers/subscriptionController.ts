@@ -1,33 +1,37 @@
 import { Request, Response } from "express";
 import SubscriptionUseCase from "../../useCase/subscriptionUseCase";
+import CouponUseCase from "../../useCase/couponUseCase";
 
 class SubscriptionController {
 
     private _SubscriptionCase: SubscriptionUseCase
+    private _CouponUseCase: CouponUseCase
 
 
-constructor (subscriptionCase: SubscriptionUseCase) {
+constructor (subscriptionCase: SubscriptionUseCase,couponUseCase: CouponUseCase) {
 
     this._SubscriptionCase = subscriptionCase
+    this._CouponUseCase = couponUseCase
 }
 
 async addNewSubscription(req: Request, res: Response) {
     try {
         
-console.log('newSubscksdjfksjfksdjkfjksj')
         const userId = req.userId || ""
  
         const data = {...req.body,userId:userId }
 
-        console.log('iamdata control',data)
+        console.log('first data in sub cont',data)
+
 
         if(req.body.paymentType === "online"){
-
             const result = await this._SubscriptionCase.verifyOnlinePayment(data.userId,data.gymId,data.price)
             req.app.locals.paymentDataUser = data
             res.status(result.status).json(result.data);
         }else{
-            console.log('iam wallet data')
+
+            const result = await this._SubscriptionCase.addNewSubscription(data)
+            res.status(result.status).json(result.data);
         }
 
 
@@ -39,6 +43,7 @@ console.log('newSubscksdjfksjfksdjkfjksj')
         });
     }
 }
+
 
 
 

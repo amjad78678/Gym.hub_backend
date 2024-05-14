@@ -349,6 +349,7 @@ class GymController {
   async addGymTrainer(req: Request, res: Response) {
     try {
       console.log("iam req.body from addgym", req.body);
+      console.log("iam req.file from addgym", req.file,'reqfiels',req.files);
       const gymId = req.gymId || "";
       if (req.file) {
         const image = await this._CloudinaryUpload.upload(
@@ -378,6 +379,8 @@ class GymController {
   async updateGymTrainer(req: Request, res: Response) {
     try {
       const trainerId = req.body._id;
+      console.log('req.file',req.file)
+      console.log('req.files',req.files)
 
       if (req.file) {
         const image = await this._CloudinaryUpload.upload(

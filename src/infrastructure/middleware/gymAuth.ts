@@ -19,7 +19,8 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
   const gymToken = req.headers.authorization?.split(" ")[1];
 
   if (!gymToken) {
-    return res.status(401).send("Authorization header is missing");
+    return res.status(401)
+    .json({ message: "Not authorized, invalid token" });
   }
 
 
