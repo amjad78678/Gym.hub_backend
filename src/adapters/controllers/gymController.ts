@@ -1,5 +1,6 @@
 import GenerateOtp from "../../infrastructure/services/generateOtp";
 import GenerateEmail from "../../infrastructure/services/sendEmail";
+import SharpImages from "../../infrastructure/services/sharpImages";
 import CloudinaryUpload from "../../infrastructure/utils/cloudinaryUpload";
 import GymUseCase from "../../useCase/gymUseCase";
 import { Request, Response } from "express";
@@ -9,17 +10,20 @@ class GymController {
   private _GenerateOtp: GenerateOtp;
   private _GenerateEmail: GenerateEmail;
   private _CloudinaryUpload: CloudinaryUpload;
+  private _SharpImages: SharpImages
 
   constructor(
     gymUseCase: GymUseCase,
     generateOtp: GenerateOtp,
     generateEmail: GenerateEmail,
-    cloudinaryUpload: CloudinaryUpload
+    cloudinaryUpload: CloudinaryUpload,
+    sharpImages: SharpImages
   ) {
     this._GymUseCase = gymUseCase;
     this._GenerateOtp = generateOtp;
     this._GenerateEmail = generateEmail;
     this._CloudinaryUpload = cloudinaryUpload;
+    this._SharpImages = sharpImages
   }
 
   async gymRegister(req: Request, res: Response) {
@@ -27,45 +31,6 @@ class GymController {
 
       console.log('iam req.body',req.body)
       console.log('iam reqfiles',req.files?.length)
-
-
-    //  const files = req.files as Express.Multer.File[];
-    //   if(req.files?.length){
-    //     const imageUrls=[]
-
-    //     for(let i=0;i<files.length;i++){
-  
-    //       let filePath = files[i].path;
-    //       const result = await this._CloudinaryUpload.upload(filePath, "gymImages");
-    //       imageUrls.push(result.secure_url)
-    //     }
-  
-    //     console.log('imagdfl',imageUrls)
-
-    //     if(imageUrls.length === 4){
-    //       const obj = {
-    //         gymName: req.body.gymName,
-    //         email: req.body.email,
-    //         contactNumber: req.body.contactNumber,
-    //         state: req.body.state,
-    //         city: req.body.city,
-    //         pincode: req.body.pincode,
-    //         subscriptions: {
-    //           Daily: req.body.dailyFee,
-    //           Monthly: req.body.monthlyFee,
-    //           Yearly: req.body.yearlyFee,
-    //         },
-    //         description: req.body.description,
-    //         businessId: req.body.businessId,
-    //         password: req.body.password,
-    //         confirmPassword: req.body.confirmPassword,
-    //         location: {
-    //           type: "Point",
-    //           coordinates: [req.body.long, req.body.lat] as [number, number],
-    //         },
-    //         images: imageUrls,
-    //       };
-      
       
       
         const gym = await this._GymUseCase.gymSignUp(req.body,req.files);
@@ -117,7 +82,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -139,7 +103,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -169,7 +132,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -187,7 +149,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -203,7 +164,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -226,7 +186,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -342,7 +301,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -352,10 +310,9 @@ class GymController {
       console.log("iam req.file from addgym", req.file,'reqfiels',req.files);
       const gymId = req.gymId || "";
       if (req.file) {
-        const image = await this._CloudinaryUpload.upload(
-          req.file.path,
-          "trainers"
-        );
+
+        const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
+
         const obj = {
           imageUrl: image.secure_url,
           public_id: image.public_id,
@@ -376,7 +333,6 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -387,10 +343,8 @@ class GymController {
       console.log('req.files',req.files)
 
       if (req.file) {
-        const image = await this._CloudinaryUpload.upload(
-          req.file.path,
-          "trainers"
-        );
+        const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
+
         const trainerData = { ...req.body };
         delete trainerData._id;
         const obj={

@@ -55,12 +55,11 @@ class GymUseCase {
     if (files?.length) {
       const imageUrls = await Promise.all(
         files.map(async (file) => {
-          const filePath = file.path;
           const res = await this._SharpImages.sharpenImage(
             file,
-            6000,
+            6000, 
             4000,
-            filePath
+            'gymImages'
           );
           console.log("res", res);
           if (res) {

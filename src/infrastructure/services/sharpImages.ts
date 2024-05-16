@@ -11,13 +11,12 @@ interface CloudinaryResponse {
 
 class SharpImages implements iSharpen {
 
-   async sharpenImage(image: any,width: number, height: number,filePath: string): Promise<CloudinaryResponse> {
+   async sharpenImage(image: any,width: number, height: number,imagePathCloudinary: string): Promise<CloudinaryResponse> {
         const buffer = await sharp(image.path)
         .resize(width, height)
         .toBuffer();
         
-        const result = await cloudinaryUpload.uploadBuffer(buffer,image.path,'ilhnxgqy','gymImages') as CloudinaryResponse
-
+        const result = await cloudinaryUpload.uploadBuffer(buffer,image.path,process.env.UPLOAD_PRESET,imagePathCloudinary) as CloudinaryResponse
         return result 
     
     }

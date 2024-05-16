@@ -37,7 +37,7 @@ const couponUseCase = new CouponUseCase(couponRepository)
 
 
 //controllers
-const gymController=new GymController(gymUseCase,generateOtp,generateEmail,cloudinaryUpload)
+const gymController=new GymController(gymUseCase,generateOtp,generateEmail,cloudinaryUpload,sharpImages)
 const couponController = new CouponController(couponUseCase)
 
 
