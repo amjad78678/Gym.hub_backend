@@ -13,6 +13,7 @@ const CouponSchema: Schema = new Schema<CouponI & Document>({
     minPrice: { type: Number, required: true },
     startingDate: { type: Date, required: true },
     endingDate: { type: Date, required: true },
+    isDelete: { type: Boolean, default: false },
     users: [{ type: String }],
 }, {
     timestamps: true

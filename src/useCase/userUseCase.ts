@@ -1,6 +1,7 @@
 import User from "../domain/user";
 import GymRepository from "../infrastructure/repository/gymRepository";
 import PaymentRepository from "../infrastructure/repository/paymentRepository";
+import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
@@ -19,19 +20,22 @@ class UserUseCase {
   private JwtToken: JWTToken;
   private _GymRepository: GymRepository;
   private _PaymentRepository: PaymentRepository;
+  private _TrainerRepository: TrainerRepository;
 
   constructor(
     UserRepository: UserRepository,
     encryptPassword: EncryptPassword,
     jwtToken: JWTToken,
     gymRepository: GymRepository,
-    paymentRepository: PaymentRepository
+    paymentRepository: PaymentRepository,
+    trainerRepository: TrainerRepository
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
     this.JwtToken = jwtToken;
     this._GymRepository = gymRepository;
     this._PaymentRepository = paymentRepository;
+    this._TrainerRepository = trainerRepository;
   }
 
   async signUp(email: string) {
@@ -195,6 +199,17 @@ class UserUseCase {
         message: gymDetails,
       },
     };
+  }
+
+  async getTrainers() {
+    const trainers = await this._TrainerRepository.findAllTrainers();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        trainers,
+      },
+    }
   }
 
   async forgotPassword(email: string) {

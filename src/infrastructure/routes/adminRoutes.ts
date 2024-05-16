@@ -44,5 +44,6 @@ router.post('/admin_logout',(req,res)=>adminController.adminLogout(req,res))
 router.get('/fetch_users',(req,res)=>adminController.fetchUsers(req,res))
 router.patch('/update_user/:id',(req,res)=>adminController.updateUser(req,res))
 router.get('/fetch_subscriptions',(req,res)=>adminController.fetchSubscriptions(req,res))
+router.get('/fetch_gym_with_id/:gymId',(req,res)=>adminController.fetchGymWithId(req,res))
 
 export default router

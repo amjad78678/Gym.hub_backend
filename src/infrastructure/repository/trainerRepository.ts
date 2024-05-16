@@ -3,6 +3,11 @@ import iTrainerRepo from "../../useCase/interface/trainerRepo";
 import TrainerModel from "../db/trainerModal";
 
 class TrainerRepository implements iTrainerRepo {
+
+  async findAllTrainers(): Promise<Trainer[] | null> {
+    const trainers = await TrainerModel.find();
+    return trainers;
+  }
   async findById(_id: string): Promise<Trainer[] | null> {
     const trainers = await TrainerModel.find({ gymId: _id }).populate("gymId");
     return trainers;
@@ -26,6 +31,16 @@ async findByIdTrainer(_id: string): Promise<Trainer | null> {
       new: true,
     });
     return trainer;
+  }
+  async findByEmail(email: string): Promise<Trainer | null> {
+    const trainer = await TrainerModel.findOne({ email });
+    return trainer;
+  }
+
+  async saveTrainer(trainer: Trainer): Promise<Trainer> {
+    const newTrainer = new TrainerModel(trainer);
+    const trainerData = await newTrainer.save();
+    return trainerData;
   }
 }
 

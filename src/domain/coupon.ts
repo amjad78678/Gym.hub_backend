@@ -9,6 +9,7 @@ interface CouponI {
     discount: number;
     startingDate: Date;
     endingDate: Date;
+    isDelete?: boolean;
     users?: string[];
 
 }

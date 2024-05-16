@@ -16,8 +16,8 @@ class GymUseCase {
   private _GenerateEmail: GenerateEmail;
   private _JwtToken: JWTToken;
   private _TrainerRepository: TrainerRepository;
-  private _CloudinaryUpload: CloudinaryUpload
-  private _SharpImages: SharpImages
+  private _CloudinaryUpload: CloudinaryUpload;
+  private _SharpImages: SharpImages;
 
   constructor(
     GymRepository: GymRepository,
@@ -26,8 +26,7 @@ class GymUseCase {
     jwtToken: JWTToken,
     trainerRepository: TrainerRepository,
     cloadinaryUpload: CloudinaryUpload,
-    sharpImages: SharpImages,
-
+    sharpImages: SharpImages
   ) {
     this._GymRepository = GymRepository;
     this._EncyptPassword = encryptPassword;
@@ -35,10 +34,10 @@ class GymUseCase {
     this._JwtToken = jwtToken;
     this._TrainerRepository = trainerRepository;
     this._CloudinaryUpload = cloadinaryUpload;
-    this._SharpImages = sharpImages
+    this._SharpImages = sharpImages;
   }
 
-  async gymSignUp(gym: Gym,gymImageFiles: any) {
+  async gymSignUp(gym: Gym, gymImageFiles: any) {
     const gymExists = await this._GymRepository.findByEmail(gym.email);
 
     if (gymExists) {
@@ -51,64 +50,65 @@ class GymUseCase {
       };
     }
 
-
     const files = gymImageFiles as Express.Multer.File[];
 
-      if(files?.length){
-
-        const imageUrls = await Promise.all(files.map(async (file) => {
+    if (files?.length) {
+      const imageUrls = await Promise.all(
+        files.map(async (file) => {
           const filePath = file.path;
-          const res = await this._SharpImages.sharpenImage(file, 6000, 4000,filePath);
-          console.log('res',res)
-          if(res){
-
+          const res = await this._SharpImages.sharpenImage(
+            file,
+            6000,
+            4000,
+            filePath
+          );
+          console.log("res", res);
+          if (res) {
             return {
-              imageUrl:res?.secure_url,
-              public_id: res?.public_id, 
+              imageUrl: res?.secure_url,
+              public_id: res?.public_id,
             };
           }
-        }));
-      
-        console.log('iam image urls',imageUrls);
+        })
+      );
 
-        if(imageUrls.length === 4){
-          const obj = {
-            gymName: gym.gymName,
-            email: gym.email,
-            contactNumber: gym.contactNumber,
-            state: gym.state,
-            city: gym.city,
-            pincode: gym.pincode,
-            subscriptions: {
-              Daily: gym.dailyFee,
-              Monthly: gym.monthlyFee,
-              Yearly: gym.yearlyFee,
-            },
-            description: gym.description,
-            businessId: gym.businessId,
-            password: gym.password,
-            confirmPassword: gym.confirmPassword,
-            location: {
-              type: "Point",
-              coordinates: [gym.long, gym.lat] as [number, number],
-            },
-            address: gym.address,
-            images: imageUrls,
-          };
+      console.log("iam image urls", imageUrls);
 
+      if (imageUrls.length === 4) {
+        const obj = {
+          gymName: gym.gymName,
+          email: gym.email,
+          contactNumber: gym.contactNumber,
+          state: gym.state,
+          city: gym.city,
+          pincode: gym.pincode,
+          subscriptions: {
+            Daily: gym.dailyFee,
+            Monthly: gym.monthlyFee,
+            Yearly: gym.yearlyFee,
+          },
+          description: gym.description,
+          businessId: gym.businessId,
+          password: gym.password,
+          confirmPassword: gym.confirmPassword,
+          location: {
+            type: "Point",
+            coordinates: [gym.long, gym.lat] as [number, number],
+          },
+          address: gym.address,
+          images: imageUrls,
+        };
 
-      return {
-        status: 200,
-        data: {
-          status: true,
-          message: "Verification otp sent to your email!",
-          gymData: obj,
-        },
-      };
+        return {
+          status: 200,
+          data: {
+            status: true,
+            message: "Verification otp sent to your email!",
+            gymData: obj,
+          },
+        };
+      }
     }
-
-  }
-
   }
 
   async gymOtpVerification(gym: Gym) {
@@ -133,8 +133,8 @@ class GymUseCase {
   async gymLogin(gymData: any) {
     if (gymData.email && gymData.password) {
       const gym = await this._GymRepository.findByEmail(gymData.email);
-      let token=''
-      
+      let token = "";
+
       if (gym) {
         if (gym.isBlocked) {
           return {
@@ -154,11 +154,10 @@ class GymUseCase {
           );
 
           if (passwordMatch) {
-            
-           console.log('gymId in Usecase',gym?._id)
+            console.log("gymId in Usecase", gym?._id);
 
-           const gymId = gym._id
-          if(gymId) token =  this._JwtToken.generateToken(gymId, "gym");
+            const gymId = gym._id;
+            if (gymId) token = this._JwtToken.generateToken(gymId, "gym");
 
             console.log("iam token in usecase", token);
 
@@ -168,7 +167,7 @@ class GymUseCase {
                 status: true,
                 message: "Login successful",
                 gym: gym,
-                gymId:gym._id,
+                gymId: gym._id,
                 token,
               },
             };
@@ -205,21 +204,20 @@ class GymUseCase {
     }
   }
 
-
   async editGymSubscription(gymId: string, subscriptionData: any) {
     const gymData = await this._GymRepository.findById(gymId);
 
     if (gymData) {
       console.log("subscr data", subscriptionData);
- 
+
       if (subscriptionData.subscription == "Daily") {
-        gymData.subscriptions.Daily = subscriptionData.amount; 
-       } else if (subscriptionData.subscription == "Monthly") {
-        gymData.subscriptions.Monthly = subscriptionData.amount; 
-       } else if (subscriptionData.subscription == "Yearly") {
+        gymData.subscriptions.Daily = subscriptionData.amount;
+      } else if (subscriptionData.subscription == "Monthly") {
+        gymData.subscriptions.Monthly = subscriptionData.amount;
+      } else if (subscriptionData.subscription == "Yearly") {
         gymData.subscriptions.Yearly = subscriptionData.amount;
-       }
-       
+      }
+
       await this._GymRepository.save(gymData);
 
       return {
@@ -228,47 +226,43 @@ class GymUseCase {
           status: true,
           message: "Subscription updated successfully",
         },
-      }
-    }else{
+      };
+    } else {
       return {
         status: 400,
         data: {
           status: false,
           message: "Gym not found",
         },
-      }
+      };
     }
-
-
   }
 
-  async fetchGymSubscription(gymId: string){
+  async fetchGymSubscription(gymId: string) {
+    console.log("gymId", gymId);
 
-    console.log('gymId',gymId)
+    const gymData =
+      await this._GymRepository.findByIdAndGetSubscriptions(gymId);
 
-   const gymData = await this._GymRepository.findByIdAndGetSubscriptions(gymId);
+    console.log(gymData);
 
-   console.log(gymData)
-
-   if(gymData){
-    return {
-      status: 200,
-      data: {
-        status: true,
-        message: gymData
-      },
+    if (gymData) {
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: gymData,
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        data: {
+          status: false,
+          message: "Gym not found",
+        },
+      };
     }
-   }else{
-    return {
-      status: 400,
-      data: {
-        status: false,
-        message: "Gym not found"
-      },
-    }
-   }
-
-
   }
 
   async forgotPassword(email: string) {
@@ -316,8 +310,8 @@ class GymUseCase {
           success: true,
           message: user,
         },
-      }
-    }else {
+      };
+    } else {
       return {
         status: 400,
         data: {
@@ -328,68 +322,66 @@ class GymUseCase {
     }
   }
 
+  async fetchGymTrainers(gymId: string) {
+    const trainers = await this._TrainerRepository.findById(gymId);
 
-  async fetchGymTrainers (gymId: string) {
-    
-    const trainers= await this._TrainerRepository.findById(gymId);
-
-    if(trainers){
+    if (trainers) {
       return {
         status: 200,
         data: {
           status: true,
-          message: trainers
+          message: trainers,
         },
-      }
-    }else{
+      };
+    } else {
       return {
         status: 400,
         data: {
-          status: false, 
-          message: "Trainer not found"
+          status: false,
+          message: "Trainer not found",
         },
-      }
+      };
     }
   }
 
-  async addGymTrainer (gymId: string, trainerData: Trainer) {
-
-   const hashedPassword = await this._EncyptPassword.encryptPassword(trainerData.password);
-    const newTrainerData={...trainerData, password: hashedPassword}
+  async addGymTrainer(gymId: string, trainerData: Trainer) {
+    const hashedPassword = await this._EncyptPassword.encryptPassword(
+      trainerData.password
+    );
+    const newTrainerData = { ...trainerData, password: hashedPassword };
     const trainer = await this._TrainerRepository.save(gymId, newTrainerData);
 
     return {
       status: 200,
       data: {
         status: true,
-        message: 'Trainer added successfully',
+        message: "Trainer added successfully",
       },
-    }
+    };
   }
 
-  async updateGymTrainer ( trainerId: string, trainerData: Trainer) {
-    
-    if(trainerData.imageUrl!=='null'){
-      console.log('iam imageUrl',trainerData.imageUrl,typeof(trainerData.imageUrl))
-      const trainer = await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
-
-    }else{
-      console.log('ivde imageUrl imlla')
+  async updateGymTrainer(trainerId: string, trainerData: Trainer) {
+    if (trainerData.image !== "null") {
       const trainer = await this._TrainerRepository.findByIdTrainer(trainerId);
-      console.log('imagedata',trainer)
-      const trainerDetails={...trainerData, imageUrl: trainer?.imageUrl}
-      const trainerData1= await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerDetails);
+      await this._CloudinaryUpload.deleteImage(trainer?.image.public_id);
+      console.log("iam imageUrl", trainerData.image, typeof trainerData.image);
+      await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
+    } else {
+      const trainer = await this._TrainerRepository.findByIdTrainer(trainerId);
+      const trainerDetails = { ...trainerData, image: trainer?.image };
+      await this._TrainerRepository.findByIdAndUpdate(
+        trainerId,
+        trainerDetails
+      );
     }
 
-  
-      return {
-        status: 200,
-        data: {
-          status: true,
-          message: "Trainer updated successfully",
-        },
-      }
-   
+    return {
+      status: 200,
+      data: {
+        status: true,
+        message: "Trainer updated successfully",
+      },
+    };
   }
 }
 export default GymUseCase;

@@ -53,9 +53,7 @@ class SubscriptionUseCase {
       }
 
       if(data.paymentType == "wallet"){
-        console.log('ima in wallet')
        const wallet =  await this._UserRepository.updateWalletBallance(data.userId,data.price)
-       console.log('dsflkkkkkkkk',wallet)
        if(!wallet){
         return {
           status: 400,
@@ -111,6 +109,18 @@ class SubscriptionUseCase {
         status: 400,
         data: { message: "An error occurred! Please try again later." },
       };
+    }
+  }
+
+  async fetchSubscriptions(userId: string) {
+    const subscriptions = await this._SubscriptionRepository.findAllSubscriptionsWithId(userId);
+    console.log('iam subscription',subscriptions)
+    return {
+      status: 200,
+      data :{
+      success: true,
+      subscriptions
+      }
     }
   }
 }

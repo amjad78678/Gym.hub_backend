@@ -18,6 +18,7 @@ import SubscriptionRepository from '../repository/subscriptionRepository';
 import CouponRepository from '../repository/couponRepository';
 import CouponUseCase from '../../useCase/couponUseCase';
 import CouponController from '../../adapters/controllers/couponController';
+import TrainerRepository from '../repository/trainerRepository';
 
 
 
@@ -36,18 +37,19 @@ const cartRepository = new CartRepository()
 const paymentRepository = new PaymentRepository()
 const subscriptionRepository = new SubscriptionRepository()
 const couponRepository = new CouponRepository()
+const trainerRepository = new TrainerRepository()
 
 
 
 //useCases
-const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository)
-const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository)
+const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository)
+const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository,subscriptionRepository)
 const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository)       
 const couponCase = new CouponUseCase(couponRepository)                                                                                                                                                                                                                       
 
 
 //controllers
-const userController=new UserController(userCase,generateOtp,generateEmail)
+const userController=new UserController(userCase,generateOtp,generateEmail,subscriptionCase)
 const cartController=new CartController(cartCase)
 const subscriptionController = new SubscriptionController(subscriptionCase,couponCase)
 const couponController = new CouponController(couponCase)
@@ -64,6 +66,8 @@ router.post('/logout',(req,res)=> userController.logout(req,res))
 router.get('/gym_list',(req,res)=> userController.getGymList(req,res))
 router.get('/gym_list_normal',(req,res)=> userController.getGymNormalList(req,res))
 router.get('/gym_details/:id',(req,res)=> userController.getGymDetails(req,res))
+router.get('/fetch_trainers',(req,res)=>userController.getTrainers(req,res))
+
 router.post('/forgot_password',(req,res)=>userController.forgotPassword(req,res))
 router.post('/verify_forgot',(req,res)=>userController.verifyForgot(req,res))
 router.patch('/update_password',(req,res)=>userController.updatePassword(req,res))
@@ -74,6 +78,7 @@ router.post('/add_new_subscription',protect,(req,res)=>subscriptionController.ad
 router.post('/validate_coupon',protect,(req,res)=>couponController.validateCoupon(req,res))
 router.get('/user_details',protect,(req,res)=>userController.getUserDetails(req,res))
 router.post('/add_money_wallet',protect,(req,res)=>userController.addMoneyToWallet(req,res))
+router.get('/fetch_subscriptions',protect,(req,res)=>userController.getSubscription(req,res))
 
 
 

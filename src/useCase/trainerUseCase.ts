@@ -71,6 +71,64 @@ class TrainerUseCase {
             }
         }
     }
+
+    async forgotPassword(email: string) {
+        const user = await this._TrainerRepository.findByEmail(email);
+    
+        if (!user) {
+          return {
+            status: 400,
+            data: {
+              success: false,
+              message: "User not found!",
+            },
+          };
+        } else if (user?.isBlocked) {
+          return {
+            status: 400,
+            data: {
+              success: false,
+              message: "You have been blocked by admin!",
+            },
+          };
+        } else {
+          return {
+            status: 200,
+            data: {
+              success: true,
+              message: "Verification otp sent to your email!",
+            },
+          };
+        }
+      }
+    
+      async updatePassword(email: string, password: string) {
+        const trainer = await this._TrainerRepository.findByEmail(email);
+    
+        const hashedPassword = await this._EncryptPassword.encryptPassword(password);
+    
+        if (trainer && trainer.password) {
+          trainer.password = hashedPassword;
+          await this._TrainerRepository.saveTrainer(trainer);
+    
+          return {
+            status: 200,
+            data: {
+              success: true,
+              message: trainer,
+            },
+          }
+        }else {
+          return {
+            status: 400,
+            data: {
+              success: false,
+              message: "User not found!",
+            },
+          };
+        }
+      }
+    
 }
 
 export default TrainerUseCase

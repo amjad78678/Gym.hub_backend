@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
 import TrainerUseCase from "../../useCase/trainerUseCase";
+import GenerateOtp from "../../infrastructure/services/generateOtp";
+import GenerateEmail from "../../infrastructure/services/sendEmail";
 
 
 class TrainerController {
 
     private _TrainerUseCase: TrainerUseCase
+    private _GenerateOtp: GenerateOtp
+    private _GenerateEmail: GenerateEmail
 
-    constructor(trainerUseCase: TrainerUseCase) {
-        this._TrainerUseCase = trainerUseCase
+    constructor(trainerUseCase: TrainerUseCase,generateOtp: GenerateOtp,generateEmail: GenerateEmail) {
+        this._TrainerUseCase = trainerUseCase 
+        this._GenerateOtp = generateOtp   
+        this._GenerateEmail = generateEmail
     }
 
     async login (req: Request, res: Response) {
@@ -57,6 +63,101 @@ class TrainerController {
             });
         }
     }
+
+    async forgotPassword(req: Request, res: Response) {
+        try {
+          const { email } = req.body;
+    
+          const result = await this._TrainerUseCase.forgotPassword(email);
+          if (result.data.success) {
+            req.app.locals.forgotEmail = email;
+            const otp = this._GenerateOtp.createOtp();
+            console.log(otp);
+    
+            req.app.locals.forgotOtp = otp;
+            setTimeout(() => {
+              req.app.locals.forgotOtp = this._GenerateOtp.createOtp();
+            }, 2 * 60000);
+    
+            this._GenerateEmail.sendEmail(email, otp);
+          }
+    
+          res.status(result.status).json(result.data);
+        } catch (error) {
+          const err: Error = error as Error;
+          res.status(400).json({
+            message: err.message,
+            stack: process.env.NODE_ENV === "production" ? null : err.stack,
+          });
+        }
+      }
+    
+      async verifyForgot(req: Request, res: Response) {
+        try {
+          console.log("bodyotp", req.body.otp);
+          console.log("session", req.app.locals.forgotOtp);
+    
+          const { forgotOtp } = req.app.locals;
+          const { otp } = req.body;
+    
+          if (forgotOtp === otp) {
+            res.status(200).json({ message: "Otp verified successfully" });
+          } else {
+            res.status(400).json({ message: "Invalid Otp" });
+          }
+        } catch (error) {
+          const err: Error = error as Error;
+          res.status(400).json({
+            message: err.message,
+            stack: process.env.NODE_ENV === "production" ? null : err.stack,
+          });
+        }
+      }
+    
+      async updatePassword(req: Request, res: Response) {
+        try {
+          const forgotEmail = req.app.locals.forgotEmail;
+          const password = req.body.password;
+    
+          const result = await this._TrainerUseCase.updatePassword(
+            forgotEmail,
+            password
+          );
+    
+          if (result) {
+            req.app.locals.otp = null;
+            req.app.locals.forgotEmail = null;
+            res.status(result.status).json(result.data);
+          }
+        } catch (error) {
+          const err: Error = error as Error;
+          res.status(400).json({
+            message: err.message,
+            stack: process.env.NODE_ENV === "production" ? null : err.stack,
+          });
+        }
+      }
+    
+      async resendForgotOtp(req: Request, res: Response) {
+        try {
+          const otp = this._GenerateOtp.createOtp();
+          console.log(otp);
+          req.app.locals.forgotOtp = otp;
+          setTimeout(() => {
+            req.app.locals.forgotOtp = this._GenerateOtp.createOtp();
+          }, 2 * 60000);
+    
+          this._GenerateEmail.sendEmail(req.app.locals.forgotEmail, otp);
+    
+          res.status(200).json({ message: "Otp sent successfully" });
+        } catch (error) {
+          const err: Error = error as Error;
+          res.status(400).json({
+            message: err.message,
+            stack: process.env.NODE_ENV === "production" ? null : err.stack,
+          });
+        }
+      }
 
 
 

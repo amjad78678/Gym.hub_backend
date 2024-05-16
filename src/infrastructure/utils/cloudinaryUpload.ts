@@ -37,6 +37,15 @@ class CloudinaryUpload {
 
         return result;
     }
+
+    async deleteImage (publicId: string){
+        try {
+            await cloudinary.uploader.destroy(publicId, { invalidate: true });
+            console.log('Old image deleted from Cloudinary');
+          } catch (error) {
+            console.error('Error deleting image from Cloudinary:', error);
+          }
+    }
 }
 
 export default CloudinaryUpload;

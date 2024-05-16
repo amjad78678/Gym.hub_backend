@@ -172,6 +172,20 @@ class AdminController {
       });
     }
   }
+
+  async fetchGymWithId(req: Request, res: Response) {
+    try {
+      const gymData=await this._AdminUseCase.fetchGymWithId(req.params.gymId);
+      console.log(gymData)
+      res.status(gymData.status).json(gymData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
 }
 
 export default AdminController;

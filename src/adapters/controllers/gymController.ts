@@ -356,7 +356,11 @@ class GymController {
           req.file.path,
           "trainers"
         );
-        const trainerData = { ...req.body, imageUrl: image.secure_url };
+        const obj = {
+          imageUrl: image.secure_url,
+          public_id: image.public_id,
+        }
+        const trainerData = { ...req.body, image: obj };
         const response = await this._GymUseCase.addGymTrainer(
           gymId,
           trainerData
@@ -389,7 +393,11 @@ class GymController {
         );
         const trainerData = { ...req.body };
         delete trainerData._id;
-        trainerData.imageUrl = image.secure_url;
+        const obj={
+          imageUrl: image.secure_url,
+          public_id: image.public_id
+        }
+        trainerData.image = obj;
         const response = await this._GymUseCase.updateGymTrainer(
           trainerId,
           trainerData

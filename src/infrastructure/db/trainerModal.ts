@@ -21,9 +21,15 @@ const trainerSchema: Schema = new Schema<Trainer | Document>(
       type: Number,
       required: true,
     },
-    imageUrl: {
-      type: String,
-      default: 'https://imgs.search.brave.com/hNMAtjnevC5eE2ATUwsjo--1usL5gaNyunR2ID_epOo/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9wcm9maWxl/LWNpcmNsZS1pY29u/LTI1NngyNTYtY205/MWdxbTIucG5n'
+    image: {
+      imageUrl: {
+        type: String,
+        default:
+          "https://imgs.search.brave.com/hNMAtjnevC5eE2ATUwsjo--1usL5gaNyunR2ID_epOo/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9wcm9maWxl/LWNpcmNsZS1pY29u/LTI1NngyNTYtY205/MWdxbTIucG5n",
+      },
+      public_id: {
+        type: String,
+      },
     },
     experience: {
       type: Number,

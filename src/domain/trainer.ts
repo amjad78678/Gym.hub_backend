@@ -13,7 +13,7 @@ interface Trainer {
     yearlyFee: number,
     email: string,
     password: string,
-    imageUrl?: string,
+    image?: any,
     isBlocked?: boolean,
     isDeleted?: boolean
 }

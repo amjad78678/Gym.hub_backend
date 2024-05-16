@@ -217,5 +217,16 @@ class AdminUseCase {
       }
     }
   }
+
+  async fetchGymWithId(gymId: string) {
+    const gym = await this._GymRepository.findById(gymId);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        gym
+      }
+    }
+  }
 }
 export default AdminUseCase;
