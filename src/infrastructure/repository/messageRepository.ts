@@ -29,7 +29,6 @@ class MessageRepository {
       .populate({ path: "sender", model: "User" })
       .exec();
 
-    console.log("messageData", messageData);
     return messageData;
   }
 }

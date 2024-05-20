@@ -34,14 +34,36 @@ function socketServer(server: any) {
     console.log("connected to socket.io" + socket.id);
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
+      console.log("add user cheythu .................." + userId);
+      console.log('users',users)
     });
 
     socket.on("chat_started", ({ to }) => {
       const user = getUser(to);
-
+      console.log("user chat ______ started", user);
       if (user) {
         io.to(user.socketId).emit("chat_started");
       }
+    });
+
+    socket.on("send_message",({sender,receiver,content})=>{
+       console.log('sendMessage',sender,receiver,content)
+       const senderData = getUser(sender)
+       const receiverData = getUser(receiver)
+
+  console.log('senderdata',senderData,'receiver',receiverData)
+       if(senderData) io.to(senderData.socketId).emit("message",{sender,receiver,content})
+       if(receiverData) io.to(receiverData.socketId).emit("message",{sender,receiver,content})
+    })
+
+
+
+    socket.on('disconnect', () => {
+      console.log('User disconnected');
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
     });
   });
 
