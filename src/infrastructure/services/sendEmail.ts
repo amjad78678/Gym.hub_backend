@@ -218,6 +218,77 @@ class GenerateEmail implements GENERATEMAIL {
         })
 
     }
+
+
+    sendSubscription(email: string, gymName: string,subscriptionType: string,
+        date: string, expiryDate: string, price: number, qrCode: string) {
+        try {
+            const mailData = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Subscripion Booking Details</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="text-align: center;">Subscription Booking Details</h2>
+                <p>Dear User,</p>
+                <p>Your subscription booking details for "${gymName}" are:</p>
+                <div style="padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+                    <p><strong>Gym:</strong> ${gymName}</p>
+                    <p><strong>Subscription Type:</strong> ${subscriptionType}</p> 
+                    <p><strong>Joining Date:</strong> ${date}</p>
+                    <p><strong>Expiry Date:</strong> ${expiryDate}</p>
+                    <p><strong>Price:</strong> ₹${price}</p>
+                </div>
+                <p>Please find your QR code below:</p>
+                <img src="cid:unique_qr_code_cid" alt="QR Code" style="display: block; margin: 0 auto; padding: 20px; max-width: 200px;">
+                <p>Scan this QR code at the gym for entry.</p>
+                <p>If you have any questions or concerns, feel free to contact us.</p>
+                <p>Thank you for booking with us!</p>
+                <p>Gym Hub,</p>
+            </body>
+            </html>
+    `;
+
+
+            let mailTransporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                requireTLS: true,
+                auth: {
+                    user:process.env.NODEMAILER_USER,
+                    pass:process.env.NODEMAILER_PASS
+                }
+            });
+
+            let details = {
+                from: process.env.NODEMAILER_USER,
+                to: email,
+                subject: "Subscription Booking Success",
+                html: mailData,
+                attachments: [
+                    {
+                        filename: 'qr_code.png',
+                        content: qrCode.split(';base64,').pop(), 
+                        encoding: 'base64',
+                        cid: 'unique_qr_code_cid' // CID used in the email HTML img src
+                    }
+                ]
+            };
+            mailTransporter.sendMail(details, (err) => {
+                if (err) {
+                    return console.log(err.message);
+                }
+                return true;
+            });
+        } catch (error) {
+            
+        }
+    }
 }
 
 

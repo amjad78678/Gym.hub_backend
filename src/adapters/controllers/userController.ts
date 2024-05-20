@@ -321,7 +321,6 @@ class UserController {
 
   async addMoneyToWallet(req: Request, res: Response) {
     try {
-      console.log("iam adding money");
       const userId = req.userId || "";
 
       const body = { ...req.body, userId };
@@ -353,6 +352,35 @@ class UserController {
       });
     }
   }
+
+  async getBookedTrainers(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const trainerData = await this.userUseCase.getBookedTrainers(userId);
+      res.status(trainerData.status).json(trainerData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    });
+  }
+  }
+
+  async getTrainerDetails(req: Request, res: Response) {
+    try {
+      const trainerId = req.params.trainerId;
+      const trainerData = await this.userUseCase.getTrainerDetails(trainerId);
+      res.status(trainerData.status).json(trainerData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
 }
 
 export default UserController;

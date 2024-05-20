@@ -4,7 +4,7 @@ import CouponI from '../../domain/coupon';
 
 const CouponSchema: Schema = new Schema<CouponI & Document>({
     name: { type: String, required: true },
-    gymId: {
+    gymId: { 
         type: Schema.Types.ObjectId,
         ref: 'Gym',
     },

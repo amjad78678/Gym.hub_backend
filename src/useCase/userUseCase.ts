@@ -6,13 +6,13 @@ import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
 interface iWallet {
-  userId: string,
-  wallet: number,
+  userId: string;
+  wallet: number;
   walletHistory: {
-    amount: number,
-    date: Date,
-    description: string
-  }
+    amount: number;
+    date: Date;
+    description: string;
+  };
 }
 class UserUseCase {
   private UserRepository: UserRepository;
@@ -71,33 +71,30 @@ class UserUseCase {
 
     const userData = await this.UserRepository.save(newUser);
 
-  if(user.isGoogle){
-    const userId = userData._id;
+    if (user.isGoogle) {
+      const userId = userData._id;
 
-    let token = this.JwtToken.generateToken(userId, "user");
+      let token = this.JwtToken.generateToken(userId, "user");
 
-     return {
-       status: 200,
-       data: {
-         status: true,
-         message: "User created successfully",
-         user,
-         token,
-       },
-     };
-  }else{
-    return {
-      status: 200,
-      data: {
-        status: true,
-        message: "User created successfully",
-      },
-    };
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: "User created successfully",
+          user,
+          token,
+        },
+      };
+    } else {
+      return {
+        status: 200,
+        data: {
+          status: true,
+          message: "User created successfully",
+        },
+      };
+    }
   }
-  }
-
-   
-
 
   async login(email: string, password: string) {
     const user = await this.UserRepository.findByEmail(email);
@@ -105,7 +102,7 @@ class UserUseCase {
 
     if (user) {
       if (user.isBlocked) {
-        return { 
+        return {
           status: 400,
           data: {
             status: false,
@@ -155,42 +152,34 @@ class UserUseCase {
     }
   }
 
-  async getGymList(latitude: any,longitude: any) {
-    console.log('iam in usecase',latitude,longitude)
+  async getGymList(latitude: any, longitude: any) {
+    console.log("iam in usecase", latitude, longitude);
 
+    const gymList = await this._GymRepository.findNearGym(latitude, longitude);
 
-      const gymList = await this._GymRepository.findNearGym(latitude,longitude);
+    console.log("usecase gymlist", gymList);
+    return {
+      status: 200,
+      data: {
+        success: false,
+        message: gymList,
+      },
+    };
+  }
 
-      console.log('usecase gymlist',gymList)
-      return {
-        status: 200,
-        data: {
-          success: false,
-          message: gymList,
-        },
-      };
-
-
-
-      
-    }
-
-    async getGymListNormal () {
-
-      const gymList = await this._GymRepository.findAllGyms();
-      return {
-        status: 200,
-        data: {
-          success: true,
-          message: gymList,
-        }
-      }
-    }
-
+  async getGymListNormal() {
+    const gymList = await this._GymRepository.findAllGyms();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: gymList,
+      },
+    };
+  }
 
   async getGymDetails(id: string) {
     const gymDetails = await this._GymRepository.findById(id);
-
 
     return {
       status: 200,
@@ -209,7 +198,7 @@ class UserUseCase {
         success: true,
         trainers,
       },
-    }
+    };
   }
 
   async forgotPassword(email: string) {
@@ -257,8 +246,8 @@ class UserUseCase {
           success: true,
           message: user,
         },
-      }
-    }else {
+      };
+    } else {
       return {
         status: 400,
         data: {
@@ -272,18 +261,14 @@ class UserUseCase {
     const user = await this.UserRepository.findById(id);
     return {
       status: 200,
-      data: user
-    }
+      data: user,
+    };
   }
 
+  async addMoneyToWallet(walletData: iWallet) {
+    const sessionId =
+      await this._PaymentRepository.confirmAddMoneyToWalletPayment(walletData);
 
-
-  async addMoneyToWallet (walletData: iWallet) {
-
-
-
-    const sessionId = await this._PaymentRepository.confirmAddMoneyToWalletPayment(walletData)
-    
     return {
       status: 200,
       data: {
@@ -291,8 +276,29 @@ class UserUseCase {
         stripeId: sessionId,
       },
     };
+  }
 
-    
+  async getBookedTrainers(userId: string) {
+    const trainers = await this._TrainerRepository.getBookedTrainers(userId);
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+        trainers,
+      },
+    };
+  }
+
+  async getTrainerDetails(id: string) {
+    const trainer = await this._TrainerRepository.findByIdTrainer(id);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        trainer,
+      },
+    };
   }
 }
 

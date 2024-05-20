@@ -28,7 +28,7 @@ const sharpImages = new SharpImages()
 //repositories
 const gymRepository=new GymRepository()
 const trainerRepository=new TrainerRepository()
-const couponRepository = new CouponRepository()
+const couponRepository = new CouponRepository() 
 
 
 //useCases
@@ -63,6 +63,4 @@ router.get('/fetch_coupons',(protect),(req,res)=>couponController.getAllCoupons(
 router.post('/add_coupon',(protect),(req,res)=>couponController.addCoupon(req,res))
 router.put('/update_coupon',(protect),(req,res)=>couponController.editCoupon(req,res))
 
-
- 
 export default router

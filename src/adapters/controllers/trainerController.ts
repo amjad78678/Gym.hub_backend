@@ -159,6 +159,31 @@ class TrainerController {
         }
       }
 
+      async getUserDetails (req: Request, res: Response) {
+
+
+         try {
+          
+
+         const {userId} = req.params
+
+         const userData = await this._TrainerUseCase.getUserDetails(userId)
+
+
+         res.status(userData.status).json(userData.data)
+
+
+         } catch (error) {
+          const err: Error = error as Error;
+          res.status(400).json({
+            message: err.message,
+            stack: process.env.NODE_ENV === "production" ? null : err.stack,
+          });
+         }
+
+
+      }
+
 
 
 }

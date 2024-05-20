@@ -1,11 +1,13 @@
 import Trainer from "../../domain/trainer";
+import iTrainerBooking from "../../domain/trainerBooking";
 import iTrainerRepo from "../../useCase/interface/trainerRepo";
+import TrainerBookingModel from "../db/trainerBookingModel";
 import TrainerModel from "../db/trainerModal";
 
 class TrainerRepository implements iTrainerRepo {
 
   async findAllTrainers(): Promise<Trainer[] | null> {
-    const trainers = await TrainerModel.find();
+    const trainers = await TrainerModel.find().populate("gymId");
     return trainers;
   }
   async findById(_id: string): Promise<Trainer[] | null> {
@@ -42,6 +44,17 @@ async findByIdTrainer(_id: string): Promise<Trainer | null> {
     const trainerData = await newTrainer.save();
     return trainerData;
   }
+
+  async getBookedTrainers(userId: string): Promise< {} | null> {
+    const trainers = await TrainerBookingModel.find({ userId: userId }).populate({
+      path: "trainerId",
+      populate: {
+        path: "gymId",
+      }
+    })
+    return trainers;
+  }
+
 }
 
 export default TrainerRepository;

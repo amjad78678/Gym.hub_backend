@@ -1,9 +1,9 @@
-import mongoose, { ObjectId, Schema, Document } from "mongoose";
+import mongoose, { ObjectId, Schema, Document, Model } from "mongoose";
 import Cart from "../../domain/cart";
 
 
 
-const CartSchema = new Schema<Cart>({
+const CartSchema: Schema = new Schema<Cart | Document>({
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     gymId: { type: Schema.Types.ObjectId, required: true, ref: "Gym" },
     date: { type: String, required: true },
@@ -19,6 +19,6 @@ const CartSchema = new Schema<Cart>({
 
 
 
-const CartModel = mongoose.model<Cart>("Cart", CartSchema);
+const CartModel:Model<Cart | Document> = mongoose.model<Cart | Document>("Cart", CartSchema);
 
 export default CartModel;

@@ -19,6 +19,13 @@ import CouponRepository from '../repository/couponRepository';
 import CouponUseCase from '../../useCase/couponUseCase';
 import CouponController from '../../adapters/controllers/couponController';
 import TrainerRepository from '../repository/trainerRepository';
+import BookTrainerController from '../../adapters/controllers/bookTrainerController';
+import BookTrainerUseCase from '../../useCase/bookTrainerUseCase';
+import BookTrainerRepository from '../repository/bookTrainerRepository';
+import GenerateQrCode from '../services/generateQrCode';
+import MessageUseCase from '../../useCase/messageUseCase';
+import MessageController from '../../adapters/controllers/messageController';
+import MessageRepository from '../repository/messageRepository';
 
 
 
@@ -27,6 +34,7 @@ const generateOtp =new GenerateOtp()
 const generateEmail =new GenerateEmail()
 const encryptPassword =new EncryptPassword()
 const jwtToken=new JWTToken()
+const generateQrCode = new GenerateQrCode()
 
 
 
@@ -34,18 +42,22 @@ const jwtToken=new JWTToken()
 const userRepository  = new UserRepository()
 const gymRepository = new GymRepository()
 const cartRepository = new CartRepository()
-const paymentRepository = new PaymentRepository()
 const subscriptionRepository = new SubscriptionRepository()
 const couponRepository = new CouponRepository()
 const trainerRepository = new TrainerRepository()
+const paymentRepository = new PaymentRepository()
+const bookTrainerRepository = new BookTrainerRepository()
+const messageRepository = new MessageRepository()
 
 
 
 //useCases
 const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository)
 const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository,subscriptionRepository)
-const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository)       
-const couponCase = new CouponUseCase(couponRepository)                                                                                                                                                                                                                       
+const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository,generateQrCode,generateEmail,gymRepository)       
+const couponCase = new CouponUseCase(couponRepository)      
+const bookTrainerUseCase = new BookTrainerUseCase(paymentRepository,bookTrainerRepository)   
+const messageUseCase=new MessageUseCase(messageRepository)                                                                                                                                                                                                              
 
 
 //controllers
@@ -53,6 +65,8 @@ const userController=new UserController(userCase,generateOtp,generateEmail,subsc
 const cartController=new CartController(cartCase)
 const subscriptionController = new SubscriptionController(subscriptionCase,couponCase)
 const couponController = new CouponController(couponCase)
+const bookTrainerController = new BookTrainerController(bookTrainerUseCase)
+const messageController = new MessageController(messageUseCase)
 
  
 const router = express.Router();
@@ -79,9 +93,11 @@ router.post('/validate_coupon',protect,(req,res)=>couponController.validateCoupo
 router.get('/user_details',protect,(req,res)=>userController.getUserDetails(req,res))
 router.post('/add_money_wallet',protect,(req,res)=>userController.addMoneyToWallet(req,res))
 router.get('/fetch_subscriptions',protect,(req,res)=>userController.getSubscription(req,res))
-
-
-
+router.post('/book_trainer',protect,(req,res)=>bookTrainerController.bookTrainer(req,res))
+router.get('/fetch_booked_trainers',protect,(req,res)=>userController.getBookedTrainers(req,res))
+router.get('/trainer_details/:trainerId',protect,(req,res)=>userController.getTrainerDetails(req,res))
+router.post('/chat/create',protect,(req,res)=>messageController.createMessage(req,res))
+router.get('/chat/user_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
 
 
 export default router
