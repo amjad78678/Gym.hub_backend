@@ -26,45 +26,64 @@ function socketServer(server: any) {
     }
   };
   const getUser = (userId: string) =>
-    users.find((user) => user.userId === userId);
+  users.find((user) => user.userId === userId);
   const removeUser = (userId: string) =>
     (users = users.filter((user) => user.userId !== userId));
 
   io.on("connection", (socket: Socket) => {
-    console.log("connected to socket.io" + socket.id);
+
+
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
-      console.log("add user cheythu .................." + userId);
-      console.log('users',users)
+      console.log("users", users);
+      socket.emit("connected");
     });
 
     socket.on("chat_started", ({ to }) => {
       const user = getUser(to);
-      console.log("user chat ______ started", user);
       if (user) {
-        io.to(user.socketId).emit("chat_started");
+        io.to(user.socketId).emit("chat_started", { to: user.userId });
       }
     });
 
-    socket.on("send_message",({sender,receiver,content})=>{
-       console.log('sendMessage',sender,receiver,content)
-       const senderData = getUser(sender)
-       const receiverData = getUser(receiver)
+    socket.on("send_message", ({ sender, receiver, content }) => {
+      const senderData = getUser(sender);
+      const receiverData = getUser(receiver);
 
-  console.log('senderdata',senderData,'receiver',receiverData)
-       if(senderData) io.to(senderData.socketId).emit("message",{sender,receiver,content})
-       if(receiverData) io.to(receiverData.socketId).emit("message",{sender,receiver,content})
-    })
+      if (senderData)
+        io.to(senderData.socketId).emit("message", {
+          sender,
+          receiver,
+          content,
+        });
+      if (receiverData)
+        io.to(receiverData.socketId).emit("message", {
+          sender,
+          receiver,
+          content,
+        });
+    });
 
+    socket.on("typing", ({ typeTo }) => {
+      console.log("type kaanikkandea llu", typeTo);
+      const user = getUser(typeTo);
+      console.log("type kaanikkandea llu", user);
+      if (user) io.to(user.socketId).emit("typing");
+    });
 
+    socket.on("stop_typing", ({ typeTo }) => {
+      const user = getUser(typeTo);
+      if (user) io.to(user.socketId).emit("stop_typing");
+    });
 
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
     });
 
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
     });
+
   });
 
   return io;

@@ -43,15 +43,21 @@ const userSchema: Schema = new Schema<User | Document>(
       type: Number,
       default: 0,
     },
-    walletHistory: [{
-      date: { type: Date },
-      amount: { type: Number },
-      description: { type: String },
-    }],
+    walletHistory: [
+      {
+        date: { type: Date },
+        amount: { type: Number },
+        description: { type: String },
+      },
+    ],
     profilePic: {
-      type: String,
-      default:
-        "https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_640.png",
+      imageUrl: {
+        type: String,
+        default:
+          "https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_640.png",
+      },
+
+      public_id: { type: String, default: "" },
     },
   },
   { timestamps: true }

@@ -381,6 +381,23 @@ class UserController {
     }
   }
 
+
+  async editProfile(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const body = req.body;
+      console.log('iam req.body',req.body);
+      const userData = await this.userUseCase.editProfile(userId, body, req.file);
+      res.status(userData.status).json(userData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
 }
 
 export default UserController;

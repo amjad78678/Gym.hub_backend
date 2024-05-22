@@ -15,7 +15,6 @@ class UserRepository implements UserRepo {
   }
   async findById(_id: string): Promise<User | null> {
     const userData = await UserModel.findById(_id);
-
     return userData;
   }
 
@@ -31,6 +30,13 @@ class UserRepository implements UserRepo {
       { new: true }
     );
 
+    return user;
+  }
+
+  async findByIdAndUpdateProfile(id: string, data: any) {
+    const user = await UserModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
     return user;
   }
 

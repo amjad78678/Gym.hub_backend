@@ -26,6 +26,9 @@ import GenerateQrCode from '../services/generateQrCode';
 import MessageUseCase from '../../useCase/messageUseCase';
 import MessageController from '../../adapters/controllers/messageController';
 import MessageRepository from '../repository/messageRepository';
+import CloudinaryUpload from '../utils/cloudinaryUpload';
+import SharpImages from '../services/sharpImages';
+import { ImageUpload } from '../middleware/multer';
 
 
 
@@ -48,11 +51,13 @@ const trainerRepository = new TrainerRepository()
 const paymentRepository = new PaymentRepository()
 const bookTrainerRepository = new BookTrainerRepository()
 const messageRepository = new MessageRepository()
+const sharpImages = new SharpImages()
+const cloudinaryUpload = new CloudinaryUpload
 
 
 
 //useCases
-const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository)
+const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository,sharpImages,cloudinaryUpload)
 const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository,subscriptionRepository)
 const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository,generateQrCode,generateEmail,gymRepository)       
 const couponCase = new CouponUseCase(couponRepository)      
@@ -98,6 +103,7 @@ router.get('/fetch_booked_trainers',protect,(req,res)=>userController.getBookedT
 router.get('/trainer_details/:trainerId',protect,(req,res)=>userController.getTrainerDetails(req,res))
 router.post('/chat/create',protect,(req,res)=>messageController.createMessage(req,res))
 router.get('/chat/user_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
+router.post('/edit_profile',ImageUpload.single("profilePic"),protect,(req,res)=>userController.editProfile(req,res))
 
 
 export default router

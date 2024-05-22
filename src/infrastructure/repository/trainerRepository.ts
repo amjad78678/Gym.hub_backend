@@ -28,7 +28,7 @@ async findByIdTrainer(_id: string): Promise<Trainer | null> {
     return trainerData;
   }
 
-  async findByIdAndUpdate(id: string, data: any): Promise<any> {
+  async findByIdAndUpdate(id: string, data: any): Promise<any> { 
     const trainer = await TrainerModel.findByIdAndUpdate(id, data, {
       new: true,
     });

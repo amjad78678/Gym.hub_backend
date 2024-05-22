@@ -9,7 +9,10 @@ interface User {
   isBlocked?: boolean;
   isDeleted?: boolean;
   isGoogle?: boolean;
-  profilePic?: string;
+  profilePic : {
+    imageUrl: string;
+    public_id: string;
+  };
   wallet?: number;
   walletHistory?: any;
 }

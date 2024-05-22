@@ -344,11 +344,10 @@ class GymController {
 
       if (req.file) {
         const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
-
         const trainerData = { ...req.body };
         delete trainerData._id;
         const obj={
-          imageUrl: image.secure_url,
+          imageUrl: image.secure_url, 
           public_id: image.public_id
         }
         trainerData.image = obj;

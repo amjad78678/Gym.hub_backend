@@ -5,6 +5,8 @@ import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
+import SharpImages from "../infrastructure/services/sharpImages";
+import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 interface iWallet {
   userId: string;
   wallet: number;
@@ -21,6 +23,8 @@ class UserUseCase {
   private _GymRepository: GymRepository;
   private _PaymentRepository: PaymentRepository;
   private _TrainerRepository: TrainerRepository;
+  private _SharpImages: SharpImages;
+  private _CloudinayUpload: CloudinaryUpload;
 
   constructor(
     UserRepository: UserRepository,
@@ -28,7 +32,9 @@ class UserUseCase {
     jwtToken: JWTToken,
     gymRepository: GymRepository,
     paymentRepository: PaymentRepository,
-    trainerRepository: TrainerRepository
+    trainerRepository: TrainerRepository,
+    sharpImages: SharpImages,
+    cloudinaryUpload: CloudinaryUpload
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -36,6 +42,8 @@ class UserUseCase {
     this._GymRepository = gymRepository;
     this._PaymentRepository = paymentRepository;
     this._TrainerRepository = trainerRepository;
+    this._SharpImages = sharpImages;
+    this._CloudinayUpload = cloudinaryUpload;
   }
 
   async signUp(email: string) {
@@ -202,8 +210,9 @@ class UserUseCase {
   }
 
   async forgotPassword(email: string) {
+    
     const user = await this.UserRepository.findByEmail(email);
-
+    if(user?.isGoogle===false){
     if (!user) {
       return {
         status: 400,
@@ -229,34 +238,50 @@ class UserUseCase {
         },
       };
     }
+
+
+  }else{
+
+    return {
+      status: 400,
+      data: {
+        success: false,
+        message: "Google users cannot change password!", 
+      },
+    };
   }
+
+}
 
   async updatePassword(email: string, password: string) {
     const user = await this.UserRepository.findByEmail(email);
+    
 
-    const hashedPassword = await this.EncryptPassword.encryptPassword(password);
+      const hashedPassword = await this.EncryptPassword.encryptPassword(password);
 
-    if (user && user.password) {
-      user.password = hashedPassword;
-      await this.UserRepository.save(user);
-
-      return {
-        status: 200,
-        data: {
-          success: true,
-          message: user,
-        },
-      };
-    } else {
-      return {
-        status: 400,
-        data: {
-          success: false,
-          message: "User not found!",
-        },
-      };
+      if (user && user.password) {
+        user.password = hashedPassword;
+        await this.UserRepository.save(user);
+  
+        return {
+          status: 200,
+          data: {
+            success: true,
+            message: user,
+          },
+        };
+      } else {
+        return {
+          status: 400,
+          data: {
+            success: false,
+            message: "User not found!",
+          },
+        };
+      }
     }
-  }
+  
+  
   async getUserDetails(id: string) {
     const user = await this.UserRepository.findById(id);
     return {
@@ -299,6 +324,105 @@ class UserUseCase {
         trainer,
       },
     };
+  }
+
+  async editProfile(userId: string, userData: any, file: any) {
+    const userDetails = await this.UserRepository.findById(userId);
+   if(userDetails){
+    if (file) {
+      const profilePic = await this._SharpImages.sharpenImage(
+        file,
+        96,
+        96,
+        "userProfile"
+      );
+
+      const obj = {
+        imageUrl: profilePic.secure_url,
+        public_id: profilePic.public_id,
+      };
+
+      if (userDetails && userDetails?.profilePic?.public_id !== "") {
+        this._CloudinayUpload.deleteImage(userDetails?.profilePic.public_id);
+      }
+      const usr = { ...userData, profilePic: obj };
+
+      if (!userData.mobileNumber) {
+        delete usr.mobileNumber;
+      }
+
+      if (!userData.oldPassword) {
+        delete usr.oldPassword;
+        delete usr.password;
+      } else {
+        const isPasswordMatch = await this.EncryptPassword.compare(
+          userData.password,
+          userDetails?.password
+        );
+        if (isPasswordMatch) {
+          const hashedPassword = await this.EncryptPassword.encryptPassword(
+            userData.password
+          );
+          usr.password = hashedPassword;
+        }else{
+          return {
+            status: 400,
+            data: {
+              success: false,
+              message: "Old password is incorrect",
+            },
+          }
+        }
+      }
+      await this.UserRepository.findByIdAndUpdateProfile(userId, usr);
+    } else {
+
+        const usr = { ...userData };
+        delete usr.profilePic;
+
+        if (!userData.mobileNumber) {
+          delete usr.mobileNumber;
+        }
+
+        if (!userData.oldPassword) {
+          delete usr.oldPassword;
+          delete usr.password;
+        } else {
+          const isPasswordMatch = await this.EncryptPassword.compare(
+            userData.password,
+            userDetails?.password
+          );
+          if (isPasswordMatch) {
+            const hashedPassword = await this.EncryptPassword.encryptPassword(
+              userData.password
+            );
+            usr.password = hashedPassword;
+          }
+        }
+
+        await this.UserRepository.findByIdAndUpdateProfile(userId, usr);
+      
+    }
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: "Profile updated successfully",
+      },
+    };
+    
+   }else{
+    return {
+      status: 400,
+      data: {
+        success: false,
+        message: "User not found",
+      },
+    };
+   }
+   
+
+ 
   }
 }
 
