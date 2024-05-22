@@ -3,8 +3,8 @@ import { Document, ObjectId } from 'mongoose';
 interface Subscription extends Document {
     userId: ObjectId;
     gymId: ObjectId;
-    date: string;
-    expiryDate: string;
+    date: Date;
+    expiryDate: Date;
     subscriptionType: 'Daily' | 'Monthly' | 'Yearly';
     paymentType: 'online' | 'wallet';
     qrCode?: string;

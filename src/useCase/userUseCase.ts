@@ -1,6 +1,8 @@
 import User from "../domain/user";
 import GymRepository from "../infrastructure/repository/gymRepository";
+import GymReviewsRepository from "../infrastructure/repository/gymReviewsRepository";
 import PaymentRepository from "../infrastructure/repository/paymentRepository";
+import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
@@ -25,6 +27,8 @@ class UserUseCase {
   private _TrainerRepository: TrainerRepository;
   private _SharpImages: SharpImages;
   private _CloudinayUpload: CloudinaryUpload;
+  private _SubscriptionRespository: SubscriptionRepository;
+  private _GymReviewsRepository: GymReviewsRepository
 
   constructor(
     UserRepository: UserRepository,
@@ -34,7 +38,9 @@ class UserUseCase {
     paymentRepository: PaymentRepository,
     trainerRepository: TrainerRepository,
     sharpImages: SharpImages,
-    cloudinaryUpload: CloudinaryUpload
+    cloudinaryUpload: CloudinaryUpload,
+    subscriptionRepository: SubscriptionRepository,
+    gymReviewsRepository: GymReviewsRepository
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -44,6 +50,8 @@ class UserUseCase {
     this._TrainerRepository = trainerRepository;
     this._SharpImages = sharpImages;
     this._CloudinayUpload = cloudinaryUpload;
+    this._SubscriptionRespository = subscriptionRepository;
+    this._GymReviewsRepository = gymReviewsRepository
   }
 
   async signUp(email: string) {
@@ -423,6 +431,33 @@ class UserUseCase {
    
 
  
+  }
+
+
+  async isReviewPossible (userId: string, gymId: string) {
+
+    const isPossible = await this._SubscriptionRespository.isReviewPossible(userId, gymId);
+    console.log("isPossible", isPossible)
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+        isPossible: isPossible
+      }
+    }
+
+  }
+
+  async addGymReview(userId: string, body: any) {
+    const review = await this._GymReviewsRepository.addGymReview(userId, body);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: "Review added successfully",
+      }
+    }
   }
 }
 

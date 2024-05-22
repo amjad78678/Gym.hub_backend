@@ -398,6 +398,39 @@ class UserController {
     }
   }
 
+  async isReviewPossible(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const {gymId} = req.params;
+
+      console.log('iam gymId',gymId)
+      console.log('iam userId',userId)
+      const result = await this.userUseCase.isReviewPossible(userId, gymId);
+      res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async addGymReview(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const body = req.body;
+      const result = await this.userUseCase.addGymReview(userId, body);
+      res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
 }
 
 export default UserController;

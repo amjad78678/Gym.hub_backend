@@ -34,6 +34,21 @@ class SubscriptionRepository implements iSubscriptionRepo {
         }
     }
 
+    async isReviewPossible(userId: string, gymId: string) {
+        const subscription = await SubscriptionModel.findOne({
+            userId: userId,
+            gymId: gymId,
+            $and: [
+                { date: { $lte: new Date() } },
+                { expiryDate: { $gte: new Date() } }
+            ]
+        });
+
+    
+        return !!subscription;
+    }
+    
+
 }
 
 export default SubscriptionRepository

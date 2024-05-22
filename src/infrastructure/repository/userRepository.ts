@@ -40,6 +40,8 @@ class UserRepository implements UserRepo {
     return user;
   }
 
+ 
+
   async updateWalletBallance(userId: string, price: number) {
     try {
       const user = await UserModel.findById(userId);
@@ -50,8 +52,9 @@ class UserRepository implements UserRepo {
           const newWalletBalance = user.wallet - price;
           const history = {
             date: new Date(),
-            amount: -price,
+            amount: price,
             description: "Purchased subscription using wallet money",
+            type: "Debit",
           };
           const updated = await UserModel.updateOne(
             { _id: userId },

@@ -6,8 +6,8 @@ import Subscription from "../../domain/subscription";
 const SubscriptionSchema = new Schema<Subscription>({
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     gymId: { type: Schema.Types.ObjectId, required: true, ref: "Gym" },
-    date: { type: String, required: true },
-    expiryDate: { type: String, required: true },
+    date: { type: Date, required: true },
+    expiryDate: { type: Date, required: true },
     subscriptionType: { type: String, enum: {
         values: ["Daily", "Monthly", "Yearly"],
     } },

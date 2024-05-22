@@ -29,6 +29,7 @@ import MessageRepository from '../repository/messageRepository';
 import CloudinaryUpload from '../utils/cloudinaryUpload';
 import SharpImages from '../services/sharpImages';
 import { ImageUpload } from '../middleware/multer';
+import GymReviewsRepository from '../repository/gymReviewsRepository';
 
 
 
@@ -38,7 +39,8 @@ const generateEmail =new GenerateEmail()
 const encryptPassword =new EncryptPassword()
 const jwtToken=new JWTToken()
 const generateQrCode = new GenerateQrCode()
-
+const sharpImages = new SharpImages()
+const cloudinaryUpload = new CloudinaryUpload()
 
 
 //repositories
@@ -51,13 +53,12 @@ const trainerRepository = new TrainerRepository()
 const paymentRepository = new PaymentRepository()
 const bookTrainerRepository = new BookTrainerRepository()
 const messageRepository = new MessageRepository()
-const sharpImages = new SharpImages()
-const cloudinaryUpload = new CloudinaryUpload
+const gymReviewsRepository = new GymReviewsRepository()
 
 
 
 //useCases
-const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository,sharpImages,cloudinaryUpload)
+const userCase = new UserUseCase(userRepository,encryptPassword,jwtToken,gymRepository,paymentRepository,trainerRepository,sharpImages,cloudinaryUpload,subscriptionRepository,gymReviewsRepository)
 const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository,subscriptionRepository)
 const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository,generateQrCode,generateEmail,gymRepository)       
 const couponCase = new CouponUseCase(couponRepository)      
@@ -104,6 +105,8 @@ router.get('/trainer_details/:trainerId',protect,(req,res)=>userController.getTr
 router.post('/chat/create',protect,(req,res)=>messageController.createMessage(req,res))
 router.get('/chat/user_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
 router.post('/edit_profile',ImageUpload.single("profilePic"),protect,(req,res)=>userController.editProfile(req,res))
+router.get('/is_review_possible/:gymId',protect,(req,res)=>userController.isReviewPossible(req,res))
+router.post('/add_review',protect,(req,res)=>userController.addGymReview(req,res))
 
 
 export default router

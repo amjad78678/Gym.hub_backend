@@ -48,6 +48,7 @@ const userSchema: Schema = new Schema<User | Document>(
         date: { type: Date },
         amount: { type: Number },
         description: { type: String },
+        type: { type: String },
       },
     ],
     profilePic: {
