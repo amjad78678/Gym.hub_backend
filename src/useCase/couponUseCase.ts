@@ -86,7 +86,7 @@ class CouponUseCase {
         if (coupon) {
             if ((new Date(coupon.startingDate) > new Date()) || (new Date() > new Date(coupon.endingDate))) {
                 return {
-                    status: 400,
+                    status: 400, 
                     data: { message: 'Coupon expired!' }
                 };
             }

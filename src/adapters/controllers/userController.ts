@@ -431,6 +431,70 @@ class UserController {
     }
   }
 
+  async getGymReviews(req: Request, res: Response) {
+    try {
+      const {gymId} = req.params;
+      const userId = req.userId || "";
+      const result = await this.userUseCase.getGymReviews(userId,gymId);
+      res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async updateRatingGym(req: Request, res: Response) {
+    try {
+      const {userReviewId} = req.body;
+      const body = {...req.body}
+      delete body.userReviewId
+      const result = await this.userUseCase.updateRatingGym(body,userReviewId);
+      res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async getWorkoutsList(req: Request,res: Response){
+    try {
+    const result = await this.userUseCase.getWorkoutsList()
+    console.log('iam result',result)
+      res.status(result.status).json(result.data)
+
+
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async getExercisesDetails(req: Request, res: Response) {
+    try {
+      const {body} = req.params
+      const result = await this.userUseCase.getExercisesDetails(body)
+      res.status(result.status).json(result.data)
+      
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+
+
 }
 
 export default UserController;

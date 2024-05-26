@@ -107,6 +107,10 @@ router.get('/chat/user_chat_data/:sender/:receiver',protect,(req,res)=>messageCo
 router.post('/edit_profile',ImageUpload.single("profilePic"),protect,(req,res)=>userController.editProfile(req,res))
 router.get('/is_review_possible/:gymId',protect,(req,res)=>userController.isReviewPossible(req,res))
 router.post('/add_review',protect,(req,res)=>userController.addGymReview(req,res))
+router.get('/fetch_gym_reviews/:gymId',protect,(req,res)=>userController.getGymReviews(req,res))
+router.post('/update_rating',protect,(req,res)=>userController.updateRatingGym(req,res))
+router.get('/workouts_body_list',(req,res)=>userController.getWorkoutsList(req,res))
+router.get('/exercises/:body',(req,res)=>userController.getExercisesDetails(req,res))
 
 
 export default router

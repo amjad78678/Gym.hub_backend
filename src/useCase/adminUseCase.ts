@@ -4,6 +4,7 @@ import JWTToken from "../infrastructure/services/generateToken";
 import GenerateEmail from "../infrastructure/services/sendEmail";
 import UserRepository from "../infrastructure/repository/userRepository";
 import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
+import TrainerRepository from "../infrastructure/repository/trainerRepository";
 
 class AdminUseCase {
   private _GymRepository: GymRepository;
@@ -11,19 +12,22 @@ class AdminUseCase {
   private _GenerateEmail: GenerateEmail;
   private _JwtToken: JWTToken;
   private _SubscriptionRepository: SubscriptionRepository;
+  private _TrainerRepository: TrainerRepository;
 
   constructor(
     gymRepository: GymRepository,
     generateEmail: GenerateEmail,
     jwtToken: JWTToken,
     userRepository: UserRepository,
-    subscriptionRepository: SubscriptionRepository
+    subscriptionRepository: SubscriptionRepository,
+    trainerRepository: TrainerRepository
   ) {
     this._GymRepository = gymRepository;
     this._GenerateEmail = generateEmail;
     this._JwtToken = jwtToken;
     this._UserRepository = userRepository;
     this._SubscriptionRepository = subscriptionRepository;
+    this._TrainerRepository = trainerRepository;
   }
 
   async getGymDetails() {
@@ -188,8 +192,8 @@ class AdminUseCase {
       return {
         status: 200,
         data: {
-          status : true,
-          message: updatedUser
+          success : true,
+          message: "User updated successfully"
         }
       }
     }else{
@@ -228,5 +232,27 @@ class AdminUseCase {
       }
     }
   }
-}
+
+  async fetchTrainers(){
+    const trainers = await this._TrainerRepository.findAllTrainers();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        trainers
+      }
+    }
+  }
+
+  async updateTrainer(id: string,data: any){
+     await this._TrainerRepository.findByIdAndUpdate(id,data)
+     return {
+       status: 200,
+       data: {
+         success: true,
+         message: "Trainer updated successfully"
+       }
+     }
+  }
+} 
 export default AdminUseCase;

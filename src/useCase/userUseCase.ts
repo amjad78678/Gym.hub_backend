@@ -9,6 +9,13 @@ import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
 import SharpImages from "../infrastructure/services/sharpImages";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import fs from 'fs'
+import path from 'path'
+
+
+
+
+
 interface iWallet {
   userId: string;
   wallet: number;
@@ -459,6 +466,61 @@ class UserUseCase {
       }
     }
   }
+
+  async getGymReviews(userId: string,gymId: string) {
+    const reviews = await this._GymReviewsRepository.getAllGymReviews(gymId);
+    const isUserReviewed = await this._GymReviewsRepository.isUserReviewed(userId,gymId);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        reviews,
+        isUserReviewed
+      }
+    }
+  }
+
+  async updateRatingGym(reviewData: any, reviewId: string) {
+   
+    const review = await this._GymReviewsRepository.updateRatingGym(reviewData, reviewId);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: "Rating updated successfully",
+      }
+    }
+
+  }
+
+  async getWorkoutsList(){
+
+   const dataPath = path.join(__dirname,'../infrastructure/utils/static/bodyPartList.json');
+   const workoutList = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+   return {
+    status: 200,
+    data:{
+      success: true,
+      workoutList
+    }
+
+  }
+
+}
+
+async getExercisesDetails(bodyPart: string) {
+
+    const dataPath= path.join(__dirname,`../infrastructure/utils/static/${bodyPart}.json`)
+    const details = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    return {
+      status: 200,
+      data:{
+        success: true,
+        details
+      }
+    }
+}
+
 }
 
 export default UserUseCase;

@@ -6,6 +6,7 @@ import GenerateEmail from '../services/sendEmail';
 import JWTToken from '../services/generateToken';
 import UserRepository from '../repository/userRepository';
 import SubscriptionRepository from '../repository/subscriptionRepository';
+import TrainerRepository from '../repository/trainerRepository';
 
 
 //services
@@ -17,12 +18,13 @@ const jwtToken=new JWTToken()
 const gymRepository=new GymRepository()
 const userRepository=new UserRepository()
 const subscriptionRepository=new SubscriptionRepository()
+const trainerRepository =new TrainerRepository()
 
 
 
 //usecases
 
-const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository)
+const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository,trainerRepository)
 
 
 //controllers
@@ -45,5 +47,7 @@ router.get('/fetch_users',(req,res)=>adminController.fetchUsers(req,res))
 router.patch('/update_user/:id',(req,res)=>adminController.updateUser(req,res))
 router.get('/fetch_subscriptions',(req,res)=>adminController.fetchSubscriptions(req,res))
 router.get('/fetch_gym_with_id/:gymId',(req,res)=>adminController.fetchGymWithId(req,res))
-
-export default router
+router.get('/fetch_trainers',(req,res)=>adminController.getTrainers(req,res))
+router.put('/update_trainer',(req,res)=>adminController.updateTrainer(req,res))
+ 
+export default router 

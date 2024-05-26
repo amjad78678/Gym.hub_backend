@@ -161,8 +161,7 @@ class AdminController {
 
   async fetchSubscriptions(req: Request, res: Response) {
     try {
-
-      const subscriptionData=await this._AdminUseCase.fetchSubscriptions();
+      const subscriptionData = await this._AdminUseCase.fetchSubscriptions();
       res.status(subscriptionData.status).json(subscriptionData.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -175,9 +174,37 @@ class AdminController {
 
   async fetchGymWithId(req: Request, res: Response) {
     try {
-      const gymData=await this._AdminUseCase.fetchGymWithId(req.params.gymId);
-      console.log(gymData)
+      const gymData = await this._AdminUseCase.fetchGymWithId(req.params.gymId);
+      console.log(gymData);
       res.status(gymData.status).json(gymData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async getTrainers(req: Request, res: Response) {
+    try {
+      const trainersData = await this._AdminUseCase.fetchTrainers();
+      res.status(trainersData.status).json(trainersData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async updateTrainer(req: Request, res: Response) {
+    try {
+      const {id,...body}=req.body
+      console.log('iam excluded body',body)
+      const response = await this._AdminUseCase.updateTrainer(id,body);
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
