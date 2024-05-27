@@ -72,7 +72,7 @@ async confirmAddMoneyToWalletPayment(walletData: any): Promise<any> {
         },
       ],
       mode: 'payment',
-      success_url: `${CLIENT_URL}/profile/subscriptions`,
+      success_url: `${CLIENT_URL}/success/add_money`,
       cancel_url: `${CLIENT_URL}/cancel/add_money`,
   })
 
