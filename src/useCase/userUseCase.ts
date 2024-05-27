@@ -1,4 +1,5 @@
 import User from "../domain/user";
+import BannerRepository from "../infrastructure/repository/bannerRepository";
 import GymRepository from "../infrastructure/repository/gymRepository";
 import GymReviewsRepository from "../infrastructure/repository/gymReviewsRepository";
 import PaymentRepository from "../infrastructure/repository/paymentRepository";
@@ -11,8 +12,6 @@ import SharpImages from "../infrastructure/services/sharpImages";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 import fs from 'fs'
 import path from 'path'
-
-
 
 
 
@@ -35,7 +34,7 @@ class UserUseCase {
   private _SharpImages: SharpImages;
   private _CloudinayUpload: CloudinaryUpload;
   private _SubscriptionRespository: SubscriptionRepository;
-  private _GymReviewsRepository: GymReviewsRepository
+  private _GymReviewsRepository: GymReviewsRepository;
 
   constructor(
     UserRepository: UserRepository,
@@ -47,7 +46,7 @@ class UserUseCase {
     sharpImages: SharpImages,
     cloudinaryUpload: CloudinaryUpload,
     subscriptionRepository: SubscriptionRepository,
-    gymReviewsRepository: GymReviewsRepository
+    gymReviewsRepository: GymReviewsRepository,
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -58,7 +57,7 @@ class UserUseCase {
     this._SharpImages = sharpImages;
     this._CloudinayUpload = cloudinaryUpload;
     this._SubscriptionRespository = subscriptionRepository;
-    this._GymReviewsRepository = gymReviewsRepository
+    this._GymReviewsRepository = gymReviewsRepository;
   }
 
   async signUp(email: string) {
@@ -520,6 +519,8 @@ async getExercisesDetails(bodyPart: string) {
       }
     }
 }
+
+
 
 }
 

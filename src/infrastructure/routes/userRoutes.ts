@@ -30,6 +30,9 @@ import CloudinaryUpload from '../utils/cloudinaryUpload';
 import SharpImages from '../services/sharpImages';
 import { ImageUpload } from '../middleware/multer';
 import GymReviewsRepository from '../repository/gymReviewsRepository';
+import BannerController from '../../adapters/controllers/bannerController';
+import BannerUseCase from '../../useCase/bannerUseCase';
+import BannerRepository from '../repository/bannerRepository';
 
 
 
@@ -54,6 +57,7 @@ const paymentRepository = new PaymentRepository()
 const bookTrainerRepository = new BookTrainerRepository()
 const messageRepository = new MessageRepository()
 const gymReviewsRepository = new GymReviewsRepository()
+const bannerRepository = new BannerRepository()
 
 
 
@@ -63,7 +67,8 @@ const cartCase = new CartUseCase(cartRepository,couponRepository,userRepository,
 const subscriptionCase = new SubscriptionUseCase(cartRepository,paymentRepository,subscriptionRepository,couponRepository,userRepository,generateQrCode,generateEmail,gymRepository)       
 const couponCase = new CouponUseCase(couponRepository)      
 const bookTrainerUseCase = new BookTrainerUseCase(paymentRepository,bookTrainerRepository)   
-const messageUseCase=new MessageUseCase(messageRepository)                                                                                                                                                                                                              
+const messageUseCase=new MessageUseCase(messageRepository)    
+const bannerUseCase=new BannerUseCase(bannerRepository,sharpImages,cloudinaryUpload)                                                                                                                                                                                                          
 
 
 //controllers
@@ -73,6 +78,7 @@ const subscriptionController = new SubscriptionController(subscriptionCase,coupo
 const couponController = new CouponController(couponCase)
 const bookTrainerController = new BookTrainerController(bookTrainerUseCase)
 const messageController = new MessageController(messageUseCase)
+const bannerController = new BannerController(bannerUseCase)
 
  
 const router = express.Router();
@@ -111,6 +117,7 @@ router.get('/fetch_gym_reviews/:gymId',protect,(req,res)=>userController.getGymR
 router.post('/update_rating',protect,(req,res)=>userController.updateRatingGym(req,res))
 router.get('/workouts_body_list',(req,res)=>userController.getWorkoutsList(req,res))
 router.get('/exercises/:body',(req,res)=>userController.getExercisesDetails(req,res))
+router.get('/fetch_banners',(req,res)=>bannerController.fetchBanners(req,res))
 
 
 export default router

@@ -336,11 +336,10 @@ class GymController {
     }
   }
 
-  async updateGymTrainer(req: Request, res: Response) {
+  async updateGymTrainer(req: Request, res: Response) { 
     try {
       const trainerId = req.body._id;
       console.log('req.file',req.file)
-      console.log('req.files',req.files)
 
       if (req.file) {
         const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
