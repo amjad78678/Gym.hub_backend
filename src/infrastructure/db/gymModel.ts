@@ -26,15 +26,6 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       type: Number,
       required: true,
     },
-    state: {
-      type: String,
-    },
-    city: {
-      type: String,
-    },
-    pincode: {
-      type: String,
-    },
     businessId: {
       type: String,
       required: true,

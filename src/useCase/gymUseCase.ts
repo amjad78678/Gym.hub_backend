@@ -78,9 +78,6 @@ class GymUseCase {
           gymName: gym.gymName,
           email: gym.email,
           contactNumber: gym.contactNumber,
-          state: gym.state,
-          city: gym.city,
-          pincode: gym.pincode,
           subscriptions: {
             Daily: gym.dailyFee,
             Monthly: gym.monthlyFee,

@@ -15,17 +15,29 @@ class BookTrainerUseCase {
 
     async verifyTrainerBooking (body: any) { 
 
-    const sessionId = await this._PaymentRepository.confirmBookTrainerPayment(body)
+    const isAlreadyTrainerBooked = await this._TrainerRepository.isAlreadyBooked(body.userId,body.trainerId)
+
+    if(!isAlreadyTrainerBooked){
+      const sessionId = await this._PaymentRepository.confirmBookTrainerPayment(body)
     
-        return {
-          status: 200,
-          data: {
-            success: true,
-            stripeId: sessionId,
-          }
+      return {
+        status: 200,
+        data: {
+          success: true,
+          stripeId: sessionId,
         }
-    
       }
+    }else{
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "Already booked the trainer",
+        }
+      }
+    }
+    
+  }
 
       async confirmBooking (body: iTrainerBooking) {
         

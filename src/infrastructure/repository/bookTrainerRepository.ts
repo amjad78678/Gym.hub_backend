@@ -11,6 +11,14 @@ class BookTrainerRepository implements iBookTrainerRepo{
         const trainer= await bookTrainer.save()
         return trainer
     }
+
+    async isAlreadyBooked(userId: string, trainerId: string): Promise<boolean> {
+        const trainer = await TrainerBookingModel.findOne({ userId, trainerId })
+        if (trainer) {
+            return true
+        }
+        return false
+    }
 }
 
 export default BookTrainerRepository

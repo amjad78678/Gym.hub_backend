@@ -3,9 +3,6 @@ interface Gym {
   gymName?: string;
   email: string;
   contactNumber?: number;
-  state?: string;
-  city?: string;
-  pincode?: string;
   businessId?: string;
   isBlocked?: boolean;
   isDeleted?: boolean;
@@ -17,8 +14,8 @@ interface Gym {
   confirmPassword?: string;
   isVerified?: boolean;
   location?: {
-      type: string;
-      coordinates: [number, number];
+    type: string;
+    coordinates: [number, number];
   };
   lat?: number;
   long?: number;

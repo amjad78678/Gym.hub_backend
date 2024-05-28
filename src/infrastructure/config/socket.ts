@@ -3,10 +3,8 @@ import { Server } from "socket.io";
 
 function socketServer(server: any) {
   const io = new Server(server, {
-    pingTimeout: 120000,
     cors: {
       origin: process.env.CLIENT_URL,
-      methods: ["GET", "POST"],
     },
   });
 
@@ -17,33 +15,24 @@ function socketServer(server: any) {
   let users: Users[] = [];
 
   const addUser = (userId: string, socketId: string) => {
+    console.log("in add user", userId);
     const userExists = users.find((user) => user.userId === userId);
-
     if (userExists) {
       userExists.socketId = socketId;
     } else {
       users.push({ userId, socketId });
     }
   };
+
   const getUser = (userId: string) =>
-  users.find((user) => user.userId === userId);
-  const removeUser = (userId: string) =>
-    (users = users.filter((user) => user.userId !== userId));
+    users.find((user) => user.userId === userId);
 
   io.on("connection", (socket: Socket) => {
-
-
+    console.log("a user connected", socket.id);
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
       console.log("users", users);
-      socket.emit("connected");
-    });
-
-    socket.on("chat_started", ({ to }) => {
-      const user = getUser(to);
-      if (user) {
-        io.to(user.socketId).emit("chat_started", { to: user.userId });
-      }
+      io.emit("connected");
     });
 
     socket.on("send_message", ({ sender, receiver, content }) => {
@@ -65,9 +54,7 @@ function socketServer(server: any) {
     });
 
     socket.on("typing", ({ typeTo }) => {
-      console.log("type kaanikkandea llu", typeTo);
       const user = getUser(typeTo);
-      console.log("type kaanikkandea llu", user);
       if (user) io.to(user.socketId).emit("typing");
     });
 
@@ -79,11 +66,6 @@ function socketServer(server: any) {
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
-
-    socket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
-    });
-
   });
 
   return io;

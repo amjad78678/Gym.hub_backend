@@ -23,7 +23,7 @@ class MessageUseCase {
 
   async getMessages(trainerId: string) {
     const messageData: iMessageTrainer[] = await this._MessageRepository.findTrainerAllMessages(trainerId)
-    console.log(messageData)
+
     return {
       status: 200,
       data: {

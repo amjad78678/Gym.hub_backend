@@ -119,5 +119,5 @@ router.get('/workouts_body_list',(req,res)=>userController.getWorkoutsList(req,r
 router.get('/exercises/:body',(req,res)=>userController.getExercisesDetails(req,res))
 router.get('/fetch_banners',(req,res)=>bannerController.fetchBanners(req,res))
 
-
+ 
 export default router
