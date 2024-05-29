@@ -60,5 +60,6 @@ router.get('/user_details/:userId',protect,(req,res)=>trainerController.getUserD
 router.post('/chat/create',protect,(req,res)=>messageController.createMessage(req,res))
 router.get('/chat/fetch_messages',protect,(req,res)=>messageController.getMessages(req,res))
 router.get('/chat/trainer_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
+router.get('/fetch_subscriptions',protect,(req,res)=>trainerController.getSubscriptions(req,res))
 
 export default router;

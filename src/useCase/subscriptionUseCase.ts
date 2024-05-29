@@ -157,6 +157,7 @@ class SubscriptionUseCase {
       },
     };
   }
+
 }
 
 export default SubscriptionUseCase;

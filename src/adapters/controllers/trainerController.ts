@@ -183,7 +183,19 @@ class TrainerController {
 
 
       }
-
+async getSubscriptions(req: Request, res: Response){
+   try {
+    const trainerId = req.trainerId || ""
+    const subscriptions = await this._TrainerUseCase.getSubscriptions(trainerId)
+    res.status(subscriptions.status).json(subscriptions.data)
+   } catch (error) {
+    const err: Error = error as Error;
+    res.status(400).json({
+      message: err.message,
+      stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    });
+   }
+}
 
 
 }

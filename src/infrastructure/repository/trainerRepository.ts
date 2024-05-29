@@ -55,6 +55,17 @@ async findByIdTrainer(_id: string): Promise<Trainer | null> {
     return trainers;
   }
 
+  async getSubscriptions(trainerId: string): Promise< {} | null> {
+    const trainers = await TrainerBookingModel.find({ trainerId: trainerId }).populate({
+      path: "trainerId",
+      populate: {
+        path: "gymId",
+      }
+    }).populate("userId")
+
+    return trainers;
+  }
+
 }
 
 export default TrainerRepository;

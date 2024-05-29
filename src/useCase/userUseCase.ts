@@ -346,8 +346,8 @@ class UserUseCase {
     if (file) {
       const profilePic = await this._SharpImages.sharpenImage(
         file,
-        96,
-        96,
+        640,
+        640,
         "userProfile"
       );
 

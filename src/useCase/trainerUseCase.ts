@@ -146,6 +146,18 @@ class TrainerUseCase {
         }
       }
 
+      async getSubscriptions(trainerId: string) {
+        const trainerBookings = await this._TrainerRepository.getSubscriptions(trainerId);
+        console.log('subscriptions',trainerBookings)
+        return {
+          status: 200,
+          data: {
+            success: true,
+            trainees: trainerBookings
+          }
+        }
+      }
+
     
 }
 
