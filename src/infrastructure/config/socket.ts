@@ -15,42 +15,45 @@ function socketServer(server: any) {
   let users: Users[] = [];
 
   const addUser = (userId: string, socketId: string) => {
-    console.log("in add user", userId);
+    console.log("Adding/updating user:", userId);
     const userExists = users.find((user) => user.userId === userId);
     if (userExists) {
       userExists.socketId = socketId;
     } else {
       users.push({ userId, socketId });
     }
+    console.log("Current users:", users);
+  };
+
+  const removeUser = (socketId: string) => {
+    users = users.filter((user) => user.socketId !== socketId);
+    console.log("Removed user with socket ID:", socketId);
+    console.log("Current users after removal:", users);
   };
 
   const getUser = (userId: string) =>
     users.find((user) => user.userId === userId);
 
   io.on("connection", (socket: Socket) => {
-    console.log("a user connected", socket.id);
+    console.log("A user connected", socket.id);
+
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
-      console.log("users", users);
       io.emit("connected");
     });
 
     socket.on("send_message", ({ sender, receiver, content }) => {
-      const senderData = getUser(sender);
+      console.log("send_message event triggered");
+      console.log("sender:", sender, "receiver:", receiver, "content:", content);
       const receiverData = getUser(receiver);
-
-      if (senderData)
-        io.to(senderData.socketId).emit("message", {
-          sender,
-          receiver,
-          content,
-        });
-      if (receiverData)
+      console.log("Receiver data:", receiverData);
+      if (receiverData) {
         io.to(receiverData.socketId).emit("message", {
           sender,
           receiver,
           content,
         });
+      }
     });
 
     socket.on("typing", ({ typeTo }) => {
@@ -64,7 +67,8 @@ function socketServer(server: any) {
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      console.log("User disconnected", socket.id);
+      removeUser(socket.id);
     });
   });
 
