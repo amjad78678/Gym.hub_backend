@@ -55,6 +55,7 @@ function socketServer(server: any) {
       }
     });
 
+
     socket.on("typing", ({ typeTo }) => {
       const user = getUser(typeTo);
       if (user) io.to(user.socketId).emit("typing");
@@ -64,6 +65,15 @@ function socketServer(server: any) {
       const user = getUser(typeTo);
       if (user) io.to(user.socketId).emit("stop_typing");
     });
+
+    socket.on("call:start",({sender,receiver})=>{      
+      const receiverData = getUser(receiver)
+      if(receiverData){
+        io.to(receiverData.socketId).emit("call:start",sender)
+      }
+      
+    })
+
 
     socket.on("disconnect", () => {
       console.log("User disconnected", socket.id);

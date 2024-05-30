@@ -196,7 +196,9 @@ class UserController {
 
   async getTrainers(req: Request, res: Response) {
     try {
-      const trainers = await this.userUseCase.getTrainers();
+      const {page} = req.params
+      console.log('iam page',page)
+      const trainers = await this.userUseCase.getTrainers(parseInt(page))   ;
       res.status(trainers.status).json(trainers.data);
     } catch (error) {
       const err: Error = error as Error;

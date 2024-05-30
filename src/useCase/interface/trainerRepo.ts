@@ -7,7 +7,7 @@ interface iTrainerRepo {
     findByIdAndUpdate(id: string, data: any): Promise<any>;
     findByEmail(email: string): Promise<Trainer | null>;
     saveTrainer(trainer: Trainer): Promise<Trainer>;
-    findAllTrainers(): Promise<Trainer[] | null>;
+    findAllTrainers(page: number): Promise<Trainer[] | null>;
     findByIdTrainer(_id: string): Promise<Trainer | null>;
 
 }

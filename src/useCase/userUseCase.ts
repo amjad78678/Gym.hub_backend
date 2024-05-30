@@ -10,10 +10,8 @@ import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
 import SharpImages from "../infrastructure/services/sharpImages";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
-import fs from 'fs'
-import path from 'path'
-
-
+import fs from "fs";
+import path from "path";
 
 interface iWallet {
   userId: string;
@@ -46,7 +44,7 @@ class UserUseCase {
     sharpImages: SharpImages,
     cloudinaryUpload: CloudinaryUpload,
     subscriptionRepository: SubscriptionRepository,
-    gymReviewsRepository: GymReviewsRepository,
+    gymReviewsRepository: GymReviewsRepository
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -175,11 +173,8 @@ class UserUseCase {
   }
 
   async getGymList(latitude: any, longitude: any) {
-    console.log("iam in usecase", latitude, longitude);
-
     const gymList = await this._GymRepository.findNearGym(latitude, longitude);
 
-    console.log("usecase gymlist", gymList);
     return {
       status: 200,
       data: {
@@ -212,8 +207,8 @@ class UserUseCase {
     };
   }
 
-  async getTrainers() {
-    const trainers = await this._TrainerRepository.findAllTrainers();
+  async getTrainers(page: any) {
+    const trainers = await this._TrainerRepository.findAllTrainers(page);
     return {
       status: 200,
       data: {
@@ -224,67 +219,9 @@ class UserUseCase {
   }
 
   async forgotPassword(email: string) {
-    
     const user = await this.UserRepository.findByEmail(email);
-    if(user?.isGoogle===false){
-    if (!user) {
-      return {
-        status: 400,
-        data: {
-          success: false,
-          message: "User not found!",
-        },
-      };
-    } else if (user?.isBlocked) {
-      return {
-        status: 400,
-        data: {
-          success: false,
-          message: "You have been blocked by admin!",
-        },
-      };
-    } else {
-      return {
-        status: 200,
-        data: {
-          success: true,
-          message: "Verification otp sent to your email!",
-        },
-      };
-    }
-
-
-  }else{
-
-    return {
-      status: 400,
-      data: {
-        success: false,
-        message: "Google users cannot change password!", 
-      },
-    };
-  }
-
-}
-
-  async updatePassword(email: string, password: string) {
-    const user = await this.UserRepository.findByEmail(email);
-    
-
-      const hashedPassword = await this.EncryptPassword.encryptPassword(password);
-
-      if (user && user.password) {
-        user.password = hashedPassword;
-        await this.UserRepository.save(user);
-  
-        return {
-          status: 200,
-          data: {
-            success: true,
-            message: user,
-          },
-        };
-      } else {
+    if (user?.isGoogle === false) {
+      if (!user) {
         return {
           status: 400,
           data: {
@@ -292,10 +229,61 @@ class UserUseCase {
             message: "User not found!",
           },
         };
+      } else if (user?.isBlocked) {
+        return {
+          status: 400,
+          data: {
+            success: false,
+            message: "You have been blocked by admin!",
+          },
+        };
+      } else {
+        return {
+          status: 200,
+          data: {
+            success: true,
+            message: "Verification otp sent to your email!",
+          },
+        };
       }
+    } else {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "Google users cannot change password!",
+        },
+      };
     }
-  
-  
+  }
+
+  async updatePassword(email: string, password: string) {
+    const user = await this.UserRepository.findByEmail(email);
+
+    const hashedPassword = await this.EncryptPassword.encryptPassword(password);
+
+    if (user && user.password) {
+      user.password = hashedPassword;
+      await this.UserRepository.save(user);
+
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: user,
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "User not found!",
+        },
+      };
+    }
+  }
+
   async getUserDetails(id: string) {
     const user = await this.UserRepository.findById(id);
     return {
@@ -342,55 +330,54 @@ class UserUseCase {
 
   async editProfile(userId: string, userData: any, file: any) {
     const userDetails = await this.UserRepository.findById(userId);
-   if(userDetails){
-    if (file) {
-      const profilePic = await this._SharpImages.sharpenImage(
-        file,
-        640,
-        640,
-        "userProfile"
-      );
-
-      const obj = {
-        imageUrl: profilePic.secure_url,
-        public_id: profilePic.public_id,
-      };
-
-      if (userDetails && userDetails?.profilePic?.public_id !== "") {
-        this._CloudinayUpload.deleteImage(userDetails?.profilePic.public_id);
-      }
-      const usr = { ...userData, profilePic: obj };
-
-      if (!userData.mobileNumber) {
-        delete usr.mobileNumber;
-      }
-
-      if (!userData.oldPassword) {
-        delete usr.oldPassword;
-        delete usr.password;
-      } else {
-        const isPasswordMatch = await this.EncryptPassword.compare(
-          userData.password,
-          userDetails?.password
+    if (userDetails) {
+      if (file) {
+        const profilePic = await this._SharpImages.sharpenImage(
+          file,
+          640,
+          640,
+          "userProfile"
         );
-        if (isPasswordMatch) {
-          const hashedPassword = await this.EncryptPassword.encryptPassword(
-            userData.password
+
+        const obj = {
+          imageUrl: profilePic.secure_url,
+          public_id: profilePic.public_id,
+        };
+
+        if (userDetails && userDetails?.profilePic?.public_id !== "") {
+          this._CloudinayUpload.deleteImage(userDetails?.profilePic.public_id);
+        }
+        const usr = { ...userData, profilePic: obj };
+
+        if (!userData.mobileNumber) {
+          delete usr.mobileNumber;
+        }
+
+        if (!userData.oldPassword) {
+          delete usr.oldPassword;
+          delete usr.password;
+        } else {
+          const isPasswordMatch = await this.EncryptPassword.compare(
+            userData.password,
+            userDetails?.password
           );
-          usr.password = hashedPassword;
-        }else{
-          return {
-            status: 400,
-            data: {
-              success: false,
-              message: "Old password is incorrect",
-            },
+          if (isPasswordMatch) {
+            const hashedPassword = await this.EncryptPassword.encryptPassword(
+              userData.password
+            );
+            usr.password = hashedPassword;
+          } else {
+            return {
+              status: 400,
+              data: {
+                success: false,
+                message: "Old password is incorrect",
+              },
+            };
           }
         }
-      }
-      await this.UserRepository.findByIdAndUpdateProfile(userId, usr);
-    } else {
-
+        await this.UserRepository.findByIdAndUpdateProfile(userId, usr);
+      } else {
         const usr = { ...userData };
         delete usr.profilePic;
 
@@ -415,44 +402,39 @@ class UserUseCase {
         }
 
         await this.UserRepository.findByIdAndUpdateProfile(userId, usr);
-      
+      }
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: "Profile updated successfully",
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "User not found",
+        },
+      };
     }
-    return {
-      status: 200,
-      data: {
-        success: true,
-        message: "Profile updated successfully",
-      },
-    };
-    
-   }else{
-    return {
-      status: 400,
-      data: {
-        success: false,
-        message: "User not found",
-      },
-    };
-   }
-   
-
- 
   }
 
-
-  async isReviewPossible (userId: string, gymId: string) {
-
-    const isPossible = await this._SubscriptionRespository.isReviewPossible(userId, gymId);
-    console.log("isPossible", isPossible)
+  async isReviewPossible(userId: string, gymId: string) {
+    const isPossible = await this._SubscriptionRespository.isReviewPossible(
+      userId,
+      gymId
+    );
+    console.log("isPossible", isPossible);
 
     return {
       status: 200,
       data: {
         success: true,
-        isPossible: isPossible
-      }
-    }
-
+        isPossible: isPossible,
+      },
+    };
   }
 
   async addGymReview(userId: string, body: any) {
@@ -462,66 +444,69 @@ class UserUseCase {
       data: {
         success: true,
         message: "Review added successfully",
-      }
-    }
+      },
+    };
   }
 
-  async getGymReviews(userId: string,gymId: string) {
+  async getGymReviews(userId: string, gymId: string) {
     const reviews = await this._GymReviewsRepository.getAllGymReviews(gymId);
-    const isUserReviewed = await this._GymReviewsRepository.isUserReviewed(userId,gymId);
+    const isUserReviewed = await this._GymReviewsRepository.isUserReviewed(
+      userId,
+      gymId 
+    );
     return {
       status: 200,
       data: {
         success: true,
         reviews,
-        isUserReviewed
-      }
-    }
+        isUserReviewed,
+      },
+    };
   }
 
   async updateRatingGym(reviewData: any, reviewId: string) {
-   
-    const review = await this._GymReviewsRepository.updateRatingGym(reviewData, reviewId);
+    const review = await this._GymReviewsRepository.updateRatingGym(
+      reviewData,
+      reviewId
+    );
     return {
       status: 200,
       data: {
         success: true,
         message: "Rating updated successfully",
-      }
-    }
-
+      },
+    };
   }
 
-  async getWorkoutsList(){
-
-   const dataPath = path.join(__dirname,'../infrastructure/utils/static/bodyPartList.json');
-   const workoutList = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-   return {
-    status: 200,
-    data:{
-      success: true,
-      workoutList
-    }
-
-  }
-
-}
-
-async getExercisesDetails(bodyPart: string) {
-
-    const dataPath= path.join(__dirname,`../infrastructure/utils/static/${bodyPart}.json`)
-    const details = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  async getWorkoutsList() {
+    const dataPath = path.join(
+      __dirname,
+      "../infrastructure/utils/static/bodyPartList.json"
+    );
+    const workoutList = JSON.parse(fs.readFileSync(dataPath, "utf8"));
     return {
       status: 200,
-      data:{
+      data: {
         success: true,
-        details
-      }
-    }
-}
+        workoutList,
+      },
+    };
+  }
 
-
-
+  async getExercisesDetails(bodyPart: string) {
+    const dataPath = path.join(
+      __dirname,
+      `../infrastructure/utils/static/${bodyPart}.json`
+    );
+    const details = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+    return {
+      status: 200,
+      data: {
+        success: true,
+        details,
+      },
+    };
+  }
 }
 
 export default UserUseCase;
