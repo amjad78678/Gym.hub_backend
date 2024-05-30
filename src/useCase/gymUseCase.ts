@@ -379,5 +379,17 @@ class GymUseCase {
       },
     };
   }
+
+  async fetchGymData(gymId: string) {
+    const gym = await this._GymRepository.findById(gymId);
+    return {
+      status: 200,
+      data: {
+        status: true,
+        gymData: gym,
+      },
+    }
+
+  }
 }
 export default GymUseCase;

@@ -25,11 +25,11 @@ function socketServer(server: any) {
     console.log("Current users:", users);
   };
 
-  const removeUser = (socketId: string) => {
-    users = users.filter((user) => user.socketId !== socketId);
-    console.log("Removed user with socket ID:", socketId);
-    console.log("Current users after removal:", users);
-  };
+  // const removeUser = (socketId: string) => {
+  //   users = users.filter((user) => user.socketId !== socketId);
+  //   console.log("Removed user with socket ID:", socketId);
+  //   console.log("Current users after removal:", users);
+  // };
 
   const getUser = (userId: string) =>
     users.find((user) => user.userId === userId);
@@ -44,7 +44,6 @@ function socketServer(server: any) {
 
     socket.on("send_message", ({ sender, receiver, content }) => {
       console.log("send_message event triggered");
-      console.log("sender:", sender, "receiver:", receiver, "content:", content);
       const receiverData = getUser(receiver);
       console.log("Receiver data:", receiverData);
       if (receiverData) {
@@ -68,7 +67,7 @@ function socketServer(server: any) {
 
     socket.on("disconnect", () => {
       console.log("User disconnected", socket.id);
-      removeUser(socket.id);
+      // removeUser(socket.id);
     });
   });
 

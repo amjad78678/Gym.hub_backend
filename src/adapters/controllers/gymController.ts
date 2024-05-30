@@ -371,7 +371,21 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
+   
+    }
+  }
+
+  async fetchGymData (req: Request,res: Response) {
+    try {
+      const gymId = req.gymId || "";
+      const response = await this._GymUseCase.fetchGymData(gymId)
+      res.status(response.status).json(response.data)
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
     }
   }
 }
