@@ -152,9 +152,10 @@ class UserController {
 
   async getGymList(req: Request, res: Response) {
     try {
-      const { latitude, longitude } = req.query;
+      const { latitude, longitude,page } = req.query;
 
-      const gymList = await this.userUseCase.getGymList(latitude, longitude);
+      const gymList = await this.userUseCase.getGymList(latitude, longitude,parseInt(page as string));
+     
 
       res.status(gymList.status).json(gymList.data);
     } catch (error) {

@@ -45,6 +45,7 @@ function socketServer(server: any) {
     socket.on("send_message", ({ sender, receiver, content }) => {
       console.log("send_message event triggered");
       const receiverData = getUser(receiver);
+      console.log("Sender data:", getUser(sender));
       console.log("Receiver data:", receiverData);
       if (receiverData) {
         io.to(receiverData.socketId).emit("message", {

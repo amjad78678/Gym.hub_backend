@@ -172,14 +172,17 @@ class UserUseCase {
     }
   }
 
-  async getGymList(latitude: any, longitude: any) {
-    const gymList = await this._GymRepository.findNearGym(latitude, longitude);
-
+  async getGymList(latitude: any, longitude: any,page: number) {
+    console.log('iam page',page)
+    const gymList = await this._GymRepository.findNearGym(latitude, longitude,page);
+    const total = await this._GymRepository.findAllLen()
+    console.log('gym list',gymList,gymList?.length,page)
     return {
       status: 200,
       data: {
         success: false,
         message: gymList,
+        total
       },
     };
   }
