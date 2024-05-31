@@ -6,16 +6,25 @@ import TrainerModel from "../db/trainerModal";
 
 class TrainerRepository implements iTrainerRepo {
 
-  async findAllTrainers(page: any): Promise<Trainer[] | null> {
-    const limit = page * 4;
-    const trainers = await TrainerModel.find().limit(limit).populate("gymId");
-    return trainers;
-
-  }
+async findAllTrainers(): Promise<Trainer[] | null> {
+  const trainers = await TrainerModel.find().populate("gymId");
+  return trainers;
+}
+async findTrainersInUserSide(page: any): Promise<Trainer[] | null> {
+  const limit = 4;
+  const offset = (page - 1) * limit;
+  const trainers = await TrainerModel.find().limit(limit).skip(offset).populate("gymId");
+  console.log('trainers from repository', trainers, trainers.length);
+  return trainers;
+}
+async findFullResultLen (){
+  const length = await TrainerModel.find().countDocuments();
+  return length
+}
   async findById(_id: string): Promise<Trainer[] | null> {
     const trainers = await TrainerModel.find({ gymId: _id }).populate("gymId");
     return trainers;
-  }
+  } 
 async findByIdTrainer(_id: string): Promise<Trainer | null> {
   const trainer = await TrainerModel.findById(_id)
   return trainer

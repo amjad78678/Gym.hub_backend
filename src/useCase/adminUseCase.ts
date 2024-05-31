@@ -234,8 +234,7 @@ class AdminUseCase {
   }
 
   async fetchTrainers(){
-    const page =1
-    const trainers = await this._TrainerRepository.findAllTrainers(page);
+    const trainers = await this._TrainerRepository.findAllTrainers();
     return {
       status: 200,
       data: {

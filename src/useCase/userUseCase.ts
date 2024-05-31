@@ -208,12 +208,14 @@ class UserUseCase {
   }
 
   async getTrainers(page: any) {
-    const trainers = await this._TrainerRepository.findAllTrainers(page);
+    const trainers = await this._TrainerRepository.findTrainersInUserSide(page);
+    const fullResult = await this._TrainerRepository.findFullResultLen()
     return {
       status: 200,
       data: {
         success: true,
         trainers,
+        fullResult
       },
     };
   }
