@@ -65,12 +65,13 @@ function socketServer(server: any) {
 
     socket.on("typing", ({ typeTo }) => {
       const user = getUser(typeTo);
-      if (user) io.to(user.socketId).emit("typing");
+      console.log('ivanode typing',user)
+      if (user) io.to(user.socketId).emit("typedUser");
     });
 
     socket.on("stop_typing", ({ typeTo }) => {
       const user = getUser(typeTo);
-      if (user) io.to(user.socketId).emit("stop_typing");
+      if (user) io.to(user.socketId).emit("stopTypedUser");
     });
 
     socket.on("call:start", ({ sender, receiver }) => {
