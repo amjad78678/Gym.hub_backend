@@ -19,34 +19,52 @@ function socketServer(server: any) {
     const userExists = users.find((user) => user.userId === userId);
     if (userExists) {
       userExists.socketId = socketId;
+    
     } else {
       users.push({ userId, socketId });
     }
     console.log("Current users:", users);
   };
 
-  // const removeUser = (socketId: string) => {
-  //   users = users.filter((user) => user.socketId !== socketId);
-  //   console.log("Removed user with socket ID:", socketId);
-  //   console.log("Current users after removal:", users);
-  // };
+  const removeUser = (socketId: string) => {
+    users = users.filter((user) => user.socketId !== socketId);
+    console.log("Removed user with socket ID:", socketId);
+    console.log("Current users after removal:", users);
+  };
 
   const getUser = (userId: string) =>
     users.find((user) => user.userId === userId);
 
   io.on("connection", (socket: Socket) => {
     console.log("A user connected", socket.id);
-
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
       io.emit("connected");
     });
 
+    socket.on("user_online", (receiverId: string) => {
+      const onlinedUser = getUser(receiverId);
+      if (onlinedUser) {
+        io.to(onlinedUser.socketId).emit("onlined");
+      }
+    });
+
+    socket.on("user_offline", (receiverId: string) => {
+      const offlinedUser = getUser(receiverId);
+      if (offlinedUser) {
+        io.to(offlinedUser.socketId).emit("offlined");
+      }
+    });
+
     socket.on("send_message", ({ sender, receiver, content }) => {
       console.log("send_message event triggered");
       const receiverData = getUser(receiver);
-      console.log("Sender data:", getUser(sender));
+      const senderData = getUser(sender);
+      console.log("Sender data:", senderData);
       console.log("Receiver data:", receiverData);
+      if (senderData?.socketId === receiverData?.socketId) {
+        console.log("user socket and trainer socket have been same so far");
+      }
       if (receiverData) {
         io.to(receiverData.socketId).emit("message", {
           sender,
@@ -55,7 +73,6 @@ function socketServer(server: any) {
         });
       }
     });
-
 
     socket.on("typing", ({ typeTo }) => {
       const user = getUser(typeTo);
@@ -67,18 +84,16 @@ function socketServer(server: any) {
       if (user) io.to(user.socketId).emit("stop_typing");
     });
 
-    socket.on("call:start",({sender,receiver})=>{      
-      const receiverData = getUser(receiver)
-      if(receiverData){
-        io.to(receiverData.socketId).emit("call:start",sender)
+    socket.on("call:start", ({ sender, receiver }) => {
+      const receiverData = getUser(receiver);
+      if (receiverData) {
+        io.to(receiverData.socketId).emit("call:start", sender);
       }
-      
-    })
-
+    });
 
     socket.on("disconnect", () => {
       console.log("User disconnected", socket.id);
-      // removeUser(socket.id);
+      removeUser(socket.id);
     });
   });
 
