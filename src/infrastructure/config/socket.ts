@@ -45,7 +45,7 @@ function socketServer(server: any) {
     });
 
  
-    socket.on("send_message", ({ sender, receiver, content }) => {
+    socket.on("send_message", ({ sender, receiver, content,createdAt }) => {
       console.log("send_message event triggered");
       const receiverData = getUser(receiver);
       const senderData = getUser(sender);
@@ -59,6 +59,7 @@ function socketServer(server: any) {
           sender,
           receiver,
           content,
+          createdAt
         });
       }
     });
