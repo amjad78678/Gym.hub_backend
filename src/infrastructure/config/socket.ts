@@ -11,6 +11,7 @@ function socketServer(server: any) {
   interface Users {
     userId: string;
     socketId: string;
+    online: boolean;
   }
   let users: Users[] = [];
 
@@ -19,11 +20,12 @@ function socketServer(server: any) {
     const userExists = users.find((user) => user.userId === userId);
     if (userExists) {
       userExists.socketId = socketId;
-    
+      userExists.online = true
     } else {
-      users.push({ userId, socketId });
+      users.push({ userId, socketId,online:true });
     }
-    console.log("Current users:", users);
+    io.emit('onlined_users',users.filter((user)=>user.online))
+    console.log('onlined users',users)
   };
 
   const removeUser = (socketId: string) => {
@@ -42,20 +44,7 @@ function socketServer(server: any) {
       io.emit("connected");
     });
 
-    socket.on("user_online", (receiverId: string) => {
-      const onlinedUser = getUser(receiverId);
-      if (onlinedUser) {
-        io.to(onlinedUser.socketId).emit("onlined");
-      }
-    });
-
-    socket.on("user_offline", (receiverId: string) => {
-      const offlinedUser = getUser(receiverId);
-      if (offlinedUser) {
-        io.to(offlinedUser.socketId).emit("offlined");
-      }
-    });
-
+ 
     socket.on("send_message", ({ sender, receiver, content }) => {
       console.log("send_message event triggered");
       const receiverData = getUser(receiver);
