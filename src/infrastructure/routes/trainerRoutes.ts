@@ -11,12 +11,14 @@ import MessageController from "../../adapters/controllers/messageController";
 import MessageUseCase from "../../useCase/messageUseCase";
 import MessageRepository from "../repository/messageRepository";
 import UserRepository from "../repository/userRepository";
+import CloudinaryUpload from "../utils/cloudinaryUpload";
 
 //services
 const encryptPassword = new EncryptPassword();
 const jwtToken = new JWTToken();
 const generateOtp = new GenerateOtp();
 const generateEmail = new GenerateEmail();
+const cloudinaryUpload= new CloudinaryUpload();
 
 //repositories
 const trainerRepository = new TrainerRepository();
@@ -30,7 +32,7 @@ const trainerUseCase = new TrainerUseCase(
   jwtToken,
   userRepository
 );
-const messageUseCase= new MessageUseCase(messageRepository)
+const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload)
 
 //controllers
 const trainerController = new TrainerController(

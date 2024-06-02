@@ -44,10 +44,7 @@ class MessageController {
   async getConversationData (req: Request, res: Response) {
 
     try {
-
       const {sender,receiver} = req.params
-
-
       const response = await this._MessageUseCase.getConversationData(sender,receiver);
       return res.status(response.status).json(response.data);
 
@@ -60,6 +57,20 @@ class MessageController {
      });
     }
  
+ }
+
+ async uploadChatFiles (req: Request,res: Response) {
+  try {
+    console.log('iam file here',req.files)
+    const response = await this._MessageUseCase.uploadChatFiles(req.files,req.body);
+    return res.status(response.status).json(response.data);
+  } catch (error) {
+    const err: Error = error as Error;
+    res.status(400).json({
+      message: err.message,
+      stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    });
+  }
  }
 }
 

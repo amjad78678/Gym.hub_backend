@@ -152,10 +152,13 @@ class UserController {
 
   async getGymList(req: Request, res: Response) {
     try {
-      const { latitude, longitude,page } = req.query;
+      const { latitude, longitude, page } = req.query;
 
-      const gymList = await this.userUseCase.getGymList(latitude, longitude,parseInt(page as string));
-     
+      const gymList = await this.userUseCase.getGymList(
+        latitude,
+        longitude,
+        parseInt(page as string)
+      );
 
       res.status(gymList.status).json(gymList.data);
     } catch (error) {
@@ -197,9 +200,9 @@ class UserController {
 
   async getTrainers(req: Request, res: Response) {
     try {
-      const {page} = req.params
-      console.log('iam page',page)
-      const trainers = await this.userUseCase.getTrainers(parseInt(page))   ;
+      const { page } = req.params;
+      console.log("iam page", page);
+      const trainers = await this.userUseCase.getTrainers(parseInt(page));
       res.status(trainers.status).json(trainers.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -366,8 +369,8 @@ class UserController {
       res.status(400).json({
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
-    });
-  }
+      });
+    }
   }
 
   async getTrainerDetails(req: Request, res: Response) {
@@ -384,13 +387,16 @@ class UserController {
     }
   }
 
-
   async editProfile(req: Request, res: Response) {
     try {
       const userId = req.userId || "";
       const body = req.body;
-      console.log('iam req.body',req.body);
-      const userData = await this.userUseCase.editProfile(userId, body, req.file);
+      console.log("iam req.body", req.body);
+      const userData = await this.userUseCase.editProfile(
+        userId,
+        body,
+        req.file
+      );
       res.status(userData.status).json(userData.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -404,10 +410,10 @@ class UserController {
   async isReviewPossible(req: Request, res: Response) {
     try {
       const userId = req.userId || "";
-      const {gymId} = req.params;
+      const { gymId } = req.params;
 
-      console.log('iam gymId',gymId)
-      console.log('iam userId',userId)
+      console.log("iam gymId", gymId);
+      console.log("iam userId", userId);
       const result = await this.userUseCase.isReviewPossible(userId, gymId);
       res.status(result.status).json(result.data);
     } catch (error) {
@@ -436,9 +442,9 @@ class UserController {
 
   async getGymReviews(req: Request, res: Response) {
     try {
-      const {gymId} = req.params;
+      const { gymId } = req.params;
       const userId = req.userId || "";
-      const result = await this.userUseCase.getGymReviews(userId,gymId);
+      const result = await this.userUseCase.getGymReviews(userId, gymId);
       res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -451,10 +457,10 @@ class UserController {
 
   async updateRatingGym(req: Request, res: Response) {
     try {
-      const {userReviewId} = req.body;
-      const body = {...req.body}
-      delete body.userReviewId
-      const result = await this.userUseCase.updateRatingGym(body,userReviewId);
+      const { userReviewId } = req.body;
+      const body = { ...req.body };
+      delete body.userReviewId;
+      const result = await this.userUseCase.updateRatingGym(body, userReviewId);
       res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -465,13 +471,11 @@ class UserController {
     }
   }
 
-  async getWorkoutsList(req: Request,res: Response){
+  async getWorkoutsList(req: Request, res: Response) {
     try {
-    const result = await this.userUseCase.getWorkoutsList()
-    console.log('iam result',result)
-      res.status(result.status).json(result.data)
-
-
+      const result = await this.userUseCase.getWorkoutsList();
+      console.log("iam result", result);
+      res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -483,10 +487,9 @@ class UserController {
 
   async getExercisesDetails(req: Request, res: Response) {
     try {
-      const {body} = req.params
-      const result = await this.userUseCase.getExercisesDetails(body)
-      res.status(result.status).json(result.data)
-      
+      const { body } = req.params;
+      const result = await this.userUseCase.getExercisesDetails(body);
+      res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -495,10 +498,6 @@ class UserController {
       });
     }
   }
-
-
-
-
 }
 
 export default UserController;
