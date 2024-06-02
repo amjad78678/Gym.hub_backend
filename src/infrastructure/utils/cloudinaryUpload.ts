@@ -16,6 +16,19 @@ class CloudinaryUpload {
     return result;
   }
 
+  async uploadVideo(filePath: string, folder: string) {
+    const result = await cloudinary.uploader.upload(filePath, {
+      resource_type: "video",
+      folder: folder,
+    });
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error deleting file:", err);
+      }
+    });
+    return result;
+  }
+
   async uploadBuffer(
     buffer: Buffer,
     filePath: string,
