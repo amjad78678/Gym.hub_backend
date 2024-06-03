@@ -179,9 +179,10 @@ class UserUseCase {
       longitude,
       page
     );
-    const averageGymReview =await this._GymReviewsRepository.findAverageReview()
-    console.log("gym list", gymList, gymList?.length, page);
     
+    // const averageGymReview =await this._GymReviewsRepository.findAverageReview()
+    console.log("gym list", gymList, gymList?.length, page);
+
     const total = await this._GymRepository.findAllLen();
 
     return {

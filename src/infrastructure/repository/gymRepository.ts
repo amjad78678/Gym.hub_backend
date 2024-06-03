@@ -16,9 +16,10 @@ class GymRepository implements iGymRepo {
     return gymData;
   }
   async findById(_id: string): Promise<Gym | null> {
-    const gymData = await GymModel.findById(_id); 
+    const gymData = await GymModel.findById(_id);
     return gymData;
   }
+
   async findNearGym(
     latitude: number,
     longitude: number,
@@ -26,26 +27,52 @@ class GymRepository implements iGymRepo {
   ): Promise<Gym[] | null> {
     const limit = 4;
     const offset = (page - 1) * limit;
-    const gymData = await GymModel.find({
-      location: {
-        $near: {
-          $geometry: {
+    const gymData = await GymModel.aggregate([
+      {
+        $geoNear: {
+          near: {
             type: "Point",
-            coordinates: [longitude, latitude],
+            coordinates: [Number(longitude), Number(latitude)],
           },
-          $maxDistance: 1000000.0,
+          distanceField: "dist.calculated",
+          maxDistance: 1000000 * 1000,
+          spherical: true,
         },
       },
-    })
-      .skip(offset)
-      .limit(limit);
+      {
+        $skip: offset,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "gymreviews",
+          localField: "_id",
+          foreignField: "gymId",
+          as: "reviews",
+        },
+      },
+      {
+        $addFields: {
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: "$reviews" }, 0] },
+              then: { $avg: "$reviews.rating" },
+              else: null,
+            },
+          },
+          totalReviews: { $size: "$reviews" },
+        },
+      },
+    ]);
 
     return gymData;
   }
 
-  async findAllLen (): Promise<number>  {
+  async findAllLen(): Promise<number> {
     const length = await GymModel.find().countDocuments();
-    return length
+    return length;
   }
 
   async findAllGyms(): Promise<Gym[] | null> {
