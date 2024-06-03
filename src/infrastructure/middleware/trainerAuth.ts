@@ -39,13 +39,13 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       if (trainer) {
-        req.trainerId = trainer._id;
-
         if (trainer.isBlocked) {
           return res
             .status(401)
             .json({ message: "Gym have been blocked by admin!" });
         } else {
+          req.trainerId = decodedData.userId;
+
           next();
         }
       }

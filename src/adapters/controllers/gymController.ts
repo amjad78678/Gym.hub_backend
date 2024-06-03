@@ -292,6 +292,7 @@ class GymController {
     try {
 
       const gymId = req.gymId || "";
+      console.log('iam gymId',gymId)
       const trainers = await this._GymUseCase.fetchGymTrainers(gymId);
 
       res.status(trainers.status).json(trainers.data);

@@ -41,11 +41,11 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       if (user) {
-        req.userId = user._id;
         if (user.isBlocked) {
           return res.status(401).json({ message: "You are blocked by admin!" });
         } else {
-          next();
+        req.userId = decodedData.userId;
+        next();
         }
       } else {
         return res

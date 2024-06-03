@@ -14,17 +14,11 @@ declare global {
 }
 
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-
-
   const gymToken = req.headers.authorization?.split(" ")[1];
-
+  console.log("iam token", gymToken);
   if (!gymToken) {
-    return res.status(401)
-    .json({ message: "Not authorized, invalid token" });
+    return res.status(401).json({ message: "Not authorized, invalid token" });
   }
-
-
-
 
   if (gymToken) {
     try {
@@ -33,9 +27,9 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
 
+      console.log("iam decodedData", decodedData);
 
       const gym = await _gymRepo.findById(decodedData.userId as string);
-
 
       if (decodedData && (!decodedData.role || decodedData.role !== "gym")) {
         return res
@@ -44,13 +38,13 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       if (gym) {
-        req.gymId = gym._id;
-
         if (gym.isBlocked) {
           return res
             .status(401)
             .json({ message: "Gym have been blocked by admin!" });
         } else {
+          console.log("iam gym", gym);
+          req.gymId = decodedData.userId;
           next();
         }
       }
