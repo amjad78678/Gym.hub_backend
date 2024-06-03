@@ -188,7 +188,7 @@ router.post(
 router.post("/add_review", protect, (req, res) =>
   userController.addGymReview(req, res)
 );
-router.get("/fetch_gym_reviews/:gymId", protect, (req, res) =>
+router.get("/fetch_gym_reviews/:gymId", (req, res) =>
   userController.getGymReviews(req, res)
 );
 router.post("/update_rating", protect, (req, res) =>

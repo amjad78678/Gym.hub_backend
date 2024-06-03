@@ -442,8 +442,7 @@ class UserController {
   async getGymReviews(req: Request, res: Response) {
     try {
       const { gymId } = req.params;
-      const userId = req.userId || "";
-      const result = await this.userUseCase.getGymReviews(userId, gymId);
+      const result = await this.userUseCase.getGymReviews( gymId);
       res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;

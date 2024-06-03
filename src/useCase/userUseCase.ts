@@ -172,17 +172,24 @@ class UserUseCase {
     }
   }
 
-  async getGymList(latitude: any, longitude: any,page: number) {
-    console.log('iam page',page)
-    const gymList = await this._GymRepository.findNearGym(latitude, longitude,page);
-    const total = await this._GymRepository.findAllLen()
-    console.log('gym list',gymList,gymList?.length,page)
+  async getGymList(latitude: any, longitude: any, page: number) {
+    console.log("iam page", page);
+    const gymList = await this._GymRepository.findNearGym(
+      latitude,
+      longitude,
+      page
+    );
+    const averageGymReview =await this._GymReviewsRepository.findAverageReview()
+    console.log("gym list", gymList, gymList?.length, page);
+    
+    const total = await this._GymRepository.findAllLen();
+
     return {
       status: 200,
       data: {
         success: false,
         message: gymList,
-        total
+        total,
       },
     };
   }
@@ -211,13 +218,13 @@ class UserUseCase {
 
   async getTrainers(page: any) {
     const trainers = await this._TrainerRepository.findTrainersInUserSide(page);
-    const fullResult = await this._TrainerRepository.findFullResultLen()
+    const fullResult = await this._TrainerRepository.findFullResultLen();
     return {
       status: 200,
       data: {
         success: true,
         trainers,
-        fullResult
+        fullResult,
       },
     };
   }
@@ -430,6 +437,10 @@ class UserUseCase {
       userId,
       gymId
     );
+    const isUserReviewed = await this._GymReviewsRepository.isUserReviewed(
+      userId,
+      gymId
+    );
     console.log("isPossible", isPossible);
 
     return {
@@ -437,6 +448,7 @@ class UserUseCase {
       data: {
         success: true,
         isPossible: isPossible,
+        isUserReviewed,
       },
     };
   }
@@ -452,18 +464,14 @@ class UserUseCase {
     };
   }
 
-  async getGymReviews(userId: string, gymId: string) {
+  async getGymReviews(gymId: string) {
     const reviews = await this._GymReviewsRepository.getAllGymReviews(gymId);
-    const isUserReviewed = await this._GymReviewsRepository.isUserReviewed(
-      userId,
-      gymId 
-    );
+
     return {
       status: 200,
       data: {
         success: true,
         reviews,
-        isUserReviewed,
       },
     };
   }
