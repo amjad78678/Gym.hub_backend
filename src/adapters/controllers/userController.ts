@@ -411,7 +411,6 @@ class UserController {
     try {
       const userId = req.userId || "";
       const { gymId } = req.params;
-
       console.log("iam gymId", gymId);
       console.log("iam userId", userId);
       const result = await this.userUseCase.isReviewPossible(userId, gymId);

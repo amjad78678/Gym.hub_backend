@@ -130,6 +130,9 @@ router.get("/gym_list_normal", (req, res) =>
 router.get("/gym_details/:id", (req, res) =>
   userController.getGymDetails(req, res)
 );
+router.get("/is_review_possible/:gymId", protect, (req, res) =>
+  userController.isReviewPossible(req, res)
+);
 router.get("/fetch_trainers/:page", (req, res) =>
   userController.getTrainers(req, res)
 );
@@ -181,9 +184,7 @@ router.post(
   protect,
   (req, res) => userController.editProfile(req, res)
 );
-router.get("/is_review_possible/:gymId", protect, (req, res) =>
-  userController.isReviewPossible(req, res)
-);
+
 router.post("/add_review", protect, (req, res) =>
   userController.addGymReview(req, res)
 );
