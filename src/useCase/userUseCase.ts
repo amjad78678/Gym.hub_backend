@@ -179,7 +179,7 @@ class UserUseCase {
       longitude,
       page
     );
-    
+
     // const averageGymReview =await this._GymReviewsRepository.findAverageReview()
     console.log("gym list", gymList, gymList?.length, page);
 
@@ -207,9 +207,9 @@ class UserUseCase {
   }
 
   async getGymDetails(id: string) {
-    const gymDetails = await this._GymRepository.findById(id); 
+    const gymDetails = await this._GymRepository.findById(id);
 
-    console.log('iam gymdetailais',gymDetails)
+    console.log("iam gymdetailais", gymDetails);
     return {
       status: 200,
       data: {
