@@ -15,8 +15,29 @@ class GymRepository implements iGymRepo {
     const gymData = await GymModel.findOne({ email: email });
     return gymData;
   }
-  async findById(_id: string): Promise<Gym | null> {
-    const gymData = await GymModel.findById(_id);
+  async findById(_id: string): Promise<any | null> {
+    const gymData = await GymModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(_id) } },
+      {
+        $lookup: {
+          from: "gymreviews",
+          localField: "_id",
+          foreignField: "gymId",
+          as: "reviews",
+        },
+      },
+      {
+        $addFields: {
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: "$reviews" }, 0] },
+              then: { $avg: "$reviews.rating" },
+              else: 0,
+            },
+          },
+        },
+      },
+    ]);
     return gymData;
   }
 
