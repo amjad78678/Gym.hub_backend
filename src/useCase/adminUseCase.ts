@@ -5,6 +5,8 @@ import GenerateEmail from "../infrastructure/services/sendEmail";
 import UserRepository from "../infrastructure/repository/userRepository";
 import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
+import GymModel from "../infrastructure/db/gymModel";
+import BookTrainerRepository from "../infrastructure/repository/bookTrainerRepository";
 
 class AdminUseCase {
   private _GymRepository: GymRepository;
@@ -13,6 +15,7 @@ class AdminUseCase {
   private _JwtToken: JWTToken;
   private _SubscriptionRepository: SubscriptionRepository;
   private _TrainerRepository: TrainerRepository;
+  private _BookTrainerRepository: BookTrainerRepository;
 
   constructor(
     gymRepository: GymRepository,
@@ -20,7 +23,8 @@ class AdminUseCase {
     jwtToken: JWTToken,
     userRepository: UserRepository,
     subscriptionRepository: SubscriptionRepository,
-    trainerRepository: TrainerRepository
+    trainerRepository: TrainerRepository,
+    bookTrainerRepository: BookTrainerRepository
   ) {
     this._GymRepository = gymRepository;
     this._GenerateEmail = generateEmail;
@@ -28,6 +32,7 @@ class AdminUseCase {
     this._UserRepository = userRepository;
     this._SubscriptionRepository = subscriptionRepository;
     this._TrainerRepository = trainerRepository;
+    this._BookTrainerRepository = bookTrainerRepository;
   }
 
   async getGymDetails() {
@@ -50,7 +55,7 @@ class AdminUseCase {
       if (res.type === "rejected") {
         this._GenerateEmail.sendGymRejectEmail(gymData[0].email, res.reason);
         await this._GymRepository.rejectGym(res.id, true);
-      } else if (res.type === "accepted") {     
+      } else if (res.type === "accepted") {
         this._GenerateEmail.sendGymAcceptEmail(gymData[0].email);
         await this._GymRepository.editGymStatus(res.id, true);
       }
@@ -244,6 +249,33 @@ class AdminUseCase {
       data: {
         success: true,
         message: "Trainer updated successfully",
+      },
+    };
+  }
+
+  async fetchRecentlyUsers() {
+    const userData = await this._UserRepository.findRecentlyUsers();
+    const gymData = await this._GymRepository.findRecentlyGyms();
+    const totalSalesOfSubscription =
+      await this._SubscriptionRepository.findTotalSalesOfSubscriptions();
+    console.log("totalSalesOfSubscription", totalSalesOfSubscription);
+    const totalSalesOfTrainer =
+      await this._BookTrainerRepository.findTotalSalesOfTrainer();
+      console.log("totalSalesOfTrainer", totalSalesOfTrainer)
+
+      const totalUsers = await this._UserRepository.findTotalUsers();
+      const totalTrainers = await this._TrainerRepository.findTotalTrainers();
+      const totalGyms = await this._GymRepository.findTotalGyms();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        recently: userData,
+        recGym: gymData,
+        totalSales: totalSalesOfSubscription[0].totalSales+totalSalesOfTrainer[0].totalSales,
+        totalUsers,
+        totalTrainers,
+        totalGyms
       },
     };
   }

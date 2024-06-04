@@ -13,6 +13,8 @@ import BannerUseCase from '../../useCase/bannerUseCase';
 import BannerRepository from '../repository/bannerRepository';
 import SharpImages from '../services/sharpImages';
 import CloudinaryUpload from '../utils/cloudinaryUpload';
+import UserController from '../../adapters/controllers/userController';
+import BookTrainerRepository from '../repository/bookTrainerRepository';
 
 
 //services
@@ -28,19 +30,18 @@ const userRepository=new UserRepository()
 const subscriptionRepository = new SubscriptionRepository()
 const trainerRepository = new TrainerRepository()
 const bannerRepository = new BannerRepository()
-
+const bookTrainerRepository = new BookTrainerRepository()
 
 
 //usecases
 
-const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository,trainerRepository)
+const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository,trainerRepository,bookTrainerRepository)
 const bannerUseCase= new BannerUseCase(bannerRepository,sharpImages,cloudinaryUpload)
 
 //controllers
 
 const adminController=new AdminController(adminUseCase)
 const bannerController=new BannerController(bannerUseCase)
-
 
 
 
@@ -62,5 +63,6 @@ router.put('/update_trainer',(req,res)=>adminController.updateTrainer(req,res))
 router.post('/add_banner',ImageUpload.single('bannerImage'),(req,res)=>bannerController.addBanner(req,res))
 router.get('/fetch_banners',(req,res)=>bannerController.fetchBanners(req,res))
 router.put('/update_banner',ImageUpload.single('bannerImage'),(req,res)=>bannerController.updateBanner(req,res))
+router.get('/recently_users',(req,res)=>adminController.fetchRecentlyUsers(req,res))
  
 export default router 

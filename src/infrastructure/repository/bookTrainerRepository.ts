@@ -19,6 +19,18 @@ class BookTrainerRepository implements iBookTrainerRepo{
         }
         return false
     }
+
+    async findTotalSalesOfTrainer(): Promise<any[]> {
+        const trainers = await TrainerBookingModel.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalSales: { $sum: "$amount" }
+                }
+            }
+        ])
+        return trainers
+    }
 }
 
 export default BookTrainerRepository

@@ -6,6 +6,10 @@ import TrainerModel from "../db/trainerModal";
 
 class TrainerRepository implements iTrainerRepo {
 
+  async findTotalTrainers(): Promise<any> {
+    const trainers = await TrainerModel.find().countDocuments();
+    return trainers
+  }
 async findAllTrainers(): Promise<Trainer[] | null> {
   const trainers = await TrainerModel.find().populate("gymId");
   return trainers;
@@ -76,6 +80,8 @@ async findByIdTrainer(_id: string): Promise<Trainer | null> {
 
     return trainers;
   }
+
+
 
 }
 

@@ -1,6 +1,7 @@
 import User from "../../domain/user";
 import UserModel from "../db/userModel";
 import UserRepo from "../../useCase/interface/userRepo";
+import GymModel from "../db/gymModel";
 
 class UserRepository implements UserRepo {
   async save(user: User): Promise<User> {
@@ -71,6 +72,16 @@ class UserRepository implements UserRepo {
       return false;
     }
   }
-}
 
+  async findRecentlyUsers(): Promise<{}[] | null> {
+    const userData = await UserModel.find().sort({createdAt: -1}).limit(5);
+    return userData;
+  }
+
+  async findTotalUsers(): Promise<{} | null> {
+    const userData = await UserModel.find().countDocuments();
+    return userData;
+
+}
+}
 export default UserRepository;
