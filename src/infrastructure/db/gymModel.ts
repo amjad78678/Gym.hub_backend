@@ -38,7 +38,6 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       type: Boolean,
       default: false,
     },
-
     location: {
       type: { type: String },
       coordinates: [Number],

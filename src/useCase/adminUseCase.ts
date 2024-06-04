@@ -44,7 +44,6 @@ class AdminUseCase {
 
   async gymAdminResponse(res: any) {
     console.log("uecaseres", res);
-
     const gymData = await this._GymRepository.findById(res.id);
     if (gymData) {
       if (res.type === "rejected") {
@@ -75,14 +74,9 @@ class AdminUseCase {
   }
 
   async gymBlockAction(id: string) {
-    const gym = await this._GymRepository.findById(id);
-
+    const gym = await this._GymRepository.findByIdAndUpdateBlock(id);
     console.log("iam gymdata", gym);
-
     if (gym) {
-      gym.isBlocked = !gym.isBlocked;
-
-      await this._GymRepository.save(gym);
       return {
         status: 200,
         data: {
@@ -128,7 +122,7 @@ class AdminUseCase {
     };
   }
 
-  async adminLogin(email: string, password: string) { 
+  async adminLogin(email: string, password: string) {
     if (
       email == process.env.ADMIN_EMAIL &&
       password == process.env.ADMIN_PASSWORD
@@ -157,7 +151,7 @@ class AdminUseCase {
 
   async fetchUsers() {
     const users = await this._UserRepository.findAllUsers();
-    
+
     if (users) {
       return {
         status: 200,
@@ -177,49 +171,48 @@ class AdminUseCase {
     }
   }
 
-  async updateUser(id: string,isBlocked: boolean, isDeleted: boolean) {
-    
+  async updateUser(id: string, isBlocked: boolean, isDeleted: boolean) {
+    const updatedUser = await this._UserRepository.findByIdAndUpdate(
+      id,
+      isBlocked,
+      isDeleted
+    );
 
-    const updatedUser =  await this._UserRepository.findByIdAndUpdate(id,isBlocked,isDeleted)
+    console.log("isBlocked", isBlocked);
+    console.log("isDeleted", isDeleted);
 
-    console.log('isBlocked',isBlocked)
-    console.log('isDeleted',isDeleted) 
+    console.log("iam updated user", updatedUser);
 
-    console.log("iam updated user", updatedUser)
-
-
-    if(updatedUser){
+    if (updatedUser) {
       return {
         status: 200,
         data: {
-          success : true,
-          message: "User updated successfully"
-        }
-      }
-    }else{
-
+          success: true,
+          message: "User updated successfully",
+        },
+      };
+    } else {
       return {
         status: 400,
         data: {
-          status : false,
-          message: "User not found"
-        }
-      }
+          status: false,
+          message: "User not found",
+        },
+      };
     }
-
-
   }
 
   async fetchSubscriptions() {
-    const subscriptions = await this._SubscriptionRepository.findAllSubscriptions();
-    console.log('iam subscription',subscriptions)
+    const subscriptions =
+      await this._SubscriptionRepository.findAllSubscriptions();
+    console.log("iam subscription", subscriptions);
     return {
       status: 200,
-      data :{
-      success: true,
-      subscriptions
-      }
-    }
+      data: {
+        success: true,
+        subscriptions,
+      },
+    };
   }
 
   async fetchGymWithId(gymId: string) {
@@ -228,31 +221,31 @@ class AdminUseCase {
       status: 200,
       data: {
         success: true,
-        gym
-      }
-    }
+        gym,
+      },
+    };
   }
 
-  async fetchTrainers(){
+  async fetchTrainers() {
     const trainers = await this._TrainerRepository.findAllTrainers();
     return {
       status: 200,
       data: {
         success: true,
-        trainers
-      }
-    }
+        trainers,
+      },
+    };
   }
 
-  async updateTrainer(id: string,data: any){
-     await this._TrainerRepository.findByIdAndUpdate(id,data)
-     return {
-       status: 200,
-       data: {
-         success: true,
-         message: "Trainer updated successfully"
-       }
-     }
+  async updateTrainer(id: string, data: any) {
+    await this._TrainerRepository.findByIdAndUpdate(id, data);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: "Trainer updated successfully",
+      },
+    };
   }
-} 
+}
 export default AdminUseCase;

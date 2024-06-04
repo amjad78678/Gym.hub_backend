@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 class GymRepository implements iGymRepo {
   async save(gym: Gym): Promise<Gym> {
     const newGym = new GymModel(gym);
-
     await newGym.save();
     return newGym;
   }
@@ -39,6 +38,18 @@ class GymRepository implements iGymRepo {
       },
     ]);
     return gymData;
+  }
+
+  async findByIdAndUpdateBlock(_id: string): Promise<any | null> {
+    const gym = await GymModel.findById({ _id });
+    if (gym) {
+      const gymData = await GymModel.findByIdAndUpdate(
+        { _id },
+        { isBlocked: !gym.isBlocked }
+      );
+
+      return gymData;
+    }
   }
 
   async findNearGym(
