@@ -113,9 +113,14 @@ class GymRepository implements iGymRepo {
   }
 
   async editGymStatus(_id: string, status: boolean): Promise<any> {
-    const gymData = await GymModel.findByIdAndUpdate(_id, {
+     await GymModel.findByIdAndUpdate(_id, {
       isVerified: status,
     });
+  }
+  async rejectGym(_id: string, status: boolean): Promise<any> {
+    await GymModel.findByIdAndUpdate(_id, {
+      isRejected: status,
+    })
   }
   async findByIdAndGetSubscriptions(_id: string): Promise<any> {
     const gymData = await GymModel.aggregate([

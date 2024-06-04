@@ -13,6 +13,7 @@ interface Gym {
   password: string;
   confirmPassword?: string;
   isVerified?: boolean;
+  isRejected?: boolean;
   location?: {
     type: string;
     coordinates: [number, number];

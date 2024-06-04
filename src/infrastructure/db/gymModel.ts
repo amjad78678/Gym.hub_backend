@@ -49,6 +49,10 @@ const gymSchema: Schema = new Schema<Gym | Document>(
       type: Boolean,
       default: false
     },
+    isRejected:{
+      type: Boolean,
+      default: false
+    },
     isDeleted:{
      type: Boolean,
      default: false

@@ -45,20 +45,20 @@ class AdminUseCase {
   async gymAdminResponse(res: any) {
     console.log("uecaseres", res);
     const gymData = await this._GymRepository.findById(res.id);
+    console.log("gymData", gymData);
     if (gymData) {
       if (res.type === "rejected") {
-        this._GenerateEmail.sendGymRejectEmail(gymData.email, res.reason);
-        const gym = await this._GymRepository.editGymStatus(res.id, false);
-      } else if (res.type === "accepted") {
-        this._GenerateEmail.sendGymAcceptEmail(gymData.email);
-
-        const gym = await this._GymRepository.editGymStatus(res.id, true);
+        this._GenerateEmail.sendGymRejectEmail(gymData[0].email, res.reason);
+        await this._GymRepository.rejectGym(res.id, true);
+      } else if (res.type === "accepted") {     
+        this._GenerateEmail.sendGymAcceptEmail(gymData[0].email);
+        await this._GymRepository.editGymStatus(res.id, true);
       }
 
       return {
         status: 200,
         data: {
-          status: true,
+          success: true,
           message: "Gym updated successfully",
         },
       };
@@ -99,7 +99,7 @@ class AdminUseCase {
     console.log("iam gym", gym);
 
     if (gym) {
-      gym.isDeleted = true;
+      gym[0].isDeleted = true;
 
       console.log("iam gym inside", gym);
 

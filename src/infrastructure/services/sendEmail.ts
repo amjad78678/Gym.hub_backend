@@ -137,8 +137,7 @@ class GenerateEmail implements GENERATEMAIL {
 
     }
     sendGymRejectEmail(email: string,reason: string): void {
-        
-         
+        console.log('in reject email',email)
         const mailData=`
         <!DOCTYPE html>
         <html>
