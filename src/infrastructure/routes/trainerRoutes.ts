@@ -69,5 +69,6 @@ router.get('/chat/trainer_chat_data/:sender/:receiver',protect,(req,res)=>messag
 router.get('/fetch_subscriptions',protect,(req,res)=>trainerController.getSubscriptions(req,res))
 router.get('/fetch_trainer_data',protect,(req,res)=>trainerController.getTrainerData(req,res))
 router.put('/edit_profile',protect,ImageUpload.single("image"),(req,res)=>trainerController.editProfile(req,res))
+router.get('/fetch_dashboard',protect,(req,res)=>trainerController.getDashboardData(req,res))
 
 export default router;

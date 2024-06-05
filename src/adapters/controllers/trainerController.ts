@@ -214,6 +214,20 @@ class TrainerController {
       });
     }
   }
+
+  async getDashboardData(req: Request, res: Response) {
+   try {
+    const trainerId = req.trainerId || "";
+    const dashboardData=await this._TrainerUseCase.getDashboardData(trainerId)
+    res.status(dashboardData.status).json(dashboardData.data)
+   } catch (error) {
+    const err: Error = error as Error;
+    res.status(400).json({
+      message: err.message,
+      stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    });
+   }
+  }
 }
 
 export default TrainerController;

@@ -1,3 +1,4 @@
+import BookTrainerRepository from "../infrastructure/repository/bookTrainerRepository";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
@@ -12,6 +13,7 @@ class TrainerUseCase {
   private _UserRepository: UserRepository;
   private _CloudinaryUpload: CloudinaryUpload;
   private _SharpImage: SharpImages;
+  private _BookTrainerRepository: BookTrainerRepository
 
   constructor(
     trainerRepository: TrainerRepository,
@@ -19,7 +21,8 @@ class TrainerUseCase {
     jwtToken: JWTToken,
     userRepository: UserRepository,
     cloudinaryUpload: CloudinaryUpload,
-    sharpImages: SharpImages
+    sharpImages: SharpImages,
+    bookTrainerRepository: BookTrainerRepository
   ) {
     this._TrainerRepository = trainerRepository;
     this._EncryptPassword = encryptPassword;
@@ -27,6 +30,7 @@ class TrainerUseCase {
     this._UserRepository = userRepository;
     this._CloudinaryUpload = cloudinaryUpload;
     this._SharpImage = sharpImages;
+    this._BookTrainerRepository = bookTrainerRepository
   }
 
   async login(email: string, password: string) {
@@ -213,6 +217,22 @@ class TrainerUseCase {
       data: {
         success: true,
         message: "Profile updated successfully",
+      },
+    };
+  }
+
+  async getDashboardData(trainerId: string) {
+    // const totalSales = await this._BookTrainerRepository.findTotalSalesOfTrainer();
+    // console.log('total sales of trainer', totalSales);
+    // const totalBookings = await this._BookTrainerRepository.findTotalBookings();
+    // console.log('total booking', totalBookings);
+    // const totalTrainees = await this._TrainerRepository.findTotalTrainees();
+    // console.log('total trainees', totalTrainees);
+    return {
+      status: 200,
+      data: {
+        success: true,
+      
       },
     };
   }
