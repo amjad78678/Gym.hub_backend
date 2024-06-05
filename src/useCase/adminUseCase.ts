@@ -214,7 +214,6 @@ class AdminUseCase {
   async fetchSubscriptions() {
     const subscriptions =
       await this._SubscriptionRepository.findAllSubscriptions();
-    console.log("iam subscription", subscriptions);
     return {
       status: 200,
       data: {
@@ -288,13 +287,9 @@ class AdminUseCase {
     }
  
     const subscriptionMonthlySales = await this._SubscriptionRepository.findMonthlySales();
-    console.log('iam subscription montly',subscriptionMonthlySales)
     const trainerMonthlySales = await this._BookTrainerRepository.findMonthlySales();
-    console.log('iam trainer montly',trainerMonthlySales)
     const subscriptionYearlySales = await this._SubscriptionRepository.findYearlySales();
-    console.log('subscriptionYearlySales',subscriptionYearlySales)
     const trainerYearlySales = await this._BookTrainerRepository.findYearlySales();
-    console.log('trainerYearlySales',trainerYearlySales)
 
 
     return {

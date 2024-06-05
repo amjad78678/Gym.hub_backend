@@ -16,7 +16,7 @@ class SubscriptionUseCase {
   private _UserRepository: UserRepository;
   private _GenerateQrCode: GenerateQrCode;
   private _GenerateEmail: GenerateEmail;
-  private _GymRepository: GymRepository
+  private _GymRepository: GymRepository;
 
   constructor(
     cartRepository: CartRepository,
@@ -35,7 +35,7 @@ class SubscriptionUseCase {
     this._UserRepository = userRepository;
     this._GenerateQrCode = generateQrCode;
     this._GenerateEmail = generateEmail;
-    this._GymRepository = gymRepository
+    this._GymRepository = gymRepository;
   }
 
   async addNewSubscription(data: any) {
@@ -45,7 +45,7 @@ class SubscriptionUseCase {
     );
 
     const userData = await this._UserRepository.findById(data.userId);
-    const gymData= await this._GymRepository.findById(data.gymId)
+    const gymData = await this._GymRepository.findById(data.gymId);
 
     if (verifyCart) {
       //updating the coupon
@@ -92,14 +92,14 @@ class SubscriptionUseCase {
 
       if (userData && gymData && gymData.gymName) {
         //Send subscription details through email to user with qr code
-          await this._GenerateEmail.sendSubscription(
+        await this._GenerateEmail.sendSubscription(
           userData.email,
           gymData.gymName,
           data.subscriptionType,
-          dayjs(data.date).format("DD-MM-YYYY"), 
+          dayjs(data.date).format("DD-MM-YYYY"),
           dayjs(data.expiryDate).format("DD-MM-YYYY"),
           data.price,
-          qrCode 
+          qrCode
         );
       }
 
@@ -148,7 +148,6 @@ class SubscriptionUseCase {
   async fetchSubscriptions(userId: string) {
     const subscriptions =
       await this._SubscriptionRepository.findAllSubscriptionsWithId(userId);
-    console.log("iam subscription", subscriptions);
     return {
       status: 200,
       data: {
@@ -157,7 +156,6 @@ class SubscriptionUseCase {
       },
     };
   }
-
 }
 
 export default SubscriptionUseCase;

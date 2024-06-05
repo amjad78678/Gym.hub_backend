@@ -12,6 +12,8 @@ import MessageUseCase from "../../useCase/messageUseCase";
 import MessageRepository from "../repository/messageRepository";
 import UserRepository from "../repository/userRepository";
 import CloudinaryUpload from "../utils/cloudinaryUpload";
+import { ImageUpload } from "../middleware/multer";
+import SharpImages from "../services/sharpImages";
 
 //services
 const encryptPassword = new EncryptPassword();
@@ -19,6 +21,7 @@ const jwtToken = new JWTToken();
 const generateOtp = new GenerateOtp();
 const generateEmail = new GenerateEmail();
 const cloudinaryUpload= new CloudinaryUpload();
+const sharpImages = new SharpImages();
 
 //repositories
 const trainerRepository = new TrainerRepository();
@@ -30,7 +33,9 @@ const trainerUseCase = new TrainerUseCase(
   trainerRepository,
   encryptPassword,
   jwtToken,
-  userRepository
+  userRepository,
+  cloudinaryUpload,
+  sharpImages
 );
 const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload)
 
@@ -43,7 +48,6 @@ const trainerController = new TrainerController(
 const messageController = new MessageController(messageUseCase)
 
 const router = express.Router();
-
 router.post("/login", (req, res) => trainerController.login(req, res));
 router.post("/logout", (req, res) => trainerController.logout(req, res));
 router.post("/forgot_password", (req, res) =>
@@ -63,5 +67,7 @@ router.post('/chat/create',protect,(req,res)=>messageController.createMessage(re
 router.get('/chat/fetch_messages',protect,(req,res)=>messageController.getMessages(req,res))
 router.get('/chat/trainer_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
 router.get('/fetch_subscriptions',protect,(req,res)=>trainerController.getSubscriptions(req,res))
+router.get('/fetch_trainer_data',protect,(req,res)=>trainerController.getTrainerData(req,res))
+router.put('/edit_profile',protect,ImageUpload.single("image"),(req,res)=>trainerController.editProfile(req,res))
 
 export default router;
