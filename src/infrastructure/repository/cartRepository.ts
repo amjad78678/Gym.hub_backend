@@ -1,37 +1,39 @@
 import iCardRepo from "../../useCase/interface/iCartRepo";
 import CartModel from "../db/cartModel";
 
+class CartRepository implements iCardRepo {
+  async save(data: any): Promise<{}> {
+    const cart = new CartModel(data);
+    const cartData = await cart.save();
+    return cartData;
+  }
 
-class CartRepository implements iCardRepo  {
+  async deleteByUserId(userId: string): Promise<any> {
+    try {
+      const userCart = await CartModel.findOne({ userId: userId });
 
-     async save(data: any): Promise<{}> {
-        const cart = new CartModel(data)
-       const cartData = await cart.save()
-       return cartData
+      if (userCart) {
+        await CartModel.deleteOne({ userId: userId });
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    async deleteByUserId(userId: string): Promise<any> {
-        try {
-            const userCart = await CartModel.findOne({userId: userId})
+  async cartDataForCheckout(userId: string): Promise<any> {
+    const userCart = await CartModel.findOne({ userId: userId }).populate(
+      "gymId"
+    );
 
-            if(userCart){
-                await CartModel.deleteOne({userId: userId})
-            }
-        } catch (error) {
-         console.log(error)
-        }
+    if (userCart) {
+      return userCart;
     }
+  }
 
-     async cartDataForCheckout(userId: string): Promise<any> {
-
-        const userCart = await CartModel.findOne({userId: userId}).populate('gymId')
-
-         if(userCart){
-            return userCart
-         }
-    }
-
-
+  async findPendingPaymentCount(): Promise<any> {
+    const count = await CartModel.find().countDocuments();
+    return count;
+  }
 }
 
-export default CartRepository
+export default CartRepository;

@@ -15,6 +15,7 @@ import SharpImages from '../services/sharpImages';
 import CloudinaryUpload from '../utils/cloudinaryUpload';
 import UserController from '../../adapters/controllers/userController';
 import BookTrainerRepository from '../repository/bookTrainerRepository';
+import CartRepository from '../repository/cartRepository';
 
 
 //services
@@ -31,12 +32,13 @@ const subscriptionRepository = new SubscriptionRepository()
 const trainerRepository = new TrainerRepository()
 const bannerRepository = new BannerRepository()
 const bookTrainerRepository = new BookTrainerRepository()
+const cartRepository = new CartRepository()
 
 
 //usecases
 
-const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository,trainerRepository,bookTrainerRepository)
-const bannerUseCase= new BannerUseCase(bannerRepository,sharpImages,cloudinaryUpload)
+const adminUseCase=new AdminUseCase(gymRepository,generateEmail,jwtToken,userRepository,subscriptionRepository,trainerRepository,bookTrainerRepository,cartRepository)
+const bannerUseCase=new BannerUseCase(bannerRepository,sharpImages,cloudinaryUpload)
 
 //controllers
 

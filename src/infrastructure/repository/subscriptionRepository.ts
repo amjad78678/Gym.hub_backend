@@ -64,6 +64,129 @@ class SubscriptionRepository implements iSubscriptionRepo {
     ]);
     return subscriptions;
   }
+
+  async findPaymentMethodCount(): Promise<any[]> {
+    const payments = await SubscriptionModel.aggregate([
+      {
+        $facet: {
+          onlinePaymentCount: [
+            { $match: { paymentType: "online" } },
+            {
+              $group: {
+                _id: "$paymentMethod",
+                count: { $sum: 1 },
+              },
+            },
+          ],
+          walletPaymentCount: [
+            { $match: { paymentType: "wallet" } },
+            {
+              $group: {
+                _id: "$paymentMethod",
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        },
+      },
+      { $project: { onlinePaymentCount: 1, walletPaymentCount: 1, _id: 0 } },
+    ]);
+    return payments;
+  }
+  async findTotalBookings(): Promise<any> {
+    const subscriptionCount = await SubscriptionModel.find().countDocuments();
+    return subscriptionCount;
+  }
+
+  async findMonthlySales(): Promise<any[]> {
+    const trainers = await SubscriptionModel.aggregate([
+      {
+        $match: {
+          date: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$date" },
+          totalSales: { $sum: "$price" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          _id: 0,
+          x: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "January" },
+                { case: { $eq: ["$_id", 2] }, then: "February" },
+                { case: { $eq: ["$_id", 3] }, then: "March" },
+                { case: { $eq: ["$_id", 4] }, then: "April" },
+                { case: { $eq: ["$_id", 5] }, then: "May" },
+                { case: { $eq: ["$_id", 6] }, then: "June" },
+                { case: { $eq: ["$_id", 7] }, then: "July" },
+                { case: { $eq: ["$_id", 8] }, then: "August" },
+                { case: { $eq: ["$_id", 9] }, then: "September" },
+                { case: { $eq: ["$_id", 10] }, then: "October" },
+                { case: { $eq: ["$_id", 11] }, then: "November" },
+                { case: { $eq: ["$_id", 12] }, then: "December" },
+              ],
+              default: "Unknown",
+            },
+          },
+          y: "$totalSales",
+        },
+      },
+    ]);
+
+    return trainers;
+  }
+
+  async findYearlySales(): Promise<any[]> {
+    const trainers = await SubscriptionModel.aggregate([
+      {
+        $match: {
+          date: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: { $year: "$date" },
+          totalSales: { $sum: "$price" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          _id: 0,
+          x: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 2023] }, then: "2023" },
+                { case: { $eq: ["$_id", 2024] }, then: "2024" },
+                { case: { $eq: ["$_id", 2025] }, then: "2025" },
+                { case: { $eq: ["$_id", 2026] }, then: "2026" },
+                { case: { $eq: ["$_id", 2027] }, then: "2027" },
+                { case: { $eq: ["$_id", 2028] }, then: "2028" },
+                { case: { $eq: ["$_id", 2029] }, then: "2029" },
+                { case: { $eq: ["$_id", 2030] }, then: "2030" },
+              ],
+              default: "Unknown",
+            },
+          },
+          y: "$totalSales",
+        },
+      },
+    ]);
+
+    return trainers;
+  }
 }
 
 export default SubscriptionRepository;

@@ -7,6 +7,7 @@ import SubscriptionRepository from "../infrastructure/repository/subscriptionRep
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import GymModel from "../infrastructure/db/gymModel";
 import BookTrainerRepository from "../infrastructure/repository/bookTrainerRepository";
+import CartRepository from "../infrastructure/repository/cartRepository";
 
 class AdminUseCase {
   private _GymRepository: GymRepository;
@@ -16,6 +17,7 @@ class AdminUseCase {
   private _SubscriptionRepository: SubscriptionRepository;
   private _TrainerRepository: TrainerRepository;
   private _BookTrainerRepository: BookTrainerRepository;
+  private _CartRepository: CartRepository;
 
   constructor(
     gymRepository: GymRepository,
@@ -24,7 +26,8 @@ class AdminUseCase {
     userRepository: UserRepository,
     subscriptionRepository: SubscriptionRepository,
     trainerRepository: TrainerRepository,
-    bookTrainerRepository: BookTrainerRepository
+    bookTrainerRepository: BookTrainerRepository,
+    cartRepository: CartRepository
   ) {
     this._GymRepository = gymRepository;
     this._GenerateEmail = generateEmail;
@@ -33,6 +36,7 @@ class AdminUseCase {
     this._SubscriptionRepository = subscriptionRepository;
     this._TrainerRepository = trainerRepository;
     this._BookTrainerRepository = bookTrainerRepository;
+    this._CartRepository = cartRepository;
   }
 
   async getGymDetails() {
@@ -265,6 +269,34 @@ class AdminUseCase {
     const totalGyms = await this._GymRepository.findTotalGyms();
     const recentlyTrainers =
       await this._TrainerRepository.findRecentlyTrainers();
+    const paymentMethodCount =
+      await this._SubscriptionRepository.findPaymentMethodCount();
+    const pendingPaymentCount =
+      await this._CartRepository.findPendingPaymentCount();
+
+    const paymentCounts = {
+      onlinePaymentCount: paymentMethodCount[0].onlinePaymentCount,
+      walletPaymentCount: paymentMethodCount[0].walletPaymentCount,
+      pendingPaymentCount: pendingPaymentCount,
+    };
+    console.log(paymentMethodCount);
+    const trainerBookingCount = await this._BookTrainerRepository.findTotalBookings();
+    const subscriptionBookingCount = await this._SubscriptionRepository.findTotalBookings();
+    const bookingStats = {
+      trainerBookingCount: trainerBookingCount,
+      subscriptionBookingCount: subscriptionBookingCount,
+    }
+ 
+    const subscriptionMonthlySales = await this._SubscriptionRepository.findMonthlySales();
+    console.log('iam subscription montly',subscriptionMonthlySales)
+    const trainerMonthlySales = await this._BookTrainerRepository.findMonthlySales();
+    console.log('iam trainer montly',trainerMonthlySales)
+    const subscriptionYearlySales = await this._SubscriptionRepository.findYearlySales();
+    console.log('subscriptionYearlySales',subscriptionYearlySales)
+    const trainerYearlySales = await this._BookTrainerRepository.findYearlySales();
+    console.log('trainerYearlySales',trainerYearlySales)
+
+
     return {
       status: 200,
       data: {
@@ -278,6 +310,12 @@ class AdminUseCase {
         totalTrainers,
         totalGyms,
         recentlyTrainers,
+        paymentCounts,
+        bookingStats,
+        subscriptionMonthlySales,
+        trainerMonthlySales,
+        subscriptionYearlySales,
+        trainerYearlySales
       },
     };
   }
