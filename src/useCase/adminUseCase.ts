@@ -258,24 +258,26 @@ class AdminUseCase {
     const gymData = await this._GymRepository.findRecentlyGyms();
     const totalSalesOfSubscription =
       await this._SubscriptionRepository.findTotalSalesOfSubscriptions();
-    console.log("totalSalesOfSubscription", totalSalesOfSubscription);
     const totalSalesOfTrainer =
       await this._BookTrainerRepository.findTotalSalesOfTrainer();
-      console.log("totalSalesOfTrainer", totalSalesOfTrainer)
-
-      const totalUsers = await this._UserRepository.findTotalUsers();
-      const totalTrainers = await this._TrainerRepository.findTotalTrainers();
-      const totalGyms = await this._GymRepository.findTotalGyms();
+    const totalUsers = await this._UserRepository.findTotalUsers();
+    const totalTrainers = await this._TrainerRepository.findTotalTrainers();
+    const totalGyms = await this._GymRepository.findTotalGyms();
+    const recentlyTrainers =
+      await this._TrainerRepository.findRecentlyTrainers();
     return {
       status: 200,
       data: {
         success: true,
         recently: userData,
         recGym: gymData,
-        totalSales: totalSalesOfSubscription[0].totalSales+totalSalesOfTrainer[0].totalSales,
+        totalSales:
+          totalSalesOfSubscription[0].totalSales +
+          totalSalesOfTrainer[0].totalSales,
         totalUsers,
         totalTrainers,
-        totalGyms
+        totalGyms,
+        recentlyTrainers,
       },
     };
   }

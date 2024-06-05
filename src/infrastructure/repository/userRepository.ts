@@ -74,7 +74,7 @@ class UserRepository implements UserRepo {
   }
 
   async findRecentlyUsers(): Promise<{}[] | null> {
-    const userData = await UserModel.find().sort({createdAt: -1}).limit(5);
+    const userData = await UserModel.find().sort({createdAt: -1}).limit(4);
     return userData;
   }
 

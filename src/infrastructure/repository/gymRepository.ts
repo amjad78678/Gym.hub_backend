@@ -131,7 +131,7 @@ class GymRepository implements iGymRepo {
     return gymData;
   }
   async findRecentlyGyms(): Promise<{}[] | null> {
-    const gymData = await GymModel.find().sort({createdAt: -1}).limit(5);
+    const gymData = await GymModel.find().sort({createdAt: -1}).limit(4);
     return gymData;
   }
   async findTotalGyms(): Promise<{} | null> {
