@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Subscription from "../../domain/subscription";
 import iSubscriptionRepo from "../../useCase/interface/iSubscriptionRepo";
 import SubscriptionModel from "../db/subscriptionModel";
@@ -192,6 +193,113 @@ class SubscriptionRepository implements iSubscriptionRepo {
     const data = await SubscriptionModel.find({ gymId: gymId }).populate('userId')
     return data
   }
+  async getMonthlySalesById(gymId: string): Promise<{ x: string; y: number }[]> {
+    const sales = await SubscriptionModel.aggregate([
+      { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
+      {
+        $group: {
+          _id: { $month: "$date" },
+          totalSales: { $sum: "$price" },
+        },
+      },
+      { $sort: { "_id": 1 } },
+      {
+        $project: {
+          _id: 0,
+          x: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "January" },
+                { case: { $eq: ["$_id", 2] }, then: "February" },
+                { case: { $eq: ["$_id", 3] }, then: "March" },
+                { case: { $eq: ["$_id", 4] }, then: "April" },
+                { case: { $eq: ["$_id", 5] }, then: "May" },
+                { case: { $eq: ["$_id", 6] }, then: "June" },
+                { case: { $eq: ["$_id", 7] }, then: "July" },
+                { case: { $eq: ["$_id", 8] }, then: "August" },
+                { case: { $eq: ["$_id", 9] }, then: "September" },
+                { case: { $eq: ["$_id", 10] }, then: "October" },
+                { case: { $eq: ["$_id", 11] }, then: "November" },
+                { case: { $eq: ["$_id", 12] }, then: "December" },
+              ],
+            },
+          },
+          y: "$totalSales",
+        },
+      },
+    ]);
+    return sales;
+  }
+  
+  async getYearlySalesById(gymId: string): Promise<{ x: string; y: number }[]> {
+    const sales = await SubscriptionModel.aggregate([
+      { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
+      {
+        $group: {
+          _id: { $year: "$date" },
+          totalSales: { $sum: "$price" },
+        },
+      },
+      { $sort: { "_id": 1 } },
+      {
+        $project: {
+          _id: 0,
+          x: { $toString: "$_id" },
+          y: "$totalSales",
+        },
+      },
+    ]);
+    return sales;
+  }
+
+  async getLatestSubscriptionsById(gymId: string): Promise<any[]> {
+    const subscriptions = await SubscriptionModel.aggregate([
+      { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
+      { $sort: { createdAt: -1 } },
+      { $limit: 4 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          username: "$user.username",
+          email: "$user.email",
+          profilePic: "$user.profilePic.imageUrl",
+          date: 1,
+          expiryDate: 1,
+          subscriptionType: 1,
+          paymentType: 1,
+          price: 1,
+        },
+      },
+    ]);
+    return subscriptions;
+  }
+  async getTotalSalesById(gymId: string): Promise<number> {
+    const result = await SubscriptionModel.aggregate([
+      { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
+      { $group: { _id: null, totalSales: { $sum: "$price" } } },
+    ]);
+    return result[0]?.totalSales || 0;
+  }
+  
+  async getTotalUsersById(gymId: string): Promise<number> {
+    const result = await SubscriptionModel.aggregate([
+      { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
+      { $group: { _id: "$userId" } },
+      { $count: "totalUsers" },
+    ]);
+    return result[0]?.totalUsers || 0;
+  }
+  
 }
 
 export default SubscriptionRepository;

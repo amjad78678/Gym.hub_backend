@@ -66,5 +66,6 @@ router.post('/add_coupon',(protect),(req,res)=>couponController.addCoupon(req,re
 router.put('/update_coupon',(protect),(req,res)=>couponController.editCoupon(req,res))
 router.get('/fetch_gym_data',(protect),(req,res)=>gymController.fetchGymData(req,res))
 router.get('/booked_memberships',(protect),(req,res)=>gymController.bookedMemberships(req,res))
+router.get('/fetch_dashboard_details',(protect),(req,res)=>gymController.fetchDashboardDetails(req,res))
 
 export default router

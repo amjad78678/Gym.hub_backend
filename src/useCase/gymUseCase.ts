@@ -208,7 +208,6 @@ class GymUseCase {
     const gymData = await this._GymRepository.findById(gymId);
 
     if (gymData) {
-    
       await this._GymRepository.findByIdAndUpdate(
         gymId,
         subscriptionData.subscription,
@@ -400,6 +399,35 @@ class GymUseCase {
       data: {
         success: true,
         subscriptions: bookedMemberships,
+      },
+    };
+  }
+
+  async fetchDashboardDetails(gymId: string) {
+    const monthlySales =
+      await this._SubscriptionRepository.getMonthlySalesById(gymId);
+    console.log("monthlySales", monthlySales);
+    const yearlySales =
+      await this._SubscriptionRepository.getYearlySalesById(gymId);
+    console.log("yearlySales", yearlySales);
+    const recentlyBookedMemberships =
+      await this._SubscriptionRepository.getLatestSubscriptionsById(gymId);
+    console.log("recentlyBookedMemberships", recentlyBookedMemberships);
+    const totalSales =
+      await this._SubscriptionRepository.getTotalSalesById(gymId);
+    console.log("totalSales", totalSales);
+    const totalUsers =
+      await this._SubscriptionRepository.getTotalUsersById(gymId);
+    console.log("totalUsers", totalUsers);
+    return {
+      status: 200,
+      data: {
+        success: true,
+        monthlySales: monthlySales,
+        yearlySales: yearlySales,
+        recentlyBookedMemberships: recentlyBookedMemberships,
+        totalSales: totalSales,
+        totalUsers: totalUsers,
       },
     };
   }

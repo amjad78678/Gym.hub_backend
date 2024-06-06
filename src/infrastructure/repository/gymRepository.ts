@@ -151,6 +151,7 @@ class GymRepository implements iGymRepo {
 
 return updated
   }
+  
 }
 
 export default GymRepository;
