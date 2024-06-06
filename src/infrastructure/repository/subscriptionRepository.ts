@@ -187,6 +187,11 @@ class SubscriptionRepository implements iSubscriptionRepo {
 
     return trainers;
   }
+
+  async findBookedMembershipsByGym(gymId: string):Promise<any[]> {
+    const data = await SubscriptionModel.find({ gymId: gymId }).populate('userId')
+    return data
+  }
 }
 
 export default SubscriptionRepository;

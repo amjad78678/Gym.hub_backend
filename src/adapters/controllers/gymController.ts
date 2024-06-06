@@ -389,6 +389,21 @@ class GymController {
       });
     }
   }
+
+  async bookedMemberships(req: Request,res: Response){
+    try {
+      const gymId= req.gymId || ""
+      console.log('gymsi',gymId)
+      const response = await this._GymUseCase.bookedMemberships(gymId);
+      res.status(response.status).json(response.data)
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
 }
 
 export default GymController;

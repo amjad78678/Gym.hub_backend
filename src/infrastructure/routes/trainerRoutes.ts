@@ -14,6 +14,7 @@ import UserRepository from "../repository/userRepository";
 import CloudinaryUpload from "../utils/cloudinaryUpload";
 import { ImageUpload } from "../middleware/multer";
 import SharpImages from "../services/sharpImages";
+import BookTrainerRepository from "../repository/bookTrainerRepository";
 
 //services
 const encryptPassword = new EncryptPassword();
@@ -27,6 +28,7 @@ const sharpImages = new SharpImages();
 const trainerRepository = new TrainerRepository();
 const messageRepository = new MessageRepository();
 const userRepository = new UserRepository();
+const bookTrainerRepository = new BookTrainerRepository();
 
 //Use cases
 const trainerUseCase = new TrainerUseCase(
@@ -35,7 +37,8 @@ const trainerUseCase = new TrainerUseCase(
   jwtToken,
   userRepository,
   cloudinaryUpload,
-  sharpImages
+  sharpImages,
+  bookTrainerRepository
 );
 const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload)
 

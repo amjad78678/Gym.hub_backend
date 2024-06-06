@@ -9,6 +9,7 @@ import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import Trainer from "../domain/trainer";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 import SharpImages from "../infrastructure/services/sharpImages";
+import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 
 class GymUseCase {
   private _GymRepository: GymRepository;
@@ -18,6 +19,7 @@ class GymUseCase {
   private _TrainerRepository: TrainerRepository;
   private _CloudinaryUpload: CloudinaryUpload;
   private _SharpImages: SharpImages;
+  private _SubscriptionRepository: SubscriptionRepository;
 
   constructor(
     GymRepository: GymRepository,
@@ -26,7 +28,8 @@ class GymUseCase {
     jwtToken: JWTToken,
     trainerRepository: TrainerRepository,
     cloadinaryUpload: CloudinaryUpload,
-    sharpImages: SharpImages
+    sharpImages: SharpImages,
+    subscriptionRepository: SubscriptionRepository
   ) {
     this._GymRepository = GymRepository;
     this._EncyptPassword = encryptPassword;
@@ -35,6 +38,7 @@ class GymUseCase {
     this._TrainerRepository = trainerRepository;
     this._CloudinaryUpload = cloadinaryUpload;
     this._SharpImages = sharpImages;
+    this._SubscriptionRepository = subscriptionRepository;
   }
 
   async gymSignUp(gym: Gym, gymImageFiles: any) {
@@ -57,9 +61,9 @@ class GymUseCase {
         files.map(async (file) => {
           const res = await this._SharpImages.sharpenImage(
             file,
-            6000, 
+            6000,
             4000,
-            'gymImages'
+            "gymImages"
           );
           console.log("res", res);
           if (res) {
@@ -204,17 +208,12 @@ class GymUseCase {
     const gymData = await this._GymRepository.findById(gymId);
 
     if (gymData) {
-      console.log("subscr data", subscriptionData);
-
-      if (subscriptionData.subscription == "Daily") {
-        gymData.subscriptions.Daily = subscriptionData.amount;
-      } else if (subscriptionData.subscription == "Monthly") {
-        gymData.subscriptions.Monthly = subscriptionData.amount;
-      } else if (subscriptionData.subscription == "Yearly") {
-        gymData.subscriptions.Yearly = subscriptionData.amount;
-      }
-
-      await this._GymRepository.save(gymData);
+    
+      await this._GymRepository.findByIdAndUpdate(
+        gymId,
+        subscriptionData.subscription,
+        subscriptionData.amount
+      );
 
       return {
         status: 200,
@@ -388,8 +387,21 @@ class GymUseCase {
         status: true,
         gymData: gym,
       },
-    }
+    };
+  }
 
+  async bookedMemberships(gymId: string) {
+    const bookedMemberships =
+      await this._SubscriptionRepository.findBookedMembershipsByGym(gymId);
+    console.log("booked", bookedMemberships);
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+        subscriptions: bookedMemberships,
+      },
+    };
   }
 }
 export default GymUseCase;

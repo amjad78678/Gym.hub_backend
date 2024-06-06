@@ -13,7 +13,7 @@ class TrainerUseCase {
   private _UserRepository: UserRepository;
   private _CloudinaryUpload: CloudinaryUpload;
   private _SharpImage: SharpImages;
-  private _BookTrainerRepository: BookTrainerRepository
+  private _BookTrainerRepository: BookTrainerRepository;
 
   constructor(
     trainerRepository: TrainerRepository,
@@ -30,7 +30,7 @@ class TrainerUseCase {
     this._UserRepository = userRepository;
     this._CloudinaryUpload = cloudinaryUpload;
     this._SharpImage = sharpImages;
-    this._BookTrainerRepository = bookTrainerRepository
+    this._BookTrainerRepository = bookTrainerRepository;
   }
 
   async login(email: string, password: string) {
@@ -221,18 +221,35 @@ class TrainerUseCase {
     };
   }
 
-  async getDashboardData(trainerId: string) {
-    // const totalSales = await this._BookTrainerRepository.findTotalSalesOfTrainer();
-    // console.log('total sales of trainer', totalSales);
-    // const totalBookings = await this._BookTrainerRepository.findTotalBookings();
-    // console.log('total booking', totalBookings);
-    // const totalTrainees = await this._TrainerRepository.findTotalTrainees();
-    // console.log('total trainees', totalTrainees);
+  async getDashboardData(trainerId: string) { 
+    const totalSales =
+    await this._BookTrainerRepository.findTotalSalesOfTrainerById(trainerId);
+    console.log("total sales of trainer", totalSales);
+    const totalBookings = await this._BookTrainerRepository.findTotalBookingsById(trainerId);
+    console.log("total booking", totalBookings);
+    const totalTrainees = await this._BookTrainerRepository.findTotalTraineesById(trainerId);
+    console.log("total trainees", totalTrainees);
+
+    const trainerMonthlySales = await this._BookTrainerRepository.trainerMonthlySalesById(trainerId);
+    console.log("trainer monthly sales", trainerMonthlySales);
+
+    const trainerYearlySales = await this._BookTrainerRepository.trainerYearlySalesById(trainerId);
+    console.log("trainer yearly sales", trainerYearlySales);
+
+    const recentlyJoinedTrainees = await this._BookTrainerRepository.recentlyJoinedTraineesById(trainerId);
+    console.log("recently joined trainees", recentlyJoinedTrainees);
+
+
     return {
       status: 200,
       data: {
         success: true,
-      
+        trainerMonthlySales,
+        trainerYearlySales,
+        recentlyJoinedTrainees,
+        totalSales,
+        totalBookings,
+        totalTrainees
       },
     };
   }

@@ -113,14 +113,14 @@ class GymRepository implements iGymRepo {
   }
 
   async editGymStatus(_id: string, status: boolean): Promise<any> {
-     await GymModel.findByIdAndUpdate(_id, {
+    await GymModel.findByIdAndUpdate(_id, {
       isVerified: status,
     });
   }
   async rejectGym(_id: string, status: boolean): Promise<any> {
     await GymModel.findByIdAndUpdate(_id, {
       isRejected: status,
-    })
+    });
   }
   async findByIdAndGetSubscriptions(_id: string): Promise<any> {
     const gymData = await GymModel.aggregate([
@@ -131,12 +131,25 @@ class GymRepository implements iGymRepo {
     return gymData;
   }
   async findRecentlyGyms(): Promise<{}[] | null> {
-    const gymData = await GymModel.find().sort({createdAt: -1}).limit(4);
+    const gymData = await GymModel.find().sort({ createdAt: -1 }).limit(4);
     return gymData;
   }
   async findTotalGyms(): Promise<{} | null> {
     const gymData = await GymModel.find().countDocuments();
     return gymData;
+  }
+  async findByIdAndUpdate(
+    gymId: string,
+    type: string,
+    amount: string
+  ): Promise<{} | null> {
+    const price = Number(amount);
+  const updated=  await GymModel.updateOne(
+      { _id: gymId },
+      { $set: { [`subscriptions.${type}`]: price } }
+    );
+
+return updated
   }
 }
 

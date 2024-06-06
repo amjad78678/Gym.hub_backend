@@ -14,6 +14,7 @@ import SharpImages from '../services/sharpImages';
 import CouponController from '../../adapters/controllers/couponController';
 import CouponUseCase from '../../useCase/couponUseCase';
 import CouponRepository from '../repository/couponRepository';
+import SubscriptionRepository from '../repository/subscriptionRepository';
   
 
     
@@ -29,10 +30,11 @@ const sharpImages = new SharpImages()
 const gymRepository=new GymRepository()
 const trainerRepository=new TrainerRepository()
 const couponRepository = new CouponRepository() 
+const subscriptionRepository = new SubscriptionRepository()
 
 
 //useCases
-const gymUseCase = new GymUseCase(gymRepository, encryptPassword, generateEmail, jwtToken, trainerRepository, cloudinaryUpload, sharpImages);
+const gymUseCase = new GymUseCase(gymRepository, encryptPassword, generateEmail, jwtToken, trainerRepository, cloudinaryUpload, sharpImages,subscriptionRepository);
 const couponUseCase = new CouponUseCase(couponRepository)
 
 
@@ -63,5 +65,6 @@ router.get('/fetch_coupons',(protect),(req,res)=>couponController.getAllCoupons(
 router.post('/add_coupon',(protect),(req,res)=>couponController.addCoupon(req,res))
 router.put('/update_coupon',(protect),(req,res)=>couponController.editCoupon(req,res))
 router.get('/fetch_gym_data',(protect),(req,res)=>gymController.fetchGymData(req,res))
+router.get('/booked_memberships',(protect),(req,res)=>gymController.bookedMemberships(req,res))
 
 export default router
