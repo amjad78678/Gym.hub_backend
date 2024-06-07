@@ -189,11 +189,15 @@ class SubscriptionRepository implements iSubscriptionRepo {
     return trainers;
   }
 
-  async findBookedMembershipsByGym(gymId: string):Promise<any[]> {
-    const data = await SubscriptionModel.find({ gymId: gymId }).populate('userId')
-    return data
+  async findBookedMembershipsByGym(gymId: string): Promise<any[]> {
+    const data = await SubscriptionModel.find({ gymId: gymId }).populate(
+      "userId"
+    );
+    return data;
   }
-  async getMonthlySalesById(gymId: string): Promise<{ x: string; y: number }[]> {
+  async getMonthlySalesById(
+    gymId: string
+  ): Promise<{ x: string; y: number }[]> {
     const sales = await SubscriptionModel.aggregate([
       { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
       {
@@ -202,7 +206,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
           totalSales: { $sum: "$price" },
         },
       },
-      { $sort: { "_id": 1 } },
+      { $sort: { _id: 1 } },
       {
         $project: {
           _id: 0,
@@ -230,7 +234,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
     ]);
     return sales;
   }
-  
+
   async getYearlySalesById(gymId: string): Promise<{ x: string; y: number }[]> {
     const sales = await SubscriptionModel.aggregate([
       { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
@@ -240,7 +244,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
           totalSales: { $sum: "$price" },
         },
       },
-      { $sort: { "_id": 1 } },
+      { $sort: { _id: 1 } },
       {
         $project: {
           _id: 0,
@@ -290,7 +294,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
     ]);
     return result[0]?.totalSales || 0;
   }
-  
+
   async getTotalUsersById(gymId: string): Promise<number> {
     const result = await SubscriptionModel.aggregate([
       { $match: { gymId: new mongoose.Types.ObjectId(gymId) } },
@@ -299,7 +303,6 @@ class SubscriptionRepository implements iSubscriptionRepo {
     ]);
     return result[0]?.totalUsers || 0;
   }
-  
 }
 
 export default SubscriptionRepository;
