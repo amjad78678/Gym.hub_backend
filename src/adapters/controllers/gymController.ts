@@ -10,7 +10,7 @@ class GymController {
   private _GenerateOtp: GenerateOtp;
   private _GenerateEmail: GenerateEmail;
   private _CloudinaryUpload: CloudinaryUpload;
-  private _SharpImages: SharpImages
+  private _SharpImages: SharpImages;
 
   constructor(
     gymUseCase: GymUseCase,
@@ -23,35 +23,32 @@ class GymController {
     this._GenerateOtp = generateOtp;
     this._GenerateEmail = generateEmail;
     this._CloudinaryUpload = cloudinaryUpload;
-    this._SharpImages = sharpImages
+    this._SharpImages = sharpImages;
   }
 
   async gymRegister(req: Request, res: Response) {
     try {
+      console.log("iam req.body", req.body);
+      console.log("iam reqfiles", req.files?.length);
 
-      console.log('iam req.body',req.body)
-      console.log('iam reqfiles',req.files?.length)
-      
-      
-        const gym = await this._GymUseCase.gymSignUp(req.body,req.files);
-        if(gym){
-          if (gym?.data.status == true) {
-            req.app.locals.gymData = gym.data.gymData;
-            const otp = this._GenerateOtp.createOtp();
-            req.app.locals.otp = otp;
-            this._GenerateEmail.sendEmail(req.body.email, otp);
-            console.log(otp);
-    
-            setTimeout(() => {
-              req.app.locals.otp = this._GenerateOtp.createOtp();
-            }, 2 * 60000);
-    
-            res.status(gym.status).json(gym.data);
-          } else {
-            res.status(gym.status).json(gym.data);
-          }
+      const gym = await this._GymUseCase.gymSignUp(req.body, req.files);
+      if (gym) {
+        if (gym?.data.status == true) {
+          req.app.locals.gymData = gym.data.gymData;
+          const otp = this._GenerateOtp.createOtp();
+          req.app.locals.otp = otp;
+          this._GenerateEmail.sendEmail(req.body.email, otp);
+          console.log(otp);
+
+          setTimeout(() => {
+            req.app.locals.otp = this._GenerateOtp.createOtp();
+          }, 2 * 60000);
+
+          res.status(gym.status).json(gym.data);
+        } else {
+          res.status(gym.status).json(gym.data);
         }
-      
+      }
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -121,7 +118,6 @@ class GymController {
             sameSite: "none",
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
-
         }
 
         res.status(gym.status).json(gym.data);
@@ -154,7 +150,7 @@ class GymController {
 
   async editGymSubscription(req: Request, res: Response) {
     try {
-      console.log('iam reqbody',req.body)
+      console.log("iam reqbody", req.body);
       let gymId = req.gymId || "";
       const gym = await this._GymUseCase.editGymSubscription(gymId, req.body);
       res.status(gym.status).json(gym.data);
@@ -290,9 +286,8 @@ class GymController {
 
   async fetchGymTrainers(req: Request, res: Response) {
     try {
-
       const gymId = req.gymId || "";
-      console.log('iam gymId',gymId)
+      console.log("iam gymId", gymId);
       const trainers = await this._GymUseCase.fetchGymTrainers(gymId);
 
       res.status(trainers.status).json(trainers.data);
@@ -308,16 +303,20 @@ class GymController {
   async addGymTrainer(req: Request, res: Response) {
     try {
       console.log("iam req.body from addgym", req.body);
-      console.log("iam req.file from addgym", req.file,'reqfiels',req.files);
+      console.log("iam req.file from addgym", req.file, "reqfiels", req.files);
       const gymId = req.gymId || "";
       if (req.file) {
-
-        const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
+        const image = await this._SharpImages.sharpenImage(
+          req.file,
+          1500,
+          1126,
+          "trainers"
+        );
 
         const obj = {
           imageUrl: image.secure_url,
           public_id: image.public_id,
-        }
+        };
         const trainerData = { ...req.body, image: obj };
         const response = await this._GymUseCase.addGymTrainer(
           gymId,
@@ -337,19 +336,24 @@ class GymController {
     }
   }
 
-  async updateGymTrainer(req: Request, res: Response) { 
+  async updateGymTrainer(req: Request, res: Response) {
     try {
       const trainerId = req.body._id;
-      console.log('req.file',req.file)
+      console.log("req.file", req.file);
 
       if (req.file) {
-        const image = await this._SharpImages.sharpenImage(req.file,1500,1126,'trainers')
+        const image = await this._SharpImages.sharpenImage(
+          req.file,
+          1500,
+          1126,
+          "trainers"
+        );
         const trainerData = { ...req.body };
         delete trainerData._id;
-        const obj={
-          imageUrl: image.secure_url, 
-          public_id: image.public_id
-        }
+        const obj = {
+          imageUrl: image.secure_url,
+          public_id: image.public_id,
+        };
         trainerData.image = obj;
         const response = await this._GymUseCase.updateGymTrainer(
           trainerId,
@@ -372,15 +376,14 @@ class GymController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-   
     }
   }
 
-  async fetchGymData (req: Request,res: Response) {
+  async fetchGymData(req: Request, res: Response) {
     try {
       const gymId = req.gymId || "";
-      const response = await this._GymUseCase.fetchGymData(gymId)
-      res.status(response.status).json(response.data)
+      const response = await this._GymUseCase.fetchGymData(gymId);
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -390,12 +393,12 @@ class GymController {
     }
   }
 
-  async bookedMemberships(req: Request,res: Response){
+  async bookedMemberships(req: Request, res: Response) {
     try {
-      const gymId= req.gymId || ""
-      console.log('gymsi',gymId)
+      const gymId = req.gymId || "";
+      console.log("gymsi", gymId);
       const response = await this._GymUseCase.bookedMemberships(gymId);
-      res.status(response.status).json(response.data)
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -405,11 +408,24 @@ class GymController {
     }
   }
 
-  async fetchDashboardDetails(req: Request,res: Response){
+  async fetchDashboardDetails(req: Request, res: Response) {
     try {
-      const gymId= req.gymId || ""
+      const gymId = req.gymId || "";
       const response = await this._GymUseCase.fetchDashboardDetails(gymId);
-      res.status(response.status).json(response.data)
+      res.status(response.status).json(response.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async editGymProfile(req: Request, res: Response) {
+    try {
+      console.log("iam body", req.body);
+      console.log("iam files coming", req.files);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
