@@ -144,14 +144,18 @@ class GymRepository implements iGymRepo {
     amount: string
   ): Promise<{} | null> {
     const price = Number(amount);
-  const updated=  await GymModel.updateOne(
+    const updated = await GymModel.updateOne(
       { _id: gymId },
       { $set: { [`subscriptions.${type}`]: price } }
     );
 
-return updated
+    return updated;
   }
-  
+
+  async findByIdAndDelete(id: string): Promise<{} | null> {
+    const gym = await GymModel.findByIdAndUpdate(id, { isDeleted: true });
+    return gym;
+  }
 }
 
 export default GymRepository;

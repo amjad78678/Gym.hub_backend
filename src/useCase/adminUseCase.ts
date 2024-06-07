@@ -104,15 +104,10 @@ class AdminUseCase {
     };
   }
   async gymDeleteAction(id: string) {
-    const gym = await this._GymRepository.findById(id);
+    const gym = await this._GymRepository.findByIdAndDelete(id);
     console.log("iam gym", gym);
 
     if (gym) {
-      gym[0].isDeleted = true;
-
-      console.log("iam gym inside", gym);
-
-      await this._GymRepository.save(gym);
       return {
         status: 200,
         data: {
@@ -279,18 +274,23 @@ class AdminUseCase {
       pendingPaymentCount: pendingPaymentCount,
     };
     console.log(paymentMethodCount);
-    const trainerBookingCount = await this._BookTrainerRepository.findTotalBookings();
-    const subscriptionBookingCount = await this._SubscriptionRepository.findTotalBookings();
+    const trainerBookingCount =
+      await this._BookTrainerRepository.findTotalBookings();
+    const subscriptionBookingCount =
+      await this._SubscriptionRepository.findTotalBookings();
     const bookingStats = {
       trainerBookingCount: trainerBookingCount,
       subscriptionBookingCount: subscriptionBookingCount,
-    }
- 
-    const subscriptionMonthlySales = await this._SubscriptionRepository.findMonthlySales();
-    const trainerMonthlySales = await this._BookTrainerRepository.findMonthlySales();
-    const subscriptionYearlySales = await this._SubscriptionRepository.findYearlySales();
-    const trainerYearlySales = await this._BookTrainerRepository.findYearlySales();
+    };
 
+    const subscriptionMonthlySales =
+      await this._SubscriptionRepository.findMonthlySales();
+    const trainerMonthlySales =
+      await this._BookTrainerRepository.findMonthlySales();
+    const subscriptionYearlySales =
+      await this._SubscriptionRepository.findYearlySales();
+    const trainerYearlySales =
+      await this._BookTrainerRepository.findYearlySales();
 
     return {
       status: 200,
@@ -310,7 +310,7 @@ class AdminUseCase {
         subscriptionMonthlySales,
         trainerMonthlySales,
         subscriptionYearlySales,
-        trainerYearlySales
+        trainerYearlySales,
       },
     };
   }

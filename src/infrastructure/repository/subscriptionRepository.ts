@@ -11,7 +11,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
   }
 
   async findAllSubscriptionsWithId(userId: string): Promise<Subscription[]> {
-    const subscriptions = await SubscriptionModel.find({ userId: userId })
+    const subscriptions = await SubscriptionModel.find({ userId: userId }).sort({createdAt: -1})
       .populate("gymId")
       .populate("userId");
     return subscriptions;

@@ -39,9 +39,7 @@ class AdminController {
   async gymBlockAction(req: Request, res: Response) {
     try {
       const { id } = req.params;
-
       console.log("iam id", id, "params", req.params);
-
       const gym = await this._AdminUseCase.gymBlockAction(id);
       res.status(gym.status).json(gym.data);
     } catch (error) {

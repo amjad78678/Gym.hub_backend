@@ -27,8 +27,6 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
 
-      console.log("iam decodedData", decodedData);
-
       const gym = await _gymRepo.findById(decodedData.userId as string);
 
       if (decodedData && (!decodedData.role || decodedData.role !== "gym")) {
@@ -43,7 +41,6 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
             .status(401)
             .json({ message: "Gym have been blocked by admin!" });
         } else {
-          console.log("iam gym", gym);
           req.gymId = decodedData.userId;
           next();
         }
