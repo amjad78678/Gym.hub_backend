@@ -23,8 +23,8 @@ class CouponRepository implements CouponRepo {
             if (coupon) return coupon;
             return null
     }
-    async findAllCoupons(): Promise<{}[]> {
-        let coupons = await CouponModel.find();
+    async findAllCoupons(gymId: string): Promise<{}[]> {
+        let coupons = await CouponModel.find({gymId: gymId});
         return coupons;
     }
     async findCheckoutCoupons(gymId: string): Promise<{}[]> {

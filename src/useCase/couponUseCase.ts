@@ -27,8 +27,8 @@ class CouponUseCase {
 
     }
 
-    async findAllCoupons() {
-        const coupons = await this._CouponRepository.findAllCoupons();
+    async findAllCoupons(gymId: string) {
+        const coupons = await this._CouponRepository.findAllCoupons(gymId);
         return {
             status: 200,
             message: "All Coupons",

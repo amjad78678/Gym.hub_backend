@@ -3,7 +3,7 @@ import CouponI from "../../domain/coupon";
 interface CouponRepo {
     save(data: CouponI): Promise<CouponI>;
     findByName(name: string): Promise<boolean>;
-    findAllCoupons(): Promise<{}[]>;
+    findAllCoupons(gymId: string): Promise<{}[]>;
     findCheckoutCoupons(gymId: string): Promise<{}[]>;
     findByNameForEdit(name: string, id: string): Promise<boolean>;
     findById(id: string): Promise<any>;
@@ -12,6 +12,5 @@ interface CouponRepo {
     applyCoupon(userId: string, name: string): Promise<boolean>;
     findAvailableCoupons(): Promise<{}[]>;
     findByIdAndUpdate(id: string, data: any): Promise<any>;
-
 } 
 export default CouponRepo;

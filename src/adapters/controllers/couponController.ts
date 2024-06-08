@@ -23,7 +23,8 @@ class CouponController {
 
     async getAllCoupons(req: Request, res: Response) {
         try {
-            const result = await this._CouponCase.findAllCoupons();
+            const gymId = req.gymId || ""
+            const result = await this._CouponCase.findAllCoupons(gymId);
             res.status(result.status).json(result.data);
         } catch (error) {
             const err: Error = error as Error;
