@@ -490,5 +490,6 @@ class GymUseCase {
       };
     }
   }
+  //nothing
 }
 export default GymUseCase;
