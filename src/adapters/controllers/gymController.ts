@@ -424,8 +424,26 @@ class GymController {
 
   async editGymProfile(req: Request, res: Response) {
     try {
+      const gymId=req.gymId||""
       console.log("iam body", req.body);
-      console.log("iam files coming", req.files);
+     const response= await this._GymUseCase.editGymProfile(gymId,req.body)
+     res.status(response.status).json(response.data)
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async editGymImages(req: Request, res: Response) {
+    try {
+      console.log("reqfiles", req.files);
+      console.log(req.body);
+      const gymId = req.gymId || "";
+      const response = await this._GymUseCase.editGymImages(gymId, req.files);
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({

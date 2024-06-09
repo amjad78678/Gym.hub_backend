@@ -431,5 +431,64 @@ class GymUseCase {
       },
     };
   }
+
+  async editGymImages(gymId: string, files: any) {
+    const gym = await this._GymRepository.findByIdNormal(gymId);
+    const updatedImages = [];
+    for (let i = 0; i < files.length; i++) {
+      const index = Number(files[i].originalname.split("_")[1]);
+      console.log("index of image", index);
+
+      if (gym.images[index]) {
+        await this._CloudinaryUpload.deleteImage(gym.images[index].public_id);
+
+        const uploadedImage = await this._SharpImages.sharpenImage(
+          files[i],
+          6000,
+          4000,
+          "gymImages"
+        );
+
+        const newImage = {
+          imageUrl: uploadedImage.secure_url,
+          public_id: uploadedImage.public_id,
+          index: index,
+        };
+
+        updatedImages.push(newImage);
+      }
+    }
+    console.log("iam updated images", updatedImages);
+    await this._GymRepository.updateImages(gymId, updatedImages);
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: "Images updated successfully",
+      },
+    };
+  }
+
+  async editGymProfile(gymId: string, gymData: Gym) {
+    const gym = await this._GymRepository.updateProfile(gymId, gymData);
+    if (gym) {
+      return {
+        status: 200,
+        data: {
+          success: true,
+          message: "Profile updated successfully",
+        },
+      };
+    } else {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "Profile cannot be updated",
+        },
+      };
+    }
+  }
 }
 export default GymUseCase;

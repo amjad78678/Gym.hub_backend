@@ -40,6 +40,11 @@ class GymRepository implements iGymRepo {
     return gymData;
   }
 
+  async findByIdNormal(id: string): Promise<{} | any> {
+    const gym = await GymModel.findOne({ _id: id });
+    return gym;
+  }
+
   async findByIdAndUpdateBlock(_id: string): Promise<any | null> {
     const gym = await GymModel.findById({ _id });
     if (gym) {
@@ -155,6 +160,31 @@ class GymRepository implements iGymRepo {
   async findByIdAndDelete(id: string): Promise<{} | null> {
     const gym = await GymModel.findByIdAndUpdate(id, { isDeleted: true });
     return gym;
+  }
+  async updateImages(id: string, images: any[]): Promise<void> {
+    try {
+      for (let i = 0; i < images.length; i++) {
+        const { index, ...image } = images[i];
+
+        await GymModel.updateOne(
+          { _id: id },
+          { $set: { [`images.${index}`]: image } }
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update images:", error);
+      throw error;
+    }
+  }
+
+  async updateProfile(id: string, data: any): Promise<{} | any> {
+    try {
+      const res = await GymModel.findByIdAndUpdate(id, data, { new: true });
+      return res;
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      throw error;
+    }
   }
 }
 
