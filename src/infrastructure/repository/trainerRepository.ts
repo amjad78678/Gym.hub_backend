@@ -13,10 +13,10 @@ class TrainerRepository implements iTrainerRepo {
     const trainers = await TrainerModel.find().populate("gymId");
     return trainers;
   }
-  async findTrainersInUserSide(page: any): Promise<Trainer[] | null> {
+  async findTrainersInUserSide(page: number,search: string,sliderValue: number): Promise<Trainer[] | null> {
     const limit = 4;
     const offset = (page - 1) * limit;
-    const trainers = await TrainerModel.find()
+    const trainers = await TrainerModel.find({name: {$regex: search, $options: "i"}, monthlyFee: {$lte: sliderValue}})
       .limit(limit)
       .skip(offset)
       .populate("gymId");
@@ -26,6 +26,13 @@ class TrainerRepository implements iTrainerRepo {
   async findFullResultLen() {
     const length = await TrainerModel.find().countDocuments();
     return length;
+  }
+  async findMaxPrice() {
+    const maxPrice = await TrainerModel.aggregate([
+      { $group: { _id: null, maxPrice: { $max: "$monthlyFee" } } },
+    ]);
+
+    return maxPrice;
   }
   async findById(_id: string): Promise<Trainer[] | null> {
     const trainers = await TrainerModel.find({ gymId: _id }).populate("gymId");

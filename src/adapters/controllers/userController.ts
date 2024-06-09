@@ -152,12 +152,16 @@ class UserController {
 
   async getGymList(req: Request, res: Response) {
     try {
-      const { latitude, longitude, page } = req.query;
+      const { latitude, longitude, page, search, sliderValue } = req.query;
+
+      console.log("slidervalue", sliderValue);
 
       const gymList = await this.userUseCase.getGymList(
         latitude,
         longitude,
-        parseInt(page as string)
+        parseInt(page as string),
+        search as string,
+        Number(sliderValue) as number
       );
 
       res.status(gymList.status).json(gymList.data);
@@ -200,10 +204,28 @@ class UserController {
 
   async getTrainers(req: Request, res: Response) {
     try {
-      const { page } = req.params;
+      const { page, search, sliderValue } = req.query;
       console.log("iam page", page);
-      const trainers = await this.userUseCase.getTrainers(parseInt(page));
+      console.log("ima params", req.query);
+      const trainers = await this.userUseCase.getTrainers(
+        page,
+        search as string,
+        Number(sliderValue)
+      );
       res.status(trainers.status).json(trainers.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async getMaxPriceTrainer(req: Request, res: Response) {
+    try {
+      const response = await this.userUseCase.getMaxPriceTrainer();
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -442,7 +464,7 @@ class UserController {
   async getGymReviews(req: Request, res: Response) {
     try {
       const { gymId } = req.params;
-      const result = await this.userUseCase.getGymReviews( gymId);
+      const result = await this.userUseCase.getGymReviews(gymId);
       res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -488,6 +510,19 @@ class UserController {
       const { body } = req.params;
       const result = await this.userUseCase.getExercisesDetails(body);
       res.status(result.status).json(result.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async getMaxPriceGym(req: Request, res: Response) {
+    try {
+      const response = await this.userUseCase.getMaxPriceGym();
+      res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({

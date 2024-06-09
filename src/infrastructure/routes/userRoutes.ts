@@ -124,6 +124,8 @@ router.post("/resend_otp", (req, res) => userController.resendOtp(req, res));
 router.post("/login", (req, res) => userController.login(req, res));
 router.post("/logout", (req, res) => userController.logout(req, res));
 router.get("/gym_list", (req, res) => userController.getGymList(req, res));
+router.get('/max_price_gym', (req, res) =>
+  userController.getMaxPriceGym(req, res))
 router.get("/gym_list_normal", (req, res) =>
   userController.getGymNormalList(req, res)
 );
@@ -133,9 +135,10 @@ router.get("/gym_details/:id", (req, res) =>
 router.get("/is_review_possible/:gymId", protect, (req, res) =>
   userController.isReviewPossible(req, res)
 );
-router.get("/fetch_trainers/:page", (req, res) =>
+router.get("/fetch_trainers", (req, res) =>
   userController.getTrainers(req, res)
 );
+router.get('/max_price_trainer', (req, res) =>userController.getMaxPriceTrainer(req, res))
 router.post("/forgot_password", (req, res) =>
   userController.forgotPassword(req, res)
 );
@@ -203,6 +206,7 @@ router.get("/exercises/:body", (req, res) =>
 router.get("/fetch_banners", (req, res) =>
   bannerController.fetchBanners(req, res)
 );
+
 
 //Chatting
 router.post("/chat/create", protect, (req, res) =>

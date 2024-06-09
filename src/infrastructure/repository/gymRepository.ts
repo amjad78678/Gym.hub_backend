@@ -60,7 +60,9 @@ class GymRepository implements iGymRepo {
   async findNearGym(
     latitude: number,
     longitude: number,
-    page: number
+    page: number,
+    search: string,
+    sliderValue: number
   ): Promise<Gym[] | null> {
     const limit = 4;
     const offset = (page - 1) * limit;
@@ -74,6 +76,14 @@ class GymRepository implements iGymRepo {
           distanceField: "dist.calculated",
           maxDistance: 1000000 * 1000,
           spherical: true,
+        },
+      },
+      {
+        $match: {
+          gymName: { $regex: search, $options: "i" },
+          "subscriptions.Daily": {
+            $lte: sliderValue == 0 ? Infinity : sliderValue,
+          },
         },
       },
       {
@@ -105,6 +115,13 @@ class GymRepository implements iGymRepo {
     ]);
 
     return gymData;
+  }
+
+  async findMaxPrice(): Promise<any> {
+    const maxPrice = await GymModel.aggregate([
+      { $group: { _id: null, maxPrice: { $max: "$subscriptions.Daily" } } },
+    ]);
+    return maxPrice;
   }
 
   async findAllLen(): Promise<number> {

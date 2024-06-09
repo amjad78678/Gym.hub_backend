@@ -172,25 +172,28 @@ class UserUseCase {
     }
   }
 
-  async getGymList(latitude: any, longitude: any, page: number) {
+  async getGymList(
+    latitude: any,
+    longitude: any,
+    page: number,
+    search: string,
+    sliderValue: number
+  ) {
     console.log("iam page", page);
     const gymList = await this._GymRepository.findNearGym(
       latitude,
       longitude,
-      page
+      page,
+      search,
+      sliderValue
     );
-
-    // const averageGymReview =await this._GymReviewsRepository.findAverageReview()
     console.log("gym list", gymList, gymList?.length, page);
-
-    const total = await this._GymRepository.findAllLen();
 
     return {
       status: 200,
       data: {
         success: false,
         message: gymList,
-        total,
       },
     };
   }
@@ -219,8 +222,12 @@ class UserUseCase {
     };
   }
 
-  async getTrainers(page: any) {
-    const trainers = await this._TrainerRepository.findTrainersInUserSide(page);
+  async getTrainers(page: any, search: string, sliderValue: number) {
+    const trainers = await this._TrainerRepository.findTrainersInUserSide(
+      page,
+      search,
+      sliderValue
+    );
     const fullResult = await this._TrainerRepository.findFullResultLen();
     return {
       status: 200,
@@ -228,6 +235,17 @@ class UserUseCase {
         success: true,
         trainers,
         fullResult,
+      },
+    };
+  }
+
+  async getMaxPriceTrainer() {
+    const maxPrice = await this._TrainerRepository.findMaxPrice();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        maxPrice,
       },
     };
   }
@@ -519,6 +537,17 @@ class UserUseCase {
       data: {
         success: true,
         details,
+      },
+    };
+  }
+
+  async getMaxPriceGym() {
+    const maxPrice = await this._GymRepository.findMaxPrice();
+    return {
+      status: 200,
+      data: {
+        success: true,
+        maxPrice,
       },
     };
   }
