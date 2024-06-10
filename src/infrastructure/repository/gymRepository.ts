@@ -156,6 +156,10 @@ class GymRepository implements iGymRepo {
     const gymData = await GymModel.find().sort({ createdAt: -1 }).limit(4);
     return gymData;
   }
+  async findLatestGyms(): Promise<{}[] | null> {
+    const gymData = await GymModel.find().sort({ createdAt: -1 }).limit(8);
+    return gymData;
+  }
   async findTotalGyms(): Promise<{} | null> {
     const gymData = await GymModel.find().countDocuments();
     return gymData;

@@ -199,7 +199,7 @@ class UserUseCase {
   }
 
   async getGymListNormal() {
-    const gymList = await this._GymRepository.findAllGyms();
+    const gymList = await this._GymRepository.findLatestGyms();
     return {
       status: 200,
       data: {
