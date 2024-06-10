@@ -13,10 +13,52 @@ class TrainerRepository implements iTrainerRepo {
     const trainers = await TrainerModel.find().populate("gymId");
     return trainers;
   }
-  async findTrainersInUserSide(page: number,search: string,sliderValue: number): Promise<Trainer[] | null> {
+  async getExperienceFilter(
+    experience: "1-3 years" | "3-5 years" | "5plus years" | "All"
+  ): Promise<{ $gte: number; $lte: number } | null> {
+    const experienceValues = ["1-3 years", "3-5 years", "5plus years"];
+    if (experience === "All" || !experienceValues.includes(experience)) {
+      return null;
+    }
+
+    const lteValues = {
+      "1-3 years": { $gte: 1, $lte: 3 },
+      "3-5 years": { $gte: 3, $lte: 5 },
+      "5plus years": { $gte: 5, $lte: Infinity },
+    };
+
+    return lteValues[experience];
+  }
+  async findTrainersInUserSide(
+    page: number,
+    search: string,
+    sliderValue: number,
+    experience: any
+  ): Promise<Trainer[] | null> {
     const limit = 4;
     const offset = (page - 1) * limit;
-    const trainers = await TrainerModel.find({name: {$regex: search, $options: "i"}, monthlyFee: {$lte: sliderValue}})
+    const filters: {
+      monthlyFee: { $lte: number };
+      name?: { $regex: string; $options: string };
+      experience?: { $gte: number; $lte: number };
+    } = {
+      monthlyFee: { $lte: sliderValue },
+    };
+
+    if (search) {
+      filters.name = { $regex: search, $options: "i" };
+    }
+
+    if (
+      experience &&
+      ["1-3 years", "3-5 years", "5plus years", "All"].includes(experience)
+    ) {
+      const experienceFilter = await this.getExperienceFilter(experience);
+      if (experienceFilter !== null) {
+        filters.experience = experienceFilter;
+      }
+    }
+    const trainers = await TrainerModel.find(filters)
       .limit(limit)
       .skip(offset)
       .populate("gymId");

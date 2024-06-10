@@ -204,13 +204,14 @@ class UserController {
 
   async getTrainers(req: Request, res: Response) {
     try {
-      const { page, search, sliderValue } = req.query;
+      const { page, search, sliderValue,experience } = req.query;
       console.log("iam page", page);
       console.log("ima params", req.query);
       const trainers = await this.userUseCase.getTrainers(
         page,
         search as string,
-        Number(sliderValue)
+        Number(sliderValue),
+        experience
       );
       res.status(trainers.status).json(trainers.data);
     } catch (error) {

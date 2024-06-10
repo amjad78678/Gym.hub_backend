@@ -222,11 +222,12 @@ class UserUseCase {
     };
   }
 
-  async getTrainers(page: any, search: string, sliderValue: number) {
+  async getTrainers(page: any, search: string, sliderValue: number,experience: any) {
     const trainers = await this._TrainerRepository.findTrainersInUserSide(
       page,
       search,
-      sliderValue
+      sliderValue,
+      experience
     );
     const fullResult = await this._TrainerRepository.findFullResultLen();
     return {
