@@ -156,6 +156,25 @@ class SubscriptionUseCase {
       },
     };
   }
+
+
+  //Add to wallet for subscription in profile
+  async addWalletPayment(walletData: any) {
+    const user = await this._UserRepository.findById(walletData.userId);
+    if (user) {
+      user.wallet = (user.wallet || 0) + walletData.wallet;
+      user.walletHistory.push(walletData.walletHistory);
+
+      await this._UserRepository.save(user);
+    }
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+      },
+    };
+  }
 }
 
 export default SubscriptionUseCase;

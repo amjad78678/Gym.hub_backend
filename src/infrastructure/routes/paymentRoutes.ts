@@ -11,6 +11,7 @@ import BookTrainerRepository from "../repository/bookTrainerRepository";
 import GenerateQrCode from "../services/generateQrCode";
 import GenerateEmail from "../services/sendEmail";
 import GymRepository from "../repository/gymRepository";
+import UserUseCase from "../../useCase/userUseCase";
 
 //services
 const generateQrCode = new GenerateQrCode();
@@ -45,23 +46,13 @@ const bookTrainerUseCase = new BookTrainerUseCase(
 const paymentController = new PaymentController(
   subscriptionUseCase,
   userRepository,
-  bookTrainerUseCase
+  bookTrainerUseCase,
 );
 
 const router = express.Router();
 
 router.post("/webhook", express.raw({ type: "application/json" }), (req, res) =>
   paymentController.confirmPayment(req, res)
-);
-router.post(
-  "/webhook/add_wallet",
-  express.raw({ type: "application/json" }),
-  (req, res) => paymentController.addWalletPayment(req, res)
-);
-router.post(
-  "/webhook/add_trainer",
-  express.raw({ type: "application/json" }),
-  (req, res) => paymentController.bookTrainerPayment(req, res)
 );
 
 export default router;
