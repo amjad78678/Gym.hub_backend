@@ -9,7 +9,6 @@ class BannerController {
 
   async addBanner(req: Request, res: Response) {
     try {
-    
       const banner = await this._BannerUseCase.addBanner(req.body, req.file);
       res.status(banner.status).json(banner.data);
     } catch (error) {
@@ -22,19 +21,16 @@ class BannerController {
   }
 
   async fetchBanners(req: Request, res: Response) {
-   try {
-
-    const banners = await this._BannerUseCase.fetchBanners();
-    res.status(banners.status).json(banners.data);
-   } catch (error) {
-    const err: Error = error as Error;
-    res.status(400).json({
-      message: err.message,
-      stack: process.env.NODE_ENV === "production" ? null : err.stack,
-    });
-   }
-
-
+    try {
+      const banners = await this._BannerUseCase.fetchBanners();
+      res.status(banners.status).json(banners.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
   }
 
   async updateBanner(req: Request, res: Response) {
