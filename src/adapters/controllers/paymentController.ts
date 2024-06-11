@@ -28,8 +28,9 @@ class PaymentController {
         req.app.locals.paymentDataUser = null;
       }
 
-      res.status(200).json({ success: true });
+      // res.status(200).json({ success: true });
     }
+    res.status(200).json({ success: true });
   }
 
   async addWalletPayment(req: Request, res: Response) {
