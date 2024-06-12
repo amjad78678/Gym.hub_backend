@@ -153,18 +153,18 @@ class UserController {
   async getGymList(req: Request, res: Response) {
     try {
       const { latitude, longitude, page, search, sliderValue } = req.query;
-
       console.log("slidervalue", sliderValue);
+   
+        const gymList = await this.userUseCase.getGymList(
+          latitude,
+          longitude,
+          parseInt(page as string),
+          search as string,
+          Number(sliderValue) as number
+        );
 
-      const gymList = await this.userUseCase.getGymList(
-        latitude,
-        longitude,
-        parseInt(page as string),
-        search as string,
-        Number(sliderValue) as number
-      );
-
-      res.status(gymList.status).json(gymList.data);
+        res.status(gymList.status).json(gymList.data);
+      
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -204,7 +204,7 @@ class UserController {
 
   async getTrainers(req: Request, res: Response) {
     try {
-      const { page, search, sliderValue,experience } = req.query;
+      const { page, search, sliderValue, experience } = req.query;
       console.log("iam page", page);
       console.log("ima params", req.query);
       const trainers = await this.userUseCase.getTrainers(

@@ -180,22 +180,33 @@ class UserUseCase {
     sliderValue: number
   ) {
     console.log("iam page", page);
-    const gymList = await this._GymRepository.findNearGym(
-      latitude,
-      longitude,
-      page,
-      search,
-      sliderValue
-    );
-    console.log("gym list", gymList, gymList?.length, page);
+    console.log("latitude", latitude, "longitude", longitude);
 
-    return {
-      status: 200,
-      data: {
-        success: false,
-        message: gymList,
-      },
-    };
+    if (latitude == "null" || longitude == "null") {
+      return {
+        status: 400,
+        data: {
+          success: false,
+        },
+      };
+    } else {
+      const gymList = await this._GymRepository.findNearGym(
+        latitude,
+        longitude,
+        page,
+        search,
+        sliderValue
+      );
+      console.log("gym list", gymList, gymList?.length, page);
+
+      return {
+        status: 200,
+        data: {
+          success: false,
+          message: gymList,
+        },
+      };
+    }
   }
 
   async getGymListNormal() {
@@ -557,8 +568,6 @@ class UserUseCase {
       },
     };
   }
-
-
 }
 
 export default UserUseCase;
