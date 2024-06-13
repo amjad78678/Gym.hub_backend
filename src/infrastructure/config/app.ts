@@ -14,7 +14,6 @@ import adminRoutes from "../routes/adminRoutes";
 import trainerRoutes from "../routes/trainerRoutes";
 import paymentRoutes from "../routes/paymentRoutes";
 
-
 export const createServer = () => {
   try {
     const app = express();
@@ -23,11 +22,12 @@ export const createServer = () => {
     app.use(express.static(path.join(__dirname, "../public")));
     app.use(
       cors({
-        origin: process.env.CORS_ORIGIN,
+        origin: "*",
         credentials: true,
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-        allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
-        optionsSuccessStatus: 200
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+        allowedHeaders:
+          "Origin,X-Requested-With,Content-Type,Accept,Authorization",
+        optionsSuccessStatus: 200,
       })
     );
     app.use(cookieParser());
@@ -39,7 +39,7 @@ export const createServer = () => {
     app.use("/api/gym", gymRoutes);
     app.use("/api/admin", adminRoutes);
     app.use("/api/trainer", trainerRoutes);
-    app.use("/api/payment", paymentRoutes );
+    app.use("/api/payment", paymentRoutes);
 
     app.use((req, res) =>
       res.status(404).json({ success: false, message: "Not Found" })
