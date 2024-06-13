@@ -154,17 +154,16 @@ class UserController {
     try {
       const { latitude, longitude, page, search, sliderValue } = req.query;
       console.log("slidervalue", sliderValue);
-   
-        const gymList = await this.userUseCase.getGymList(
-          latitude,
-          longitude,
-          parseInt(page as string),
-          search as string,
-          Number(sliderValue) as number
-        );
 
-        res.status(gymList.status).json(gymList.data);
-      
+      const gymList = await this.userUseCase.getGymList(
+        latitude,
+        longitude,
+        parseInt(page as string),
+        search as string,
+        Number(sliderValue) as number
+      );
+
+      res.status(gymList.status).json(gymList.data);
     } catch (error) {
       const err: Error = error as Error;
       res.status(400).json({
@@ -523,6 +522,24 @@ class UserController {
   async getMaxPriceGym(req: Request, res: Response) {
     try {
       const response = await this.userUseCase.getMaxPriceGym();
+      res.status(response.status).json(response.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async setBrowserToken(req: Request, res: Response) {
+    try {
+      const userId = req.userId || "";
+      const browserToken = req.body.token;
+      const response = await this.userUseCase.setBrowserToken(
+        userId as string,
+        browserToken as string
+      );
       res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;

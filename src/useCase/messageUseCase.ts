@@ -1,22 +1,30 @@
 import MessageRepository from "../infrastructure/repository/messageRepository";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 import iMessageTrainer from "./interface/messageTrainer";
+import PushNotificationRepository from "../infrastructure/repository/pushNotificationRepository";
 
 class MessageUseCase {
   private _MessageRepository: MessageRepository;
   private _CloudinaryUpload: CloudinaryUpload;
+  private _PushNotificationRepo: PushNotificationRepository;
 
   constructor(
     messageRepository: MessageRepository,
-    cloudinaryUpload: CloudinaryUpload
+    cloudinaryUpload: CloudinaryUpload,
+    pushNotificationRepo: PushNotificationRepository
   ) {
     this._MessageRepository = messageRepository;
     this._CloudinaryUpload = cloudinaryUpload;
+    this._PushNotificationRepo = pushNotificationRepo;
   }
 
   async createMessage(data: iMessageTrainer) {
     const messageData: iMessageTrainer =
       await this._MessageRepository.createMessage(data);
+    await this._PushNotificationRepo.sendPushNotification(
+      data.receiver,
+      data.content
+    );
 
     return {
       status: 200,

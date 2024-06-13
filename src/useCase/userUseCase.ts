@@ -3,6 +3,7 @@ import BannerRepository from "../infrastructure/repository/bannerRepository";
 import GymRepository from "../infrastructure/repository/gymRepository";
 import GymReviewsRepository from "../infrastructure/repository/gymReviewsRepository";
 import PaymentRepository from "../infrastructure/repository/paymentRepository";
+import PushNotificationRepository from "../infrastructure/repository/pushNotificationRepository";
 import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
@@ -33,6 +34,8 @@ class UserUseCase {
   private _CloudinayUpload: CloudinaryUpload;
   private _SubscriptionRespository: SubscriptionRepository;
   private _GymReviewsRepository: GymReviewsRepository;
+  private _PushNotificationRepository: PushNotificationRepository
+
 
   constructor(
     UserRepository: UserRepository,
@@ -44,7 +47,9 @@ class UserUseCase {
     sharpImages: SharpImages,
     cloudinaryUpload: CloudinaryUpload,
     subscriptionRepository: SubscriptionRepository,
-    gymReviewsRepository: GymReviewsRepository
+    gymReviewsRepository: GymReviewsRepository,
+    pushNotificationRepo: PushNotificationRepository
+
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -56,6 +61,7 @@ class UserUseCase {
     this._CloudinayUpload = cloudinaryUpload;
     this._SubscriptionRespository = subscriptionRepository;
     this._GymReviewsRepository = gymReviewsRepository;
+    this._PushNotificationRepository=pushNotificationRepo
   }
 
   async signUp(email: string) {
@@ -565,6 +571,16 @@ class UserUseCase {
       data: {
         success: true,
         maxPrice,
+      },
+    };
+  }
+
+  async setBrowserToken(userId: string, token: string) {
+    await this._PushNotificationRepository.updateOne(userId, token);
+    return {
+      status: 200,
+      data: {
+        success: true,
       },
     };
   }

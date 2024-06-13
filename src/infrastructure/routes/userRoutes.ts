@@ -33,6 +33,7 @@ import GymReviewsRepository from "../repository/gymReviewsRepository";
 import BannerController from "../../adapters/controllers/bannerController";
 import BannerUseCase from "../../useCase/bannerUseCase";
 import BannerRepository from "../repository/bannerRepository";
+import PushNotificationRepository from "../repository/pushNotificationRepository";
 
 //services
 const generateOtp = new GenerateOtp();
@@ -55,6 +56,7 @@ const bookTrainerRepository = new BookTrainerRepository();
 const messageRepository = new MessageRepository();
 const gymReviewsRepository = new GymReviewsRepository();
 const bannerRepository = new BannerRepository();
+const pushNotificationRepo= new PushNotificationRepository();
 
 //useCases
 const userCase = new UserUseCase(
@@ -67,7 +69,8 @@ const userCase = new UserUseCase(
   sharpImages,
   cloudinaryUpload,
   subscriptionRepository,
-  gymReviewsRepository
+  gymReviewsRepository,
+  pushNotificationRepo
 );
 const cartCase = new CartUseCase(
   cartRepository,
@@ -90,7 +93,7 @@ const bookTrainerUseCase = new BookTrainerUseCase(
   paymentRepository,
   bookTrainerRepository
 );
-const messageUseCase = new MessageUseCase(messageRepository, cloudinaryUpload);
+const messageUseCase = new MessageUseCase(messageRepository, cloudinaryUpload,pushNotificationRepo);
 const bannerUseCase = new BannerUseCase(
   bannerRepository,
   sharpImages,
@@ -218,5 +221,6 @@ router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res) =>
 router.post("/upload_chat_files", ImageUpload.array("files", 5), (req, res) =>
   messageController.uploadChatFiles(req, res)
 );
+router.post('/set_client_token',protect,(req,res)=>userController.setBrowserToken(req,res))
 
 export default router;

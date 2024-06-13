@@ -216,17 +216,36 @@ class TrainerController {
   }
 
   async getDashboardData(req: Request, res: Response) {
-   try {
-    const trainerId = req.trainerId || "";
-    const dashboardData=await this._TrainerUseCase.getDashboardData(trainerId)
-    res.status(dashboardData.status).json(dashboardData.data)
-   } catch (error) {
-    const err: Error = error as Error;
-    res.status(400).json({
-      message: err.message,
-      stack: process.env.NODE_ENV === "production" ? null : err.stack,
-    });
-   }
+    try {
+      const trainerId = req.trainerId || "";
+      const dashboardData =
+        await this._TrainerUseCase.getDashboardData(trainerId);
+      res.status(dashboardData.status).json(dashboardData.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
+  }
+
+  async setTrainerBrowserToken(req: Request, res: Response) {
+    try {
+      const userId = req.trainerId || "";
+      const browserToken = req.body.token;
+      const response = await this._TrainerUseCase.setBrowserToken(
+        userId as string,
+        browserToken as string
+      );
+      res.status(response.status).json(response.data);
+    } catch (error) {
+      const err: Error = error as Error;
+      res.status(400).json({
+        message: err.message,
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      });
+    }
   }
 }
 

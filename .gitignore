@@ -138,3 +138,4 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+src/infrastructure/services/gymhub-push-notification-firebase-adminsdk-34ryj-4eaaeb8cda.json

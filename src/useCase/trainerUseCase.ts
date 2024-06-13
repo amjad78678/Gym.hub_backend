@@ -1,4 +1,5 @@
 import BookTrainerRepository from "../infrastructure/repository/bookTrainerRepository";
+import PushNotificationRepository from "../infrastructure/repository/pushNotificationRepository";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
@@ -14,7 +15,7 @@ class TrainerUseCase {
   private _CloudinaryUpload: CloudinaryUpload;
   private _SharpImage: SharpImages;
   private _BookTrainerRepository: BookTrainerRepository;
-
+  private _PushNotificationRepository: PushNotificationRepository
   constructor(
     trainerRepository: TrainerRepository,
     encryptPassword: EncryptPassword,
@@ -22,7 +23,8 @@ class TrainerUseCase {
     userRepository: UserRepository,
     cloudinaryUpload: CloudinaryUpload,
     sharpImages: SharpImages,
-    bookTrainerRepository: BookTrainerRepository
+    bookTrainerRepository: BookTrainerRepository,
+    pushNotificationRepo: PushNotificationRepository
   ) {
     this._TrainerRepository = trainerRepository;
     this._EncryptPassword = encryptPassword;
@@ -31,6 +33,7 @@ class TrainerUseCase {
     this._CloudinaryUpload = cloudinaryUpload;
     this._SharpImage = sharpImages;
     this._BookTrainerRepository = bookTrainerRepository;
+    this._PushNotificationRepository= pushNotificationRepo
   }
 
   async login(email: string, password: string) {
@@ -250,6 +253,16 @@ class TrainerUseCase {
         totalSales,
         totalBookings,
         totalTrainees
+      },
+    };
+  }
+
+  async setBrowserToken(userId: string, token: string) {
+    await this._PushNotificationRepository.updateOne(userId, token);
+    return {
+      status: 200,
+      data: {
+        success: true,
       },
     };
   }

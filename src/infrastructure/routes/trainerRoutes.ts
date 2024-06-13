@@ -15,6 +15,7 @@ import CloudinaryUpload from "../utils/cloudinaryUpload";
 import { ImageUpload } from "../middleware/multer";
 import SharpImages from "../services/sharpImages";
 import BookTrainerRepository from "../repository/bookTrainerRepository";
+import PushNotificationRepository from "../repository/pushNotificationRepository";
 
 //services
 const encryptPassword = new EncryptPassword();
@@ -29,6 +30,7 @@ const trainerRepository = new TrainerRepository();
 const messageRepository = new MessageRepository();
 const userRepository = new UserRepository();
 const bookTrainerRepository = new BookTrainerRepository();
+const pushNotificationRepo = new PushNotificationRepository();
 
 //Use cases
 const trainerUseCase = new TrainerUseCase(
@@ -38,9 +40,10 @@ const trainerUseCase = new TrainerUseCase(
   userRepository,
   cloudinaryUpload,
   sharpImages,
-  bookTrainerRepository
+  bookTrainerRepository,
+  pushNotificationRepo
 );
-const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload)
+const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload,pushNotificationRepo)
 
 //controllers
 const trainerController = new TrainerController(
@@ -73,5 +76,6 @@ router.get('/fetch_subscriptions',protect,(req,res)=>trainerController.getSubscr
 router.get('/fetch_trainer_data',protect,(req,res)=>trainerController.getTrainerData(req,res))
 router.put('/edit_profile',protect,ImageUpload.single("image"),(req,res)=>trainerController.editProfile(req,res))
 router.get('/fetch_dashboard',protect,(req,res)=>trainerController.getDashboardData(req,res))
+router.post('/set_trainer_browser_token',protect,(req,res)=>trainerController.setTrainerBrowserToken(req,res))
 
 export default router;
