@@ -83,6 +83,7 @@ class PushNotificationRepository {
         notification: {
           title: "GymHub",
           body: content,
+          icon: "https://res.cloudinary.com/dkxtgziy2/image/upload/v1718292712/1_xc02g4.png",
         },
       };
 
