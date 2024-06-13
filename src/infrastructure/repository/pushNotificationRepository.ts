@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import PushNotificationModel from "../db/pushNotificationModel";
-import firebase from "../..";
+import firebase from "../services/firebasePushNotification";
 const fs = require("fs");
 const path = require("path");
 var FCM = require("fcm-node");
