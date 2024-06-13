@@ -3,7 +3,6 @@ import PushNotificationModel from "../db/pushNotificationModel";
 import firebase from "../services/firebasePushNotification";
 const fs = require("fs");
 const path = require("path");
-var FCM = require("fcm-node");
 
 class PushNotificationRepository {
   async updateOne(userId: string, token: string) {
