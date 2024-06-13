@@ -6,7 +6,6 @@ import cors from "cors";
 import http from "http";
 import path from "path";
 import morgan from "morgan";
-
 //Routes root
 import userRoutes from "../routes/userRoutes";
 import gymRoutes from "../routes/gymRoutes";
