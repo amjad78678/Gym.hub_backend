@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from "cookie-parser";
@@ -20,32 +20,17 @@ export const createServer = () => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, "../public")));
-    // app.use(
-    //   cors({
-    //     origin: process.env.CORS_ORIGIN,
-    //     credentials: true,
-    //   })
-    // );
-
-    const corsOptions = {
-      origin: process.env.CORS_ORIGIN,
-      credentials: true,
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-      allowedHeaders:
-        "Origin,X-Requested-With,Content-Type,Accept,Authorization",
-      optionsSuccessStatus: 200,
-    };
-
-    app.use(cors(corsOptions));
-    app.options("*", cors(corsOptions));
-    app.get("/", (req: Request, res: Response) => {
-      console.log("its working ... ");
-      res.send("Hello Wolrd ");
-    });
+    app.use(
+      cors({
+        origin: process.env.CORS_ORIGIN,
+        credentials: true,
+      })
+    );
     app.use(cookieParser());
     app.use(morgan("tiny"));
 
     const httpServer = http.createServer(app);
+
     app.use("/api/user", userRoutes);
     app.use("/api/gym", gymRoutes);
     app.use("/api/admin", adminRoutes);
