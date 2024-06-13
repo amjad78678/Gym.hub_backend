@@ -28,9 +28,9 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - name: Create Firebase secret key file
-    - run: |
-       mkdir -p src/infrastructure/services
-       echo '${{ secrets.FI_BACKEND_PRIVATE }}' > src/infrastructure/services/gymhub-push-notification-firebase-adminsdk-34ryj-4eaaeb8cda.json
+      run: |
+        mkdir -p src/infrastructure/services
+        echo '${{ secrets.FI_BACKEND_PRIVATE }}' > src/infrastructure/services/gymhub-push-notification-firebase-adminsdk-34ryj-4eaaeb8cda.json
     - run: |
         touch .env
         echo "${{secrets.PROD }}" > .env
