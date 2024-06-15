@@ -1,3 +1,4 @@
+import { refreshToken } from "firebase-admin/app";
 import User from "../domain/user";
 import BannerRepository from "../infrastructure/repository/bannerRepository";
 import GymRepository from "../infrastructure/repository/gymRepository";
@@ -101,6 +102,7 @@ class UserUseCase {
       const userId = userData._id;
 
       let token = this.JwtToken.generateToken(userId, "user");
+      let refreshToken = this.JwtToken.generateRefreshToken(userId, "user");
 
       return {
         status: 200,
@@ -109,6 +111,7 @@ class UserUseCase {
           message: "User created successfully",
           user,
           token,
+          refreshToken,
         },
       };
     } else {
@@ -117,6 +120,8 @@ class UserUseCase {
         data: {
           status: true,
           message: "User created successfully",
+          token: "",
+          refreshToken: "",
         },
       };
     }
@@ -125,6 +130,7 @@ class UserUseCase {
   async login(email: string, password: string) {
     const user = await this.UserRepository.findByEmail(email);
     let token = "";
+    let refreshToken = "";
 
     if (user) {
       if (user.isBlocked) {
@@ -134,6 +140,7 @@ class UserUseCase {
             status: false,
             message: "You have been blocked by admin!",
             token: "",
+            refreshToken: "",
           },
         };
       }
@@ -147,6 +154,7 @@ class UserUseCase {
         const userId = user._id;
 
         token = this.JwtToken.generateToken(userId, "user");
+        refreshToken = this.JwtToken.generateRefreshToken(userId, "user");
 
         return {
           status: 200,
@@ -154,6 +162,7 @@ class UserUseCase {
             status: true,
             message: user,
             token,
+            refreshToken,
           },
         };
       } else {
@@ -163,6 +172,7 @@ class UserUseCase {
             success: false,
             message: "Invalid email or password!",
             token: "",
+            refreshToken: "",
           },
         };
       }
@@ -173,6 +183,7 @@ class UserUseCase {
           success: false,
           message: "Invalid email or password!",
           token: "",
+          refreshToken: "",
         },
       };
     }

@@ -1,6 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import UserRepository from "../repository/userRepository";
+import JWTToken from "../services/generateToken";
+const _jwtToken = new JWTToken();
 
 const _userRepo = new UserRepository();
 
@@ -13,16 +15,20 @@ declare global {
 }
 
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-
-  const userToken = req.headers.authorization?.split(" ")[1];
-
-
-  if (!userToken) {
-    return res.status(401)
-    .json({ message: "Not authorized, invalid token" });
+  const userToken = req.cookies.user_access_token;
+  const userRefreshToken = req.cookies.user_refresh_token;
+  if (!userRefreshToken) {
+    return res.status(401).json({ message: "Not authorized, invalid token" });
   }
-
-
+  if (!userToken) {
+    const newUserToken = await refreshAccessToken(userRefreshToken);
+    res.cookie("user_access_token", newUserToken, {
+      maxAge: 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV !== "development",
+    });
+  }
 
   if (userToken) {
     try {
@@ -31,9 +37,7 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         process.env.JWT_SECRET_KEY as string
       ) as JwtPayload;
 
-
       const user = await _userRepo.findById(decodedData.userId as string);
-
       if (decodedData && (!decodedData.role || decodedData.role !== "user")) {
         return res
           .status(401)
@@ -44,8 +48,8 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         if (user.isBlocked) {
           return res.status(401).json({ message: "You are blocked by admin!" });
         } else {
-        req.userId = decodedData.userId;
-        next();
+          req.userId = decodedData.userId;
+          next();
         }
       } else {
         return res
@@ -57,6 +61,18 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
     }
   } else {
     return res.status(401).json({ message: "Not authorized, invalid token" });
+  }
+};
+
+const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    if (!refreshToken) throw new Error("No refresh token found");
+    const decoded = _jwtToken.verifyRefreshToken(refreshToken);
+    const newAccessToken = _jwtToken.generateToken(decoded?.userId, "user");
+    return newAccessToken;
+  } catch (error) {
+    console.log(error as Error);
+    throw new Error("Invalid refresh token");
   }
 };
 

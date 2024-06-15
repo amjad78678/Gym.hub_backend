@@ -34,9 +34,23 @@ class UserController {
     try {
       console.log("iam body", req.body);
       const verifyUser = await this.userUseCase.signUp(req.body.email);
-
       if (verifyUser.data.status == true && req.body.isGoogle) {
         const user = await this.userUseCase.verifyOtpUser(req.body);
+        if (user.data.token != "" && user.data.refreshToken != "") {
+          res
+            .cookie("user_access_token", user.data.token, {
+              httpOnly: true,
+              sameSite: "none",
+              secure: process.env.NODE_ENV !== "development",
+              maxAge: 60 * 60 * 1000,
+            })
+            .cookie("user_refresh_token", user.data.refreshToken, {
+              httpOnly: true,
+              sameSite: "none",
+              secure: process.env.NODE_ENV !== "development",
+              maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+        }
         res.status(user.status).json(user.data);
       } else if (verifyUser.data.status == true) {
         req.app.locals.userData = req.body;
@@ -59,7 +73,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -88,16 +101,21 @@ class UserController {
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
-
       const user = await this.userUseCase.login(email, password);
-
-      if (user.data.token != "") {
-        res.cookie("userJWT", user.data.token, {
-          httpOnly: true,
-          sameSite: "none",
-          secure: process.env.NODE_ENV !== "development",
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
+      if (user.data.token != "" && user.data.refreshToken != "") {
+        res
+          .cookie("user_access_token", user.data.token, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 60 * 60 * 1000,
+          })
+          .cookie("user_refresh_token", user.data.refreshToken, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+          });
       }
 
       res.status(user.status).json(user.data);
@@ -107,7 +125,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -135,10 +152,15 @@ class UserController {
 
   async logout(req: Request, res: Response) {
     try {
-      res.cookie("userJWT", "", {
-        httpOnly: true,
-        expires: new Date(0),
-      });
+      res
+        .cookie("user_access_token", "", {
+          httpOnly: true,
+          expires: new Date(0),
+        })
+        .cookie("user_refresh_token", "", {
+          httpOnly: true,
+          expires: new Date(0),
+        });
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
       const err: Error = error as Error;
@@ -146,7 +168,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -170,7 +191,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 

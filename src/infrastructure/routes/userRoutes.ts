@@ -56,7 +56,7 @@ const bookTrainerRepository = new BookTrainerRepository();
 const messageRepository = new MessageRepository();
 const gymReviewsRepository = new GymReviewsRepository();
 const bannerRepository = new BannerRepository();
-const pushNotificationRepo= new PushNotificationRepository();
+const pushNotificationRepo = new PushNotificationRepository();
 
 //useCases
 const userCase = new UserUseCase(
@@ -93,7 +93,11 @@ const bookTrainerUseCase = new BookTrainerUseCase(
   paymentRepository,
   bookTrainerRepository
 );
-const messageUseCase = new MessageUseCase(messageRepository, cloudinaryUpload,pushNotificationRepo);
+const messageUseCase = new MessageUseCase(
+  messageRepository,
+  cloudinaryUpload,
+  pushNotificationRepo
+);
 const bannerUseCase = new BannerUseCase(
   bannerRepository,
   sharpImages,
@@ -127,8 +131,9 @@ router.post("/resend_otp", (req, res) => userController.resendOtp(req, res));
 router.post("/login", (req, res) => userController.login(req, res));
 router.post("/logout", (req, res) => userController.logout(req, res));
 router.get("/gym_list", (req, res) => userController.getGymList(req, res));
-router.get('/max_price_gym', (req, res) =>
-  userController.getMaxPriceGym(req, res))
+router.get("/max_price_gym", (req, res) =>
+  userController.getMaxPriceGym(req, res)
+);
 router.get("/gym_list_normal", (req, res) =>
   userController.getGymNormalList(req, res)
 );
@@ -141,7 +146,9 @@ router.get("/is_review_possible/:gymId", protect, (req, res) =>
 router.get("/fetch_trainers", (req, res) =>
   userController.getTrainers(req, res)
 );
-router.get('/max_price_trainer', (req, res) =>userController.getMaxPriceTrainer(req, res))
+router.get("/max_price_trainer", (req, res) =>
+  userController.getMaxPriceTrainer(req, res)
+);
 router.post("/forgot_password", (req, res) =>
   userController.forgotPassword(req, res)
 );
@@ -210,7 +217,6 @@ router.get("/fetch_banners", (req, res) =>
   bannerController.fetchBanners(req, res)
 );
 
-
 //Chatting
 router.post("/chat/create", protect, (req, res) =>
   messageController.createMessage(req, res)
@@ -221,6 +227,8 @@ router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res) =>
 router.post("/upload_chat_files", ImageUpload.array("files", 5), (req, res) =>
   messageController.uploadChatFiles(req, res)
 );
-router.post('/set_client_token',protect,(req,res)=>userController.setBrowserToken(req,res))
+router.post("/set_client_token", protect, (req, res) =>
+  userController.setBrowserToken(req, res)
+);
 
 export default router;

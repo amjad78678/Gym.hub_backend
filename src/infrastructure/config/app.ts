@@ -27,7 +27,6 @@ export const createServer = () => {
     );
     app.use(cookieParser());
     app.use(morgan("tiny"));
-
     const httpServer = http.createServer(app);
 
     app.use("/api/user", userRoutes);
@@ -35,7 +34,6 @@ export const createServer = () => {
     app.use("/api/admin", adminRoutes);
     app.use("/api/trainer", trainerRoutes);
     app.use("/api/payment", paymentRoutes);
-
     app.use((req, res) =>
       res.status(404).json({ success: false, message: "Not Found" })
     );
