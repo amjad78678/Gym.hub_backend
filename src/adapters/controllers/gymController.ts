@@ -28,8 +28,7 @@ class GymController {
 
   async gymRegister(req: Request, res: Response) {
     try {
-      console.log("iam req.body", req.body);
-      console.log("iam reqfiles", req.files?.length);
+
 
       const gym = await this._GymUseCase.gymSignUp(req.body, req.files);
       if (gym) {
@@ -38,7 +37,6 @@ class GymController {
           const otp = this._GenerateOtp.createOtp();
           req.app.locals.otp = otp;
           this._GenerateEmail.sendEmail(req.body.email, otp);
-          console.log(otp);
 
           setTimeout(() => {
             req.app.locals.otp = this._GenerateOtp.createOtp();
@@ -86,7 +84,6 @@ class GymController {
       const otp = this._GenerateOtp.createOtp();
       req.app.locals.otp = otp;
       this._GenerateEmail.sendEmail(req.app.locals.gymData.email, otp);
-      console.log(otp);
 
       setTimeout(() => {
         req.app.locals.otp = this._GenerateOtp.createOtp();
@@ -106,10 +103,8 @@ class GymController {
     try {
       const gym = await this._GymUseCase.gymLogin(req.body);
 
-      console.log("iam gym", gym);
       if (gym) {
         if (gym.data.token != "") {
-          console.log("iam Undu ivde", gym.data.token);
 
           res.cookie("gymJWT", gym.data.token, {
             httpOnly: true,
@@ -149,7 +144,6 @@ class GymController {
 
   async editGymSubscription(req: Request, res: Response) {
     try {
-      console.log("iam reqbody", req.body);
       let gymId = req.gymId || "";
       const gym = await this._GymUseCase.editGymSubscription(gymId, req.body);
       res.status(gym.status).json(gym.data);
@@ -164,13 +158,11 @@ class GymController {
 
   async fetchGymSubscription(req: Request, res: Response) {
     try {
-      console.log("iamin fetch sub controller", req.params);
       const gymId = req.gymId || "";
       const subscriptions = await this._GymUseCase.fetchGymSubscription(
         gymId as string
       );
 
-      console.log("iam mangatholi", subscriptions.data.message);
 
       if (subscriptions) {
         res.status(subscriptions.status).json(subscriptions.data.message);
@@ -192,7 +184,6 @@ class GymController {
       if (result.data.success) {
         req.app.locals.forgotEmail = email;
         const otp = this._GenerateOtp.createOtp();
-        console.log(otp);
 
         req.app.locals.forgotOtp = otp;
         setTimeout(() => {
@@ -215,8 +206,7 @@ class GymController {
 
   async verifyForgot(req: Request, res: Response) {
     try {
-      console.log("bodyotp", req.body.otp);
-      console.log("session", req.app.locals.forgotOtp);
+
 
       const { forgotOtp } = req.app.locals;
       const { otp } = req.body;
@@ -264,7 +254,6 @@ class GymController {
   async resendForgotOtp(req: Request, res: Response) {
     try {
       const otp = this._GenerateOtp.createOtp();
-      console.log(otp);
       req.app.locals.forgotOtp = otp;
       setTimeout(() => {
         req.app.locals.forgotOtp = this._GenerateOtp.createOtp();
@@ -286,7 +275,6 @@ class GymController {
   async fetchGymTrainers(req: Request, res: Response) {
     try {
       const gymId = req.gymId || "";
-      console.log("iam gymId", gymId);
       const trainers = await this._GymUseCase.fetchGymTrainers(gymId);
 
       res.status(trainers.status).json(trainers.data);
@@ -301,8 +289,7 @@ class GymController {
 
   async addGymTrainer(req: Request, res: Response) {
     try {
-      console.log("iam req.body from addgym", req.body);
-      console.log("iam req.file from addgym", req.file, "reqfiels", req.files);
+
       const gymId = req.gymId || "";
       if (req.file) {
         const image = await this._SharpImages.sharpenImage(
@@ -338,7 +325,6 @@ class GymController {
   async updateGymTrainer(req: Request, res: Response) {
     try {
       const trainerId = req.body._id;
-      console.log("req.file", req.file);
 
       if (req.file) {
         const image = await this._SharpImages.sharpenImage(
@@ -395,7 +381,6 @@ class GymController {
   async bookedMemberships(req: Request, res: Response) {
     try {
       const gymId = req.gymId || "";
-      console.log("gymsi", gymId);
       const response = await this._GymUseCase.bookedMemberships(gymId);
       res.status(response.status).json(response.data);
     } catch (error) {
@@ -424,7 +409,6 @@ class GymController {
   async editGymProfile(req: Request, res: Response) {
     try {
       const gymId = req.gymId || "";
-      console.log("iam body", req.body);
       const response = await this._GymUseCase.editGymProfile(gymId, req.body);
       res.status(response.status).json(response.data);
     } catch (error) {
@@ -438,8 +422,7 @@ class GymController {
 
   async editGymImages(req: Request, res: Response) {
     try {
-      console.log("reqfiles", req.files);
-      console.log(req.body);
+
       const gymId = req.gymId || "";
       const response = await this._GymUseCase.editGymImages(gymId, req.files);
       res.status(response.status).json(response.data);
