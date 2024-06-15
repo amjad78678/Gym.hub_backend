@@ -67,7 +67,6 @@ class TrainerController {
       if (result.data.success) {
         req.app.locals.forgotEmail = email;
         const otp = this._GenerateOtp.createOtp();
-        console.log(otp);
 
         req.app.locals.forgotOtp = otp;
         setTimeout(() => {
@@ -89,8 +88,6 @@ class TrainerController {
 
   async verifyForgot(req: Request, res: Response) {
     try {
-      console.log("bodyotp", req.body.otp);
-      console.log("session", req.app.locals.forgotOtp);
 
       const { forgotOtp } = req.app.locals;
       const { otp } = req.body;
@@ -136,7 +133,6 @@ class TrainerController {
   async resendForgotOtp(req: Request, res: Response) {
     try {
       const otp = this._GenerateOtp.createOtp();
-      console.log(otp);
       req.app.locals.forgotOtp = otp;
       setTimeout(() => {
         req.app.locals.forgotOtp = this._GenerateOtp.createOtp();

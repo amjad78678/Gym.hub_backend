@@ -56,7 +56,6 @@ class UserController {
         const otp = this.generateOtp.createOtp();
         req.app.locals.otp = otp;
         this.generateEmail.sendEmail(req.body.email, otp);
-        console.log(otp);
 
         setTimeout(() => {
           req.app.locals.otp = this.generateOtp.createOtp();
@@ -131,7 +130,6 @@ class UserController {
       const otp = this.generateOtp.createOtp();
       req.app.locals.otp = otp;
       this.generateEmail.sendEmail(req.app.locals.userData.email, otp);
-      console.log(otp);
 
       setTimeout(() => {
         req.app.locals.otp = this.generateOtp.createOtp();
@@ -144,7 +142,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -259,7 +256,6 @@ class UserController {
       if (result.data.success) {
         req.app.locals.forgotEmail = email;
         const otp = this.generateOtp.createOtp();
-        console.log(otp);
 
         req.app.locals.forgotOtp = otp;
         setTimeout(() => {
@@ -325,7 +321,6 @@ class UserController {
   async resendForgotOtp(req: Request, res: Response) {
     try {
       const otp = this.generateOtp.createOtp();
-      console.log(otp);
       req.app.locals.forgotOtp = otp;
       setTimeout(() => {
         req.app.locals.forgotOtp = this.generateOtp.createOtp();

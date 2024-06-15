@@ -16,7 +16,6 @@ function socketServer(server: any) {
   let users: Users[] = [];
 
   const addUser = (userId: string, socketId: string) => {
-    console.log("Adding/updating user:", userId);
     const userExists = users.find((user) => user.userId === userId);
     if (userExists) {
       userExists.socketId = socketId;
@@ -25,20 +24,16 @@ function socketServer(server: any) {
       users.push({ userId, socketId,online:true });
     }
     io.emit('onlined_users',users.filter((user)=>user.online))
-    console.log('onlined users',users)
   };
 
   const removeUser = (socketId: string) => {
     users = users.filter((user) => user.socketId !== socketId);
-    console.log("Removed user with socket ID:", socketId);
-    console.log("Current users after removal:", users);
   };
 
   const getUser = (userId: string) =>
     users.find((user) => user.userId === userId);
 
   io.on("connection", (socket: Socket) => {
-    console.log("A user connected", socket.id);
     socket.on("add_user", (userId: string) => {
       addUser(userId, socket.id);
       io.emit("connected");
@@ -46,12 +41,8 @@ function socketServer(server: any) {
 
  
     socket.on("send_message", ({ sender, receiver, content,createdAt }) => {
-      console.log("send_message event triggered");
       const receiverData = getUser(receiver);
       const senderData = getUser(sender);
-      console.log("Sender data:", senderData);
-      console.log("Receiver data:", receiverData);
-      console.log('content will be this',content)
       if (senderData?.socketId === receiverData?.socketId) {
         console.log("user socket and trainer socket have been same so far");
       }
@@ -67,7 +58,6 @@ function socketServer(server: any) {
 
     socket.on("typing", ({ typeTo }) => {
       const user = getUser(typeTo);
-      console.log('ivanode typing',user)
       if (user) io.to(user.socketId).emit("typedUser");
     });
 
@@ -84,7 +74,6 @@ function socketServer(server: any) {
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected", socket.id);
       removeUser(socket.id);
     });
   });

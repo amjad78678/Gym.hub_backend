@@ -65,7 +65,6 @@ class GymUseCase {
             4000,
             "gymImages"
           );
-          console.log("res", res);
           if (res) {
             return {
               imageUrl: res?.secure_url,
@@ -75,7 +74,6 @@ class GymUseCase {
         })
       );
 
-      console.log("iam image urls", imageUrls);
 
       if (imageUrls.length === 4) {
         const obj = {
@@ -154,12 +152,10 @@ class GymUseCase {
           );
 
           if (passwordMatch) {
-            console.log("gymId in Usecase", gym?._id);
 
             const gymId = gym._id;
             if (gymId) token = this._JwtToken.generateToken(gymId, "gym");
 
-            console.log("iam token in usecase", token);
 
             return {
               status: 200,
@@ -233,12 +229,10 @@ class GymUseCase {
   }
 
   async fetchGymSubscription(gymId: string) {
-    console.log("gymId", gymId);
 
     const gymData =
       await this._GymRepository.findByIdAndGetSubscriptions(gymId);
 
-    console.log(gymData);
 
     if (gymData) {
       return {
@@ -358,7 +352,6 @@ class GymUseCase {
     if (trainerData.image !== "null") {
       const trainer = await this._TrainerRepository.findByIdTrainer(trainerId);
       await this._CloudinaryUpload.deleteImage(trainer?.image.public_id);
-      console.log("iam imageUrl", trainerData.image, typeof trainerData.image);
       await this._TrainerRepository.findByIdAndUpdate(trainerId, trainerData);
     } else {
       const trainer = await this._TrainerRepository.findByIdTrainer(trainerId);
@@ -392,7 +385,6 @@ class GymUseCase {
   async bookedMemberships(gymId: string) {
     const bookedMemberships =
       await this._SubscriptionRepository.findBookedMembershipsByGym(gymId);
-    console.log("booked", bookedMemberships);
 
     return {
       status: 200,
@@ -406,19 +398,14 @@ class GymUseCase {
   async fetchDashboardDetails(gymId: string) {
     const monthlySales =
       await this._SubscriptionRepository.getMonthlySalesById(gymId);
-    console.log("monthlySales", monthlySales);
     const yearlySales =
       await this._SubscriptionRepository.getYearlySalesById(gymId);
-    console.log("yearlySales", yearlySales);
     const recentlyBookedMemberships =
       await this._SubscriptionRepository.getLatestSubscriptionsById(gymId);
-    console.log("recentlyBookedMemberships", recentlyBookedMemberships);
     const totalSales =
       await this._SubscriptionRepository.getTotalSalesById(gymId);
-    console.log("totalSales", totalSales);
     const totalUsers =
       await this._SubscriptionRepository.getTotalUsersById(gymId);
-    console.log("totalUsers", totalUsers);
     return {
       status: 200,
       data: {
@@ -437,7 +424,6 @@ class GymUseCase {
     const updatedImages = [];
     for (let i = 0; i < files.length; i++) {
       const index = Number(files[i].originalname.split("_")[1]);
-      console.log("index of image", index);
 
       if (gym.images[index]) {
         await this._CloudinaryUpload.deleteImage(gym.images[index].public_id);
@@ -458,7 +444,6 @@ class GymUseCase {
         updatedImages.push(newImage);
       }
     }
-    console.log("iam updated images", updatedImages);
     await this._GymRepository.updateImages(gymId, updatedImages);
 
     return {

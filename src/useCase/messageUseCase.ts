@@ -88,7 +88,6 @@ class MessageUseCase {
         receiver: data.receiver,
         content: fileUploadCloudinary.secure_url,
       });
-      console.log("createdMessageData", messageData);
 
       return {
         status: 200,
@@ -106,8 +105,6 @@ class MessageUseCase {
         })
       );
 
-      console.log("fileUploadCloudinary", fileUploadCloudinary);
-      console.log("data message", data);
 
       const messageDataPromises = fileUploadCloudinary.map(
         async (file: any) => {
@@ -116,14 +113,12 @@ class MessageUseCase {
             receiver: data.receiver,
             content: file.secure_url,
           });
-          console.log("createdMessageData", messageData);
           return messageData;
         }
       );
 
       const messageDataResults = await Promise.all(messageDataPromises);
 
-      console.log("aim messageData results........", messageDataResults);
 
       return {
         status: 200,

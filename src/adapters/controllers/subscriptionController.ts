@@ -22,7 +22,6 @@ async addNewSubscription(req: Request, res: Response) {
  
         const data = {...req.body,userId:userId }
 
-        console.log('first data in sub cont',data) 
 
 
         if(req.body.paymentType === "online"){
