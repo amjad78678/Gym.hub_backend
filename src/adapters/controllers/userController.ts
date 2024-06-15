@@ -32,7 +32,6 @@ class UserController {
 
   async signUp(req: Request, res: Response) {
     try {
-      console.log("iam body", req.body);
       const verifyUser = await this.userUseCase.signUp(req.body.email);
       if (verifyUser.data.status == true && req.body.isGoogle) {
         const user = await this.userUseCase.verifyOtpUser(req.body);
@@ -94,7 +93,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -174,7 +172,6 @@ class UserController {
   async getGymList(req: Request, res: Response) {
     try {
       const { latitude, longitude, page, search, sliderValue } = req.query;
-      console.log("slidervalue", sliderValue);
 
       const gymList = await this.userUseCase.getGymList(
         latitude,
@@ -224,8 +221,7 @@ class UserController {
   async getTrainers(req: Request, res: Response) {
     try {
       const { page, search, sliderValue, experience } = req.query;
-      console.log("iam page", page);
-      console.log("ima params", req.query);
+
       const trainers = await this.userUseCase.getTrainers(
         page,
         search as string,
@@ -280,15 +276,11 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
   async verifyForgot(req: Request, res: Response) {
     try {
-      console.log("bodyotp", req.body.otp);
-      console.log("session", req.app.locals.forgotOtp);
-
       const { forgotOtp } = req.app.locals;
       const { otp } = req.body;
 
@@ -303,7 +295,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -328,7 +319,6 @@ class UserController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -433,7 +423,6 @@ class UserController {
     try {
       const userId = req.userId || "";
       const body = req.body;
-      console.log("iam req.body", req.body);
       const userData = await this.userUseCase.editProfile(
         userId,
         body,
@@ -453,8 +442,6 @@ class UserController {
     try {
       const userId = req.userId || "";
       const { gymId } = req.params;
-      console.log("iam gymId", gymId);
-      console.log("iam userId", userId);
       const result = await this.userUseCase.isReviewPossible(userId, gymId);
       res.status(result.status).json(result.data);
     } catch (error) {
@@ -514,7 +501,6 @@ class UserController {
   async getWorkoutsList(req: Request, res: Response) {
     try {
       const result = await this.userUseCase.getWorkoutsList();
-      console.log("iam result", result);
       res.status(result.status).json(result.data);
     } catch (error) {
       const err: Error = error as Error;

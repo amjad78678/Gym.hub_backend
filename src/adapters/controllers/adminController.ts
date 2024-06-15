@@ -18,7 +18,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -32,7 +31,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -48,7 +46,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -66,7 +63,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -94,7 +90,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -113,7 +108,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -128,7 +122,6 @@ class AdminController {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-      console.log("iam stack", err.stack, "---", "iam message", err.message);
     }
   }
 
@@ -199,9 +192,9 @@ class AdminController {
 
   async updateTrainer(req: Request, res: Response) {
     try {
-      const {id,...body}=req.body
-      console.log('iam excluded body',body)
-      const response = await this._AdminUseCase.updateTrainer(id,body);
+      const { id, ...body } = req.body;
+      console.log("iam excluded body", body);
+      const response = await this._AdminUseCase.updateTrainer(id, body);
       res.status(response.status).json(response.data);
     } catch (error) {
       const err: Error = error as Error;
