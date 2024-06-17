@@ -37,7 +37,6 @@ class AdminController {
   async gymBlockAction(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      console.log("iam id", id, "params", req.params);
       const gym = await this._AdminUseCase.gymBlockAction(id);
       res.status(gym.status).json(gym.data);
     } catch (error) {
@@ -54,7 +53,6 @@ class AdminController {
       const { id } = req.params;
       const gym = await this._AdminUseCase.gymDeleteAction(id);
 
-      console.log("controller", gym);
       res.status(gym.status).json(gym.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -129,8 +127,7 @@ class AdminController {
     try {
       const userId = req.params.id as string;
 
-      console.log("iamuserId", userId);
-      console.log("iam body", req.body);
+    
 
       const { isBlocked, isDeleted } = req.body;
 
@@ -166,7 +163,7 @@ class AdminController {
   async fetchGymWithId(req: Request, res: Response) {
     try {
       const gymData = await this._AdminUseCase.fetchGymWithId(req.params.gymId);
-      console.log(gymData);
+   
       res.status(gymData.status).json(gymData.data);
     } catch (error) {
       const err: Error = error as Error;
@@ -193,7 +190,7 @@ class AdminController {
   async updateTrainer(req: Request, res: Response) {
     try {
       const { id, ...body } = req.body;
-      console.log("iam excluded body", body);
+      
       const response = await this._AdminUseCase.updateTrainer(id, body);
       res.status(response.status).json(response.data);
     } catch (error) {
