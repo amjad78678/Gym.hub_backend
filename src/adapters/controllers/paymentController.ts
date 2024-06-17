@@ -26,7 +26,7 @@ class PaymentController {
       const paymentDataUser = req.app.locals.paymentDataUser;
       const walletData = req.app.locals.walletData;
       const bookTrainerData = req.app.locals.bookTrainerData;
-      console.log("paymentData user", paymentDataUser);
+      
 
       if (walletData != null) {
         await this._SubscriptionUseCase.addWalletPayment(walletData);

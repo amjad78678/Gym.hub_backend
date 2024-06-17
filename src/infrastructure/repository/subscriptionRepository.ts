@@ -33,7 +33,7 @@ class SubscriptionRepository implements iSubscriptionRepo {
       gymId: gymId,
       subscriptionType: subscriptionType,
     });
-    console.log("subs", subscription);
+    
     if (subscription) {
       return true;
     } else {

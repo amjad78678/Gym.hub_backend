@@ -61,7 +61,7 @@ class MessageController {
 
  async uploadChatFiles (req: Request,res: Response) {
   try {
-    console.log('iam file here',req.files)
+    
     const response = await this._MessageUseCase.uploadChatFiles(req.files,req.body);
     return res.status(response.status).json(response.data);
   } catch (error) {

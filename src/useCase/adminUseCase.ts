@@ -52,9 +52,9 @@ class AdminUseCase {
   }
 
   async gymAdminResponse(res: any) {
-    console.log("uecaseres", res);
+    
     const gymData = await this._GymRepository.findById(res.id);
-    console.log("gymData", gymData);
+    
     if (gymData) {
       if (res.type === "rejected") {
         this._GenerateEmail.sendGymRejectEmail(gymData[0].email, res.reason);
@@ -84,7 +84,7 @@ class AdminUseCase {
 
   async gymBlockAction(id: string) {
     const gym = await this._GymRepository.findByIdAndUpdateBlock(id);
-    console.log("iam gymdata", gym);
+    
     if (gym) {
       return {
         status: 200,
@@ -105,7 +105,7 @@ class AdminUseCase {
   }
   async gymDeleteAction(id: string) {
     const gym = await this._GymRepository.findByIdAndDelete(id);
-    console.log("iam gym", gym);
+    
 
     if (gym) {
       return {
@@ -182,10 +182,10 @@ class AdminUseCase {
       isDeleted
     );
 
-    console.log("isBlocked", isBlocked);
-    console.log("isDeleted", isDeleted);
+    
+    
 
-    console.log("iam updated user", updatedUser);
+    
 
     if (updatedUser) {
       return {
@@ -273,7 +273,7 @@ class AdminUseCase {
       walletPaymentCount: paymentMethodCount[0].walletPaymentCount,
       pendingPaymentCount: pendingPaymentCount,
     };
-    console.log(paymentMethodCount);
+    
     const trainerBookingCount =
       await this._BookTrainerRepository.findTotalBookings();
     const subscriptionBookingCount =

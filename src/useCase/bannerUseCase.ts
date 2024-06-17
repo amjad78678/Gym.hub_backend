@@ -54,8 +54,8 @@ class BannerUseCase {
   async updateBanner(data: any, file: any) {
     const { bannerImage, id, ...body } = data;
     const banner = await this._BannerRepository.findById(id);
-    console.log("data", body);
-    console.log("file", file);
+    
+    
 
     if (file) {
       await this._CloudinaryUpload.deleteImage(banner?.bannerImage.public_id);

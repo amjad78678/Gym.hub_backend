@@ -10,7 +10,7 @@ class GenerateQrCode implements iQrCode {
     return new Promise((resolve, reject) => {
         QR.toDataURL(dataJSON, function (err, code) {
             if (err) {
-                console.log(err);
+                
             } else {
                 resolve(code);
             }

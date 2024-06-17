@@ -16,14 +16,14 @@ class PushNotificationRepository {
 
   async sendPushNotification(recieverId: ObjectId, content: string) {
     try {
-      console.log("User Id:- " + recieverId);
-      console.log("message:- " + content);
+      
+      
       // fs.readFile(
       //   path.join(__dirname, "../services/fireBaseConfig.json"),
       //   "utf8",
       //   async (err: any, jsonString: any) => {
       //     if (err) {
-      //       console.log("Error reading file from disk:", err);
+      //       
       //       return err;
       //     }
       //     try {
@@ -58,18 +58,18 @@ class PushNotificationRepository {
       //           // }
       //         };
 
-      //         console.log('iam push message',pushMessage)
+      //         
 
       //         fcm.send(pushMessage, function (err: any, response: any) {
       //           if (err) {
-      //             console.log("Something has gone wrong!", err);
+      //             
       //           } else {
-      //             console.log("Push notification sent.", response);
+      //             
       //           }
       //         });
       //       }
       //     } catch (err) {
-      //       console.log("Error parsing JSON string:", err);
+      //       
       //     }
       //   }
       // );
@@ -87,9 +87,9 @@ class PushNotificationRepository {
       };
 
       const response = await firebase.messaging().send(message);
-      console.log("firebase sent notification response", response);
+      
     } catch (error) {
-      console.log(error);
+      
     }
   }
 }

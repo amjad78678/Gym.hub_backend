@@ -77,13 +77,13 @@ class CouponRepository implements CouponRepo {
   }
 
   async applyCoupon(userId: string, name: string): Promise<boolean> {
-    console.log("userid", userId);
+    
     try {
       const coupon = await CouponModel.updateOne(
         { name },
         { $push: { users: userId } }
       );
-      console.log("iamIn repository", coupon);
+      
       if (coupon) return true;
       return false;
     } catch (error) {

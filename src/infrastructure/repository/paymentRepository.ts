@@ -10,7 +10,7 @@ class PaymentRepository implements iPayment {
 
  async confirmPayment(price: number, cartData: any): Promise<any> {
 
-    console.log('iam cartData in confirm pay',cartData)
+    
 
     const {subscriptionType,gymId,date,expiryDate} = cartData
     const text = `${subscriptionType} Subscription`

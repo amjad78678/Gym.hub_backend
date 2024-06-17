@@ -41,6 +41,6 @@ export const createServer = () => {
     return httpServer;
   } catch (error) {
     const err: Error = error as Error;
-    console.log(err.message);
+    
   }
 };

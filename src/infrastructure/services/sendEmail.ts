@@ -50,7 +50,7 @@ class GenerateEmail implements GENERATEMAIL {
 
         mailTransporter.sendMail(details,(err)=>{
             if(err){
-                return console.log(err.message);
+                return 
             }
         })
 
@@ -131,13 +131,13 @@ class GenerateEmail implements GENERATEMAIL {
 
         mailTransporter.sendMail(details,(err)=>{
             if(err){
-                return console.log(err.message);
+                return 
             }
         })
 
     }
     sendGymRejectEmail(email: string,reason: string): void {
-        console.log('in reject email',email)
+        
         const mailData=`
         <!DOCTYPE html>
         <html>
@@ -212,7 +212,7 @@ class GenerateEmail implements GENERATEMAIL {
 
         mailTransporter.sendMail(details,(err)=>{
             if(err){
-                return console.log(err.message);
+                return 
             }
         })
 
@@ -280,7 +280,7 @@ class GenerateEmail implements GENERATEMAIL {
             };
             mailTransporter.sendMail(details, (err) => {
                 if (err) {
-                    return console.log(err.message);
+                    return 
                 }
                 return true;
             });

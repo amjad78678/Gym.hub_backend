@@ -62,7 +62,7 @@ class TrainerRepository implements iTrainerRepo {
       .limit(limit)
       .skip(offset)
       .populate("gymId");
-    console.log("trainers from repository", trainers, trainers.length);
+    
     return trainers;
   }
   async findFullResultLen() {

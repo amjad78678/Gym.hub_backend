@@ -19,7 +19,7 @@ class CartUseCase {
 
   async addToCart(data: any) {
 
-    console.log('iam data in usecasei',data)
+    
     const subscription = await this._SubscriptionRepository.verifySubscription(data.userId,data.gymId,data.subscriptionType);
     if(subscription){
 
@@ -64,7 +64,7 @@ class CartUseCase {
     const cart = await this._CartRepository.cartDataForCheckout(userId);
     const user = await this._UserRepository.findById(userId);
 
-    console.log('cart in getche',cart)
+    
     const gymId = cart.gymId._id
 
     const coupons = await this._CouponRepository.findCheckoutCoupons(gymId);   

@@ -44,7 +44,7 @@ function socketServer(server: any) {
       const receiverData = getUser(receiver);
       const senderData = getUser(sender);
       if (senderData?.socketId === receiverData?.socketId) {
-        console.log("user socket and trainer socket have been same so far");
+        
       }
       if (receiverData) {
         io.to(receiverData.socketId).emit("message", {

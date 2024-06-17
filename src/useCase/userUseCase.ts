@@ -94,7 +94,7 @@ class UserUseCase {
 
     const newUser = { ...user, password: hashedPassword };
 
-    console.log("iam new user after pass enc", newUser);
+    
 
     const userData = await this.UserRepository.save(newUser);
 
@@ -196,8 +196,8 @@ class UserUseCase {
     search: string,
     sliderValue: number
   ) {
-    console.log("iam page", page);
-    console.log("latitude", latitude, "longitude", longitude);
+    
+    
 
     if (latitude == "null" || longitude == "null") {
       return {
@@ -214,7 +214,7 @@ class UserUseCase {
         search,
         sliderValue
       );
-      console.log("gym list", gymList, gymList?.length, page);
+      
 
       return {
         status: 200,
@@ -240,7 +240,7 @@ class UserUseCase {
   async getGymDetails(id: string) {
     const gymDetails = await this._GymRepository.findById(id);
 
-    console.log("iam gymdetailais", gymDetails);
+    
     return {
       status: 200,
       data: {
@@ -496,7 +496,7 @@ class UserUseCase {
       userId,
       gymId
     );
-    console.log("isPossible", isPossible);
+    
 
     return {
       status: 200,

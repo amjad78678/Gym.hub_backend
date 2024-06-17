@@ -39,7 +39,7 @@ class SubscriptionUseCase {
   }
 
   async addNewSubscription(data: any) {
-    console.log("iam data in usecase", data);
+    
     const verifyCart = await this._CartRepository.cartDataForCheckout(
       data.userId
     );
@@ -57,7 +57,7 @@ class SubscriptionUseCase {
           data.userId,
           data.coupon.name
         );
-        console.log("updated", updated);
+        
         if (updated) {
           data.coupon = {
             name: data.coupon.name,

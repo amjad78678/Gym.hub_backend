@@ -10,7 +10,7 @@ const startServer = async (): Promise<void> => {
   const app: any = createServer();
   if (app) socketServer(app);
   app?.listen(PORT, () => {
-    console.log(`Server is running on port https://127.0.0.1/${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
   });
 };
 

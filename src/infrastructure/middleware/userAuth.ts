@@ -71,7 +71,7 @@ const refreshAccessToken = async (refreshToken: string) => {
     const newAccessToken = _jwtToken.generateToken(decoded?.userId, "user");
     return newAccessToken;
   } catch (error) {
-    console.log(error as Error);
+    
     throw new Error("Invalid refresh token");
   }
 };

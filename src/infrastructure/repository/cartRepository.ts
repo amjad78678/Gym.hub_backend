@@ -16,7 +16,7 @@ class CartRepository implements iCardRepo {
         await CartModel.deleteOne({ userId: userId });
       }
     } catch (error) {
-      console.log(error);
+      
     }
   }
 
