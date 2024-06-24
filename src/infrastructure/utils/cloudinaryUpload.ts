@@ -1,4 +1,3 @@
-import { buffer } from "stream/consumers";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
 

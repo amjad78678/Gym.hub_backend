@@ -61,8 +61,6 @@ class JWTToken implements JWT {
       }
     }
   }
-
-
 }
 
 export default JWTToken;
