@@ -140,9 +140,6 @@ router.get("/gym_list_normal", (req, res) =>
 router.get("/gym_details/:id", (req, res) =>
   userController.getGymDetails(req, res)
 );
-router.get("/is_review_possible/:gymId", protect, (req, res) =>
-  userController.isReviewPossible(req, res)
-);
 router.get("/fetch_trainers", (req, res) =>
   userController.getTrainers(req, res)
 );
@@ -160,6 +157,9 @@ router.patch("/update_password", (req, res) =>
 );
 router.post("/resend_forgot_otp", (req, res) =>
   userController.resendForgotOtp(req, res)
+);
+router.get("/is_review_possible/:gymId", protect, (req, res) =>
+  userController.isReviewPossible(req, res)
 );
 router.post("/add_to_cart", protect, (req, res) =>
   cartController.addToCart(req, res)
@@ -224,8 +224,11 @@ router.post("/chat/create", protect, (req, res) =>
 router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res) =>
   messageController.getConversationData(req, res)
 );
-router.post("/upload_chat_files", ImageUpload.array("files", 5), (req, res) =>
-  messageController.uploadChatFiles(req, res)
+router.post(
+  "/upload_chat_files",
+  ImageUpload.array("files", 5),
+  protect,
+  (req, res) => messageController.uploadChatFiles(req, res)
 );
 router.post("/set_client_token", protect, (req, res) =>
   userController.setBrowserToken(req, res)

@@ -23,7 +23,7 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
   if (!userToken) {
     const newUserToken = await refreshAccessToken(userRefreshToken);
     res.cookie("user_access_token", newUserToken, {
-      maxAge: 60 * 60 * 1000,
+      maxAge: 60 * 1000,
       httpOnly: true,
       sameSite: "none",
       secure: process.env.NODE_ENV !== "development",

@@ -41,7 +41,7 @@ class UserController {
               httpOnly: true,
               sameSite: "none",
               secure: process.env.NODE_ENV !== "development",
-              maxAge: 60 * 60 * 1000,
+              maxAge: 60 * 1000,
             })
             .cookie("user_refresh_token", user.data.refreshToken, {
               httpOnly: true,
@@ -105,7 +105,7 @@ class UserController {
             httpOnly: true,
             sameSite: "none",
             secure: process.env.NODE_ENV !== "development",
-            maxAge: 60 * 60 * 1000,
+            maxAge: 60 * 1000,
           })
           .cookie("user_refresh_token", user.data.refreshToken, {
             httpOnly: true,
