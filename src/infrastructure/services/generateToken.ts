@@ -6,9 +6,7 @@ class JWTToken implements JWT {
     const SECRETKEY = process.env.JWT_SECRET_KEY;
 
     if (SECRETKEY) {
-      const token: string = jwt.sign({ userId, role }, SECRETKEY, {
-        expiresIn: "1h",
-      });
+      const token: string = jwt.sign({ userId, role }, SECRETKEY);
       return token;
     }
 
@@ -18,9 +16,7 @@ class JWTToken implements JWT {
     const SECRETKEY = process.env.JWT_REFRESH_SECRET;
 
     if (SECRETKEY) {
-      const token: string = jwt.sign({ userId, role }, SECRETKEY, {
-        expiresIn: "30d",
-      });
+      const token: string = jwt.sign({ userId, role }, SECRETKEY);
       return token;
     }
 
@@ -36,7 +32,6 @@ class JWTToken implements JWT {
       }
       throw new Error("JWT key is not defined!");
     } catch (err: any) {
-      console.error("Error while verifying JWT token:", err);
       if (err?.name === "TokenExpiredError") {
         return { success: false, message: "Token Expired!" };
       } else {
@@ -53,7 +48,6 @@ class JWTToken implements JWT {
       }
       throw new Error("JWT key is not defined!");
     } catch (err: any) {
-      console.error("Error while verifying JWT token:", err);
       if (err?.name === "TokenExpiredError") {
         return { success: false, message: "Token Expired!" };
       } else {

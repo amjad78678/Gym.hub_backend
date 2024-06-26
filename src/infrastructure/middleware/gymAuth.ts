@@ -46,7 +46,6 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
         }
       }
     } catch (error) {
-      console.error("Error in protect middleware:", error);
       return res.status(401).json({ message: "Not authorized, invalid token" });
     }
   } else {

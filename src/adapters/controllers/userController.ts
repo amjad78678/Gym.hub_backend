@@ -41,7 +41,7 @@ class UserController {
               httpOnly: true,
               sameSite: "none",
               secure: process.env.NODE_ENV !== "development",
-              maxAge: 60 * 1000,
+              maxAge: 60 * 60 * 1000,
             })
             .cookie("user_refresh_token", user.data.refreshToken, {
               httpOnly: true,
@@ -105,7 +105,7 @@ class UserController {
             httpOnly: true,
             sameSite: "none",
             secure: process.env.NODE_ENV !== "development",
-            maxAge: 60 * 1000,
+            maxAge: 60 * 60 * 1000,
           })
           .cookie("user_refresh_token", user.data.refreshToken, {
             httpOnly: true,
@@ -169,7 +169,6 @@ class UserController {
   async getGymList(req: Request, res: Response) {
     try {
       const { latitude, longitude, page, search, sliderValue } = req.query;
-
       const gymList = await this.userUseCase.getGymList(
         latitude,
         longitude,
@@ -534,6 +533,7 @@ class UserController {
   }
 
   async setBrowserToken(req: Request, res: Response) {
+  
     try {
       const userId = req.userId || "";
       const browserToken = req.body.token;
