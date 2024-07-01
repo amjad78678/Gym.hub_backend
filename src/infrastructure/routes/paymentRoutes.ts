@@ -46,7 +46,7 @@ const bookTrainerUseCase = new BookTrainerUseCase(
 const paymentController = new PaymentController(
   subscriptionUseCase,
   userRepository,
-  bookTrainerUseCase,
+  bookTrainerUseCase
 );
 
 const router = express.Router();

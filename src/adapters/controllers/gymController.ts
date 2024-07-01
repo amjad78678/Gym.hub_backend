@@ -79,7 +79,7 @@ class GymController {
     }
   }
 
-  async resendOtp(req: Request, res: Response) {
+async resendOtp(req: Request, res: Response) {
     try {
       const otp = this._GenerateOtp.createOtp();
       req.app.locals.otp = otp;

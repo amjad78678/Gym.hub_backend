@@ -21,13 +21,13 @@ class PaymentController {
 
   async confirmPayment(req: Request, res: Response) {
     let event = req.body;
-
+    console.log("i am inside webhook its called there");
     if (event.type === "checkout.session.completed") {
       const paymentDataUser = req.app.locals.paymentDataUser;
       const walletData = req.app.locals.walletData;
       const bookTrainerData = req.app.locals.bookTrainerData;
-      
 
+      console.log("book trainer data", bookTrainerData);
       if (walletData != null) {
         await this._SubscriptionUseCase.addWalletPayment(walletData);
         req.app.locals.walletData = null;
