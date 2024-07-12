@@ -1,8 +1,9 @@
+
 [
   {
     "bodyPart": "upper legs",
     "equipment": "body weight",
-    "gifUrl": "https://v2.exercisedb.io/image/ux6iUQWPmKrUAW",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714684/Gym_gifs/upper_legs/TsG7vlCkntPIlE_muyatx.gif",
     "id": "1512",
     "name": "all fours squad stretch",
     "target": "quads",
@@ -18,7 +19,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "body weight",
-    "gifUrl": "https://v2.exercisedb.io/image/RlZdY6Ymgc4I8X",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714682/Gym_gifs/upper_legs/7NLVlDCN0LUxR1_np3e24.gif",
     "id": "3214",
     "name": "arms apart circular toe touch (male)",
     "target": "glutes",
@@ -34,7 +35,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "assisted",
-    "gifUrl": "https://v2.exercisedb.io/image/GAKfRk0ugjhyd-",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714653/Gym_gifs/upper_legs/74x-LxBHBlidp8_nek7jb.gif",
     "id": "1709",
     "name": "assisted lying glutes stretch",
     "target": "glutes",
@@ -50,7 +51,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "assisted",
-    "gifUrl": "https://v2.exercisedb.io/image/xGwFa2n6EaY3nx",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714651/Gym_gifs/upper_legs/peSwLyvlJFVPBn_ernbyj.gif",
     "id": "1710",
     "name": "assisted lying gluteus and piriformis stretch",
     "target": "glutes",
@@ -66,7 +67,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "assisted",
-    "gifUrl": "https://v2.exercisedb.io/image/hCeFrGwGDbIJKT",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714650/Gym_gifs/upper_legs/UVdO9YKMUeJEVk_gufwk2.gif",
     "id": "0016",
     "name": "assisted prone hamstring",
     "target": "hamstrings",
@@ -82,7 +83,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "assisted",
-    "gifUrl": "https://v2.exercisedb.io/image/K-yH71V9yWZlin",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714648/Gym_gifs/upper_legs/MaeWvaWPcLk-Yv_qsz5mf.gif",
     "id": "1713",
     "name": "assisted prone lying quads stretch",
     "target": "quads",
@@ -98,7 +99,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "assisted",
-    "gifUrl": "https://v2.exercisedb.io/image/Lw-v7PqQOaM0Pj",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714646/Gym_gifs/upper_legs/psvjcUPOwMp9s3_jwlddl.gif",
     "id": "1712",
     "name": "assisted side lying adductor stretch",
     "target": "adductors",
@@ -115,7 +116,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "body weight",
-    "gifUrl": "https://v2.exercisedb.io/image/t11c5X9kt4cY3z",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714645/Gym_gifs/upper_legs/dLOXULxTfRd7wQ_fh8qay.gif",
     "id": "1473",
     "name": "backward jump",
     "target": "quads",
@@ -130,7 +131,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "body weight",
-    "gifUrl": "https://v2.exercisedb.io/image/LYH7v784gFMSZl",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714644/Gym_gifs/upper_legs/g2FJiJFUVAtwxi_gginsy.gif",
     "id": "0020",
     "name": "balance board",
     "target": "quads",
@@ -146,7 +147,7 @@
   {
     "bodyPart": "upper legs",
     "equipment": "band",
-    "gifUrl": "https://v2.exercisedb.io/image/9nmJPKqhLLNWkg",
+    "gifUrl": "https://res.cloudinary.com/dkxtgziy2/image/upload/v1720714643/Gym_gifs/upper_legs/mXxXU-CeGuUcdj_fq76v1.gif",
     "id": "0980",
     "name": "band bent-over hip extension",
     "target": "glutes",
