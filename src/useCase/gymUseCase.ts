@@ -41,7 +41,7 @@ class GymUseCase {
     this._SubscriptionRepository = subscriptionRepository;
   }
 
-  async gymSignUp(gym: Gym, gymImageFiles: any) {
+  async gymSignUp(gym: Gym) {
     const gymExists = await this._GymRepository.findByEmail(gym.email);
 
     if (gymExists) {
@@ -54,59 +54,57 @@ class GymUseCase {
       };
     }
 
-    const files = gymImageFiles as Express.Multer.File[];
+    // const files = gymImageFiles as Express.Multer.File[];
 
-    if (files?.length) {
-      const imageUrls = await Promise.all(
-        files.map(async (file) => {
-          const res = await this._SharpImages.sharpenImage(
-            file,
-            6000,
-            4000,
-            "gymImages"
-          );
-          if (res) {
-            return {
-              imageUrl: res?.secure_url,
-              public_id: res?.public_id,
-            };
-          }
-        })
-      );
+      // if (files?.length) {
+      //   const imageUrls = await Promise.all(
+      //     files.map(async (file) => {
+      //       const res = await this._SharpImages.sharpenImage(
+      //         file,
+      //         6000,
+      //         4000,
+      //         "gymImages"
+      //       );
+      //       if (res) {
+      //         return {
+      //           imageUrl: res?.secure_url,
+      //           public_id: res?.public_id,
+      //         };
+      //       }
+      //     })
+      //   );
 
+    // if (imageUrls.length === 4) {
+    const obj = {
+      gymName: gym.gymName,
+      email: gym.email,
+      contactNumber: gym.contactNumber,
+      subscriptions: {
+        Daily: gym.dailyFee,
+        Monthly: gym.monthlyFee,
+        Yearly: gym.yearlyFee,
+      },
+      description: gym.description,
+      businessId: gym.businessId,
+      password: gym.password,
+      confirmPassword: gym.confirmPassword,
+      location: {
+        type: "Point",
+        coordinates: [gym.long, gym.lat] as [number, number],
+      },
+      address: gym.address,
+      images: gym.images,
+    };
 
-      if (imageUrls.length === 4) {
-        const obj = {
-          gymName: gym.gymName,
-          email: gym.email,
-          contactNumber: gym.contactNumber,
-          subscriptions: {
-            Daily: gym.dailyFee,
-            Monthly: gym.monthlyFee,
-            Yearly: gym.yearlyFee,
-          },
-          description: gym.description,
-          businessId: gym.businessId,
-          password: gym.password,
-          confirmPassword: gym.confirmPassword,
-          location: {
-            type: "Point",
-            coordinates: [gym.long, gym.lat] as [number, number],
-          },
-          address: gym.address,
-          images: imageUrls,
-        };
-
-        return {
-          status: 200,
-          data: {
-            status: true,
-            message: "Verification otp sent to your email!",
-            gymData: obj,
-          },
-        };
-      }
-    }
+    return {
+      status: 200,
+      data: {
+        status: true,
+        message: "Verification otp sent to your email!",
+        gymData: obj,
+      },
+    };
+    // }
   }
 
   async gymOtpVerification(gym: Gym) {
@@ -116,8 +114,11 @@ class GymUseCase {
       );
 
       const newGym = { ...gym, password: hashedPassword };
+      console.log('iam newgym',newGym)
       const gymData = await this._GymRepository.save(newGym);
     }
+
+
 
     return {
       status: 200,
@@ -152,10 +153,8 @@ class GymUseCase {
           );
 
           if (passwordMatch) {
-
             const gymId = gym._id;
             if (gymId) token = this._JwtToken.generateToken(gymId, "gym");
-
 
             return {
               status: 200,
@@ -229,10 +228,8 @@ class GymUseCase {
   }
 
   async fetchGymSubscription(gymId: string) {
-
     const gymData =
       await this._GymRepository.findByIdAndGetSubscriptions(gymId);
-
 
     if (gymData) {
       return {

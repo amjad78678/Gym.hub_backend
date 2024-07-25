@@ -47,7 +47,7 @@ const couponController = new CouponController(couponUseCase)
 const router = express.Router();
 
 
-router.post('/gym_register',ImageUpload.array('images', 4),(req,res)=>gymController.gymRegister(req,res))
+router.post('/gym_register',(req,res)=>gymController.gymRegister(req,res))
 router.post('/gym_login',(req,res)=>gymController.gymLogin(req,res))
 router.post('/gym_otp_verify',(req,res)=>gymController.gymOtpVerification(req,res))
 router.post('/resend_otp',(req,res)=>gymController.resendOtp(req,res))

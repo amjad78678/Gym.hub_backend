@@ -28,13 +28,12 @@ class GymController {
 
   async gymRegister(req: Request, res: Response) {
     try {
-
-
-      const gym = await this._GymUseCase.gymSignUp(req.body, req.files);
+      const gym = await this._GymUseCase.gymSignUp(req.body);
       if (gym) {
         if (gym?.data.status == true) {
           req.app.locals.gymData = gym.data.gymData;
           const otp = this._GenerateOtp.createOtp();
+          console.log(otp);
           req.app.locals.otp = otp;
           this._GenerateEmail.sendEmail(req.body.email, otp);
 
@@ -79,9 +78,10 @@ class GymController {
     }
   }
 
-async resendOtp(req: Request, res: Response) {
+  async resendOtp(req: Request, res: Response) {
     try {
       const otp = this._GenerateOtp.createOtp();
+      console.log(otp)
       req.app.locals.otp = otp;
       this._GenerateEmail.sendEmail(req.app.locals.gymData.email, otp);
 
@@ -105,7 +105,6 @@ async resendOtp(req: Request, res: Response) {
 
       if (gym) {
         if (gym.data.token != "") {
-
           res.cookie("gymJWT", gym.data.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
@@ -163,7 +162,6 @@ async resendOtp(req: Request, res: Response) {
         gymId as string
       );
 
-
       if (subscriptions) {
         res.status(subscriptions.status).json(subscriptions.data.message);
       }
@@ -200,14 +198,11 @@ async resendOtp(req: Request, res: Response) {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-    
     }
   }
 
   async verifyForgot(req: Request, res: Response) {
     try {
-
-
       const { forgotOtp } = req.app.locals;
       const { otp } = req.body;
 
@@ -222,7 +217,6 @@ async resendOtp(req: Request, res: Response) {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-    
     }
   }
 
@@ -247,7 +241,6 @@ async resendOtp(req: Request, res: Response) {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-    
     }
   }
 
@@ -268,7 +261,6 @@ async resendOtp(req: Request, res: Response) {
         message: err.message,
         stack: process.env.NODE_ENV === "production" ? null : err.stack,
       });
-    
     }
   }
 
@@ -289,7 +281,6 @@ async resendOtp(req: Request, res: Response) {
 
   async addGymTrainer(req: Request, res: Response) {
     try {
-
       const gymId = req.gymId || "";
       if (req.file) {
         const image = await this._SharpImages.sharpenImage(
@@ -422,7 +413,6 @@ async resendOtp(req: Request, res: Response) {
 
   async editGymImages(req: Request, res: Response) {
     try {
-
       const gymId = req.gymId || "";
       const response = await this._GymUseCase.editGymImages(gymId, req.files);
       res.status(response.status).json(response.data);
