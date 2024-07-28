@@ -35,8 +35,7 @@ class UserUseCase {
   private _CloudinayUpload: CloudinaryUpload;
   private _SubscriptionRespository: SubscriptionRepository;
   private _GymReviewsRepository: GymReviewsRepository;
-  private _PushNotificationRepository: PushNotificationRepository
-
+  private _PushNotificationRepository: PushNotificationRepository;
 
   constructor(
     UserRepository: UserRepository,
@@ -50,7 +49,6 @@ class UserUseCase {
     subscriptionRepository: SubscriptionRepository,
     gymReviewsRepository: GymReviewsRepository,
     pushNotificationRepo: PushNotificationRepository
-
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -62,7 +60,7 @@ class UserUseCase {
     this._CloudinayUpload = cloudinaryUpload;
     this._SubscriptionRespository = subscriptionRepository;
     this._GymReviewsRepository = gymReviewsRepository;
-    this._PushNotificationRepository=pushNotificationRepo
+    this._PushNotificationRepository = pushNotificationRepo;
   }
 
   async signUp(email: string) {
@@ -93,8 +91,6 @@ class UserUseCase {
     );
 
     const newUser = { ...user, password: hashedPassword };
-
-    
 
     const userData = await this.UserRepository.save(newUser);
 
@@ -135,10 +131,9 @@ class UserUseCase {
     if (user) {
       if (user.isBlocked) {
         return {
-          status: 400,
+          status: 200,
           data: {
-            status: false,
-            message: "You have been blocked by admin!",
+            success: false,
             token: "",
             refreshToken: "",
           },
@@ -159,7 +154,7 @@ class UserUseCase {
         return {
           status: 200,
           data: {
-            status: true,
+            success: true,
             message: user,
             token,
             refreshToken,
@@ -196,9 +191,6 @@ class UserUseCase {
     search: string,
     sliderValue: number
   ) {
-    
-    
-
     if (latitude == "null" || longitude == "null") {
       return {
         status: 400,
@@ -214,7 +206,6 @@ class UserUseCase {
         search,
         sliderValue
       );
-      
 
       return {
         status: 200,
@@ -240,7 +231,6 @@ class UserUseCase {
   async getGymDetails(id: string) {
     const gymDetails = await this._GymRepository.findById(id);
 
-    
     return {
       status: 200,
       data: {
@@ -496,7 +486,6 @@ class UserUseCase {
       userId,
       gymId
     );
-    
 
     return {
       status: 200,
