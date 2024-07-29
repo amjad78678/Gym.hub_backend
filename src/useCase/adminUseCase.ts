@@ -52,9 +52,8 @@ class AdminUseCase {
   }
 
   async gymAdminResponse(res: any) {
-    
     const gymData = await this._GymRepository.findById(res.id);
-    
+
     if (gymData) {
       if (res.type === "rejected") {
         this._GenerateEmail.sendGymRejectEmail(gymData[0].email, res.reason);
@@ -84,7 +83,7 @@ class AdminUseCase {
 
   async gymBlockAction(id: string) {
     const gym = await this._GymRepository.findByIdAndUpdateBlock(id);
-    
+
     if (gym) {
       return {
         status: 200,
@@ -105,7 +104,6 @@ class AdminUseCase {
   }
   async gymDeleteAction(id: string) {
     const gym = await this._GymRepository.findByIdAndDelete(id);
-    
 
     if (gym) {
       return {
@@ -182,11 +180,6 @@ class AdminUseCase {
       isDeleted
     );
 
-    
-    
-
-    
-
     if (updatedUser) {
       return {
         status: 200,
@@ -252,67 +245,79 @@ class AdminUseCase {
   }
 
   async fetchRecentlyUsers() {
-    const userData = await this._UserRepository.findRecentlyUsers();
-    const gymData = await this._GymRepository.findRecentlyGyms();
-    const totalSalesOfSubscription =
-      await this._SubscriptionRepository.findTotalSalesOfSubscriptions();
-    const totalSalesOfTrainer =
-      await this._BookTrainerRepository.findTotalSalesOfTrainer();
-    const totalUsers = await this._UserRepository.findTotalUsers();
-    const totalTrainers = await this._TrainerRepository.findTotalTrainers();
-    const totalGyms = await this._GymRepository.findTotalGyms();
-    const recentlyTrainers =
-      await this._TrainerRepository.findRecentlyTrainers();
-    const paymentMethodCount =
-      await this._SubscriptionRepository.findPaymentMethodCount();
-    const pendingPaymentCount =
-      await this._CartRepository.findPendingPaymentCount();
+    try {
+      const userData = await this._UserRepository.findRecentlyUsers();
+      const gymData = await this._GymRepository.findRecentlyGyms();
+      const totalSalesOfSubscription =
+        await this._SubscriptionRepository.findTotalSalesOfSubscriptions();
+      const totalSalesOfTrainer =
+        await this._BookTrainerRepository.findTotalSalesOfTrainer();
+      const totalUsers = await this._UserRepository.findTotalUsers();
+      const totalTrainers = await this._TrainerRepository.findTotalTrainers();
+      const totalGyms = await this._GymRepository.findTotalGyms();
+      const recentlyTrainers =
+        await this._TrainerRepository.findRecentlyTrainers();
+      const paymentMethodCount =
+        await this._SubscriptionRepository.findPaymentMethodCount();
+      const pendingPaymentCount =
+        await this._CartRepository.findPendingPaymentCount();
 
-    const paymentCounts = {
-      onlinePaymentCount: paymentMethodCount[0].onlinePaymentCount,
-      walletPaymentCount: paymentMethodCount[0].walletPaymentCount,
-      pendingPaymentCount: pendingPaymentCount,
-    };
-    
-    const trainerBookingCount =
-      await this._BookTrainerRepository.findTotalBookings();
-    const subscriptionBookingCount =
-      await this._SubscriptionRepository.findTotalBookings();
-    const bookingStats = {
-      trainerBookingCount: trainerBookingCount,
-      subscriptionBookingCount: subscriptionBookingCount,
-    };
+      const paymentCounts = {
+        onlinePaymentCount: paymentMethodCount[0].onlinePaymentCount,
+        walletPaymentCount: paymentMethodCount[0].walletPaymentCount,
+        pendingPaymentCount: pendingPaymentCount,
+      };
 
-    const subscriptionMonthlySales =
-      await this._SubscriptionRepository.findMonthlySales();
-    const trainerMonthlySales =
-      await this._BookTrainerRepository.findMonthlySales();
-    const subscriptionYearlySales =
-      await this._SubscriptionRepository.findYearlySales();
-    const trainerYearlySales =
-      await this._BookTrainerRepository.findYearlySales();
+      const trainerBookingCount =
+        await this._BookTrainerRepository.findTotalBookings();
+      const subscriptionBookingCount =
+        await this._SubscriptionRepository.findTotalBookings();
+      const bookingStats = {
+        trainerBookingCount: trainerBookingCount,
+        subscriptionBookingCount: subscriptionBookingCount,
+      };
 
-    return {
-      status: 200,
-      data: {
-        success: true,
-        recently: userData,
-        recGym: gymData,
-        totalSales:
-          totalSalesOfSubscription[0].totalSales +
-          totalSalesOfTrainer[0].totalSales,
-        totalUsers,
-        totalTrainers,
-        totalGyms,
-        recentlyTrainers,
-        paymentCounts,
-        bookingStats,
-        subscriptionMonthlySales,
-        trainerMonthlySales,
-        subscriptionYearlySales,
-        trainerYearlySales,
-      },
-    };
+      const subscriptionMonthlySales =
+        await this._SubscriptionRepository.findMonthlySales();
+      const trainerMonthlySales =
+        await this._BookTrainerRepository.findMonthlySales();
+      const subscriptionYearlySales =
+        await this._SubscriptionRepository.findYearlySales();
+      const trainerYearlySales =
+        await this._BookTrainerRepository.findYearlySales();
+
+      return {
+        status: 200,
+        data: {
+          success: true,
+          recently: userData,
+          recGym: gymData,
+          totalSales:
+            totalSalesOfSubscription[0].totalSales ??
+            0 + totalSalesOfTrainer[0].totalSales ??
+            0,
+          totalUsers,
+          totalTrainers,
+          totalGyms,
+          recentlyTrainers,
+          paymentCounts,
+          bookingStats,
+          subscriptionMonthlySales,
+          trainerMonthlySales,
+          subscriptionYearlySales,
+          trainerYearlySales,
+        },
+      };
+    } catch (error: any) {
+      console.error("Error fetching recently users:", error);
+      return {
+        status: 400,
+        data: {
+          success: false,
+          error: error.message,
+        },
+      };
+    }
   }
 }
 export default AdminUseCase;
