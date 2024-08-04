@@ -39,7 +39,6 @@ class SubscriptionUseCase {
   }
 
   async addNewSubscription(data: any) {
-    
     const verifyCart = await this._CartRepository.cartDataForCheckout(
       data.userId
     );
@@ -57,7 +56,7 @@ class SubscriptionUseCase {
           data.userId,
           data.coupon.name
         );
-        
+
         if (updated) {
           data.coupon = {
             name: data.coupon.name,
@@ -156,7 +155,6 @@ class SubscriptionUseCase {
       },
     };
   }
-
 
   //Add to wallet for subscription in profile
   async addWalletPayment(walletData: any) {
