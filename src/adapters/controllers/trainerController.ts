@@ -88,7 +88,6 @@ class TrainerController {
 
   async verifyForgot(req: Request, res: Response) {
     try {
-
       const { forgotOtp } = req.app.locals;
       const { otp } = req.body;
 

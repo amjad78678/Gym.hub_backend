@@ -34,6 +34,7 @@ import BannerController from "../../adapters/controllers/bannerController";
 import BannerUseCase from "../../useCase/bannerUseCase";
 import BannerRepository from "../repository/bannerRepository";
 import PushNotificationRepository from "../repository/pushNotificationRepository";
+import GeminiChatbot from "../services/chatbot";
 
 //services
 const generateOtp = new GenerateOtp();
@@ -57,6 +58,7 @@ const messageRepository = new MessageRepository();
 const gymReviewsRepository = new GymReviewsRepository();
 const bannerRepository = new BannerRepository();
 const pushNotificationRepo = new PushNotificationRepository();
+const geminiChatbot = new GeminiChatbot();
 
 //useCases
 const userCase = new UserUseCase(
@@ -70,7 +72,8 @@ const userCase = new UserUseCase(
   cloudinaryUpload,
   subscriptionRepository,
   gymReviewsRepository,
-  pushNotificationRepo
+  pushNotificationRepo,
+  geminiChatbot
 );
 const cartCase = new CartUseCase(
   cartRepository,
@@ -216,6 +219,8 @@ router.get("/exercises/:body", (req, res) =>
 router.get("/fetch_banners", (req, res) =>
   bannerController.fetchBanners(req, res)
 );
+router.post("/send_chatbot_message", (req, res) =>
+  userController.sendChatbotMessage(req, res))
 
 //Chatting
 router.post("/chat/create", protect, (req, res) =>

@@ -14,6 +14,7 @@ import SharpImages from "../infrastructure/services/sharpImages";
 import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
 import fs from "fs";
 import path from "path";
+import GeminiChatbot from "../infrastructure/services/chatbot";
 
 interface iWallet {
   userId: string;
@@ -36,6 +37,7 @@ class UserUseCase {
   private _SubscriptionRespository: SubscriptionRepository;
   private _GymReviewsRepository: GymReviewsRepository;
   private _PushNotificationRepository: PushNotificationRepository;
+  private _Chatbot: GeminiChatbot;
 
   constructor(
     UserRepository: UserRepository,
@@ -48,7 +50,8 @@ class UserUseCase {
     cloudinaryUpload: CloudinaryUpload,
     subscriptionRepository: SubscriptionRepository,
     gymReviewsRepository: GymReviewsRepository,
-    pushNotificationRepo: PushNotificationRepository
+    pushNotificationRepo: PushNotificationRepository,
+    chatbot: GeminiChatbot
   ) {
     this.UserRepository = UserRepository;
     this.EncryptPassword = encryptPassword;
@@ -61,6 +64,7 @@ class UserUseCase {
     this._SubscriptionRespository = subscriptionRepository;
     this._GymReviewsRepository = gymReviewsRepository;
     this._PushNotificationRepository = pushNotificationRepo;
+    this._Chatbot = chatbot;
   }
 
   async signUp(email: string) {
@@ -583,6 +587,29 @@ class UserUseCase {
         success: true,
       },
     };
+  }
+
+  async chatWithBot(message: string) {
+    try {
+      const result = await this._Chatbot.sendMessage(message);
+      if (!result) {
+        return {
+          status: 400,
+          message: "Something Went Wrong",
+        };
+      }
+
+      return {
+        status: 200,
+        data: result,
+      };
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      return {
+        status: 500,
+        message: "An error occurred while fetching notifications",
+      };
+    }
   }
 }
 

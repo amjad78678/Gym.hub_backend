@@ -14,5 +14,4 @@ const startServer = async (): Promise<void> => {
   });
 };
 
-//someclean
 startServer();

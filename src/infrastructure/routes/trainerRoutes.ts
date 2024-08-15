@@ -22,7 +22,7 @@ const encryptPassword = new EncryptPassword();
 const jwtToken = new JWTToken();
 const generateOtp = new GenerateOtp();
 const generateEmail = new GenerateEmail();
-const cloudinaryUpload= new CloudinaryUpload();
+const cloudinaryUpload = new CloudinaryUpload();
 const sharpImages = new SharpImages();
 
 //repositories
@@ -43,7 +43,11 @@ const trainerUseCase = new TrainerUseCase(
   bookTrainerRepository,
   pushNotificationRepo
 );
-const messageUseCase= new MessageUseCase(messageRepository,cloudinaryUpload,pushNotificationRepo)
+const messageUseCase = new MessageUseCase(
+  messageRepository,
+  cloudinaryUpload,
+  pushNotificationRepo
+);
 
 //controllers
 const trainerController = new TrainerController(
@@ -51,7 +55,7 @@ const trainerController = new TrainerController(
   generateOtp,
   generateEmail
 );
-const messageController = new MessageController(messageUseCase)
+const messageController = new MessageController(messageUseCase);
 
 const router = express.Router();
 router.post("/login", (req, res) => trainerController.login(req, res));
@@ -68,14 +72,32 @@ router.patch("/update_password", (req, res) =>
 router.post("/resend_forgot_otp", (req, res) =>
   trainerController.resendForgotOtp(req, res)
 );
-router.get('/user_details/:userId',protect,(req,res)=>trainerController.getUserDetails(req,res))
-router.post('/chat/create',protect,(req,res)=>messageController.createMessage(req,res))
-router.get('/chat/fetch_messages',protect,(req,res)=>messageController.getMessages(req,res))
-router.get('/chat/trainer_chat_data/:sender/:receiver',protect,(req,res)=>messageController.getConversationData(req,res))
-router.get('/fetch_subscriptions',protect,(req,res)=>trainerController.getSubscriptions(req,res))
-router.get('/fetch_trainer_data',protect,(req,res)=>trainerController.getTrainerData(req,res))
-router.put('/edit_profile',protect,ImageUpload.single("image"),(req,res)=>trainerController.editProfile(req,res))
-router.get('/fetch_dashboard',protect,(req,res)=>trainerController.getDashboardData(req,res))
-router.post('/set_trainer_browser_token',protect,(req,res)=>trainerController.setTrainerBrowserToken(req,res))
+router.get("/user_details/:userId", protect, (req, res) =>
+  trainerController.getUserDetails(req, res)
+);
+router.post("/chat/create", protect, (req, res) =>
+  messageController.createMessage(req, res)
+);
+router.get("/chat/fetch_messages", protect, (req, res) =>
+  messageController.getMessages(req, res)
+);
+router.get("/chat/trainer_chat_data/:sender/:receiver", protect, (req, res) =>
+  messageController.getConversationData(req, res)
+);
+router.get("/fetch_subscriptions", protect, (req, res) =>
+  trainerController.getSubscriptions(req, res)
+);
+router.get("/fetch_trainer_data", protect, (req, res) =>
+  trainerController.getTrainerData(req, res)
+);
+router.put("/edit_profile", protect, ImageUpload.single("image"), (req, res) =>
+  trainerController.editProfile(req, res)
+);
+router.get("/fetch_dashboard", protect, (req, res) =>
+  trainerController.getDashboardData(req, res)
+);
+router.post("/set_trainer_browser_token", protect, (req, res) =>
+  trainerController.setTrainerBrowserToken(req, res)
+);
 
 export default router;
