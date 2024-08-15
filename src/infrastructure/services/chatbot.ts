@@ -72,9 +72,10 @@ Now, how can I assist you with your gym or health-related needs today?
   public async sendMessage(message: string): Promise<string> {
     try {
       const result = await this.chatSession.sendMessage(message);
+      console.log("gemini api", process.env.GEMINI_API_KEY);
       return result.response.text();
     } catch (error) {
-      console.error("Error sending message to Zep AI:", error);
+      console.error("Error sending message to Gymmi AI:", error);
       throw error;
     }
   }
