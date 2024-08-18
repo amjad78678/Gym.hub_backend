@@ -1,5 +1,6 @@
 import AdminUseCase from "../../useCase/adminUseCase";
 import { Request, Response } from "express";
+import asyncErrorHandler from "../../infrastructure/utils/asyncErrorHandler";
 
 class AdminController {
   private _AdminUseCase: AdminUseCase;
@@ -8,212 +9,93 @@ class AdminController {
     this._AdminUseCase = adminUseCase;
   }
 
-  async getGymDetails(req: Request, res: Response) {
-    try {
-      const gym = await this._AdminUseCase.getGymDetails();
-      res.status(gym.status).json(gym.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  getGymDetails = asyncErrorHandler(async (req: Request, res: Response) => {
+    const gym = await this._AdminUseCase.getGymDetails();
+    res.status(gym.status).json(gym.data);
+  });
 
-  async gymAdminResponse(req: Request, res: Response) {
-    try {
-      const gym = await this._AdminUseCase.gymAdminResponse(req.body);
-      res.status(gym.status).json(gym.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  gymAdminResponse = asyncErrorHandler(async (req: Request, res: Response) => {
+    const gym = await this._AdminUseCase.gymAdminResponse(req.body);
+    res.status(gym.status).json(gym.data);
+  });
 
-  async gymBlockAction(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const gym = await this._AdminUseCase.gymBlockAction(id);
-      res.status(gym.status).json(gym.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  gymBlockAction = asyncErrorHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const gym = await this._AdminUseCase.gymBlockAction(id);
+    res.status(gym.status).json(gym.data);
+  });
 
-  async deleteGym(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const gym = await this._AdminUseCase.gymDeleteAction(id);
+  deleteGym = asyncErrorHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const gym = await this._AdminUseCase.gymDeleteAction(id);
+    res.status(gym.status).json(gym.data);
+  });
 
-      res.status(gym.status).json(gym.data);
-    } catch (error) {
-      const err: Error = error as Error;
+  adminLogin = asyncErrorHandler(async (req: Request, res: Response) => {
+    const response = await this._AdminUseCase.adminLogin(
+      req.body.email,
+      req.body.password
+    );
 
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
-
-  async adminLogin(req: Request, res: Response) {
-    try {
-      const response = await this._AdminUseCase.adminLogin(
-        req.body.email,
-        req.body.password
-      );
-
-      if (response.data.token) {
-        res.cookie("adminJWT", response.data.token, {
-          httpOnly: true,
-          sameSite: "none",
-          secure: process.env.NODE_ENV !== "development",
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
-      }
-
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      const err: Error = error as Error;
-
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
-
-  async adminLogout(req: Request, res: Response) {
-    try {
-      res.cookie("adminJWT", "", {
+    if (response.data.token) {
+      res.cookie("adminJWT", response.data.token, {
         httpOnly: true,
-        expires: new Date(0),
-      });
-
-      res.status(200).json({ message: "Admin logged out" });
-    } catch (error) {
-      const err: Error = error as Error;
-
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+        sameSite: "none",
+        secure: process.env.NODE_ENV !== "development",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       });
     }
-  }
 
-  async fetchUsers(req: Request, res: Response) {
-    try {
-      const response = await this._AdminUseCase.fetchUsers();
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      const err: Error = error as Error;
+    res.status(response.status).json(response.data);
+  });
 
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  adminLogout = asyncErrorHandler(async (req: Request, res: Response) => {
+    res.cookie("adminJWT", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    });
 
-  async updateUser(req: Request, res: Response) {
-    try {
-      const userId = req.params.id as string;
+    res.status(200).json({ message: "Admin logged out" });
+  });
 
-    
+  fetchUsers = asyncErrorHandler(async (req: Request, res: Response) => {
+    const response = await this._AdminUseCase.fetchUsers();
+    res.status(response.status).json(response.data);
+  });
 
-      const { isBlocked, isDeleted } = req.body;
+  updateUser = asyncErrorHandler(async (req: Request, res: Response) => {
+    const userId = req.params.id as string;
+    const { isBlocked, isDeleted } = req.body;
+    const response = await this._AdminUseCase.updateUser(userId, isBlocked, isDeleted);
+    res.status(response.status).json(response.data);
+  });
 
-      const response = await this._AdminUseCase.updateUser(
-        userId,
-        isBlocked,
-        isDeleted
-      );
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      const err: Error = error as Error;
+  fetchSubscriptions = asyncErrorHandler(async (req: Request, res: Response) => {
+    const subscriptionData = await this._AdminUseCase.fetchSubscriptions();
+    res.status(subscriptionData.status).json(subscriptionData.data);
+  });
 
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  fetchGymWithId = asyncErrorHandler(async (req: Request, res: Response) => {
+    const gymData = await this._AdminUseCase.fetchGymWithId(req.params.gymId);
+    res.status(gymData.status).json(gymData.data);
+  });
 
-  async fetchSubscriptions(req: Request, res: Response) {
-    try {
-      const subscriptionData = await this._AdminUseCase.fetchSubscriptions();
-      res.status(subscriptionData.status).json(subscriptionData.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  getTrainers = asyncErrorHandler(async (req: Request, res: Response) => {
+    const trainersData = await this._AdminUseCase.fetchTrainers();
+    res.status(trainersData.status).json(trainersData.data);
+  });
 
-  async fetchGymWithId(req: Request, res: Response) {
-    try {
-      const gymData = await this._AdminUseCase.fetchGymWithId(req.params.gymId);
-   
-      res.status(gymData.status).json(gymData.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  updateTrainer = asyncErrorHandler(async (req: Request, res: Response) => {
+    const { id, ...body } = req.body;
+    const response = await this._AdminUseCase.updateTrainer(id, body);
+    res.status(response.status).json(response.data);
+  });
 
-  async getTrainers(req: Request, res: Response) {
-    try {
-      const trainersData = await this._AdminUseCase.fetchTrainers();
-      res.status(trainersData.status).json(trainersData.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
-
-  async updateTrainer(req: Request, res: Response) {
-    try {
-      const { id, ...body } = req.body;
-      
-      const response = await this._AdminUseCase.updateTrainer(id, body);
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
-
-  async fetchRecentlyUsers(req: Request, res: Response) {
-    try {
-      const response = await this._AdminUseCase.fetchRecentlyUsers();
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      const err: Error = error as Error;
-      res.status(400).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-      });
-    }
-  }
+  fetchRecentlyUsers = asyncErrorHandler(async (req: Request, res: Response) => {
+    const response = await this._AdminUseCase.fetchRecentlyUsers();
+    res.status(response.status).json(response.data);
+  });
 }
 
 export default AdminController;
+

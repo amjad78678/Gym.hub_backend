@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import SubscriptionUseCase from "../../useCase/subscriptionUseCase";
 import UserRepository from "../../infrastructure/repository/userRepository";
-import UserUseCase from "../../useCase/userUseCase";
 import BookTrainerUseCase from "../../useCase/bookTrainerUseCase";
+import asyncHandler from "../../infrastructure/utils/asyncErrorHandler";
 
 class PaymentController {
   private _SubscriptionUseCase: SubscriptionUseCase;
@@ -19,15 +19,15 @@ class PaymentController {
     this._BookTrainerUseCase = bookTrainerUseCase;
   }
 
-  async confirmPayment(req: Request, res: Response) {
+  confirmPayment = asyncHandler(async (req: Request, res: Response) => {
     let event = req.body;
-    console.log("i am inside webhook its called there");
+    console.log("I am inside webhook, it's called there");
     if (event.type === "checkout.session.completed") {
       const paymentDataUser = req.app.locals.paymentDataUser;
       const walletData = req.app.locals.walletData;
       const bookTrainerData = req.app.locals.bookTrainerData;
 
-      console.log("book trainer data", bookTrainerData);
+      console.log("Book trainer data", bookTrainerData);
       if (walletData != null) {
         await this._SubscriptionUseCase.addWalletPayment(walletData);
         req.app.locals.walletData = null;
@@ -44,7 +44,7 @@ class PaymentController {
       }
     }
     res.status(200).json({ success: true });
-  }
+  });
 }
 
 export default PaymentController;

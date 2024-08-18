@@ -51,8 +51,8 @@ const paymentController = new PaymentController(
 
 const router = express.Router();
 
-router.post("/webhook", express.raw({ type: "application/json" }), (req, res) =>
-  paymentController.confirmPayment(req, res)
+router.post("/webhook", express.raw({ type: "application/json" }), (req, res, next) =>
+  paymentController.confirmPayment(req, res, next)
 );
 
 export default router;

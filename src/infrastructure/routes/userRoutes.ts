@@ -126,117 +126,118 @@ const bannerController = new BannerController(bannerUseCase);
 
 const router = express.Router();
 
-router.post("/sign_up", (req, res) => userController.signUp(req, res));
-router.post("/verify", (req, res) =>
-  userController.userOtpVerification(req, res)
+router.post("/sign_up", (req, res, next) => userController.signUp(req, res, next));
+router.post("/verify", (req, res, next) =>
+  userController.userOtpVerification(req, res, next)
 );
-router.post("/resend_otp", (req, res) => userController.resendOtp(req, res));
-router.post("/login", (req, res) => userController.login(req, res));
-router.post("/logout", (req, res) => userController.logout(req, res));
-router.get("/gym_list", (req, res) => userController.getGymList(req, res));
-router.get("/max_price_gym", (req, res) =>
-  userController.getMaxPriceGym(req, res)
+router.post("/resend_otp", (req, res, next) => userController.resendOtp(req, res, next));
+router.post("/login", (req, res, next) => userController.login(req, res, next));
+router.post("/logout", (req, res, next) => userController.logout(req, res, next));
+router.get("/gym_list", (req, res, next) => userController.getGymList(req, res, next));
+router.get("/max_price_gym", (req, res, next) =>
+  userController.getMaxPriceGym(req, res, next)
 );
-router.get("/gym_list_normal", (req, res) =>
-  userController.getGymNormalList(req, res)
+router.get("/gym_list_normal", (req, res, next) =>
+  userController.getGymNormalList(req, res, next)
 );
-router.get("/gym_details/:id", (req, res) =>
-  userController.getGymDetails(req, res)
+router.get("/gym_details/:id", (req, res, next) =>
+  userController.getGymDetails(req, res, next)
 );
-router.get("/fetch_trainers", (req, res) =>
-  userController.getTrainers(req, res)
+router.get("/fetch_trainers", (req, res, next) =>
+  userController.getTrainers(req, res, next)
 );
-router.get("/max_price_trainer", (req, res) =>
-  userController.getMaxPriceTrainer(req, res)
+router.get("/max_price_trainer", (req, res, next) =>
+  userController.getMaxPriceTrainer(req, res, next)
 );
-router.post("/forgot_password", (req, res) =>
-  userController.forgotPassword(req, res)
+router.post("/forgot_password", (req, res, next) =>
+  userController.forgotPassword(req, res, next)
 );
-router.post("/verify_forgot", (req, res) =>
-  userController.verifyForgot(req, res)
+router.post("/verify_forgot", (req, res, next) =>
+  userController.verifyForgot(req, res, next)
 );
-router.patch("/update_password", (req, res) =>
-  userController.updatePassword(req, res)
+router.patch("/update_password", (req, res, next) =>
+  userController.updatePassword(req, res, next)
 );
-router.post("/resend_forgot_otp", (req, res) =>
-  userController.resendForgotOtp(req, res)
+router.post("/resend_forgot_otp", (req, res, next) =>
+  userController.resendForgotOtp(req, res, next)
 );
-router.get("/is_review_possible/:gymId", protect, (req, res) =>
-  userController.isReviewPossible(req, res)
+router.get("/is_review_possible/:gymId", protect, (req, res, next) =>
+  userController.isReviewPossible(req, res, next)
 );
-router.post("/add_to_cart", protect, (req, res) =>
-  cartController.addToCart(req, res)
+router.post("/add_to_cart", protect, (req, res, next) =>
+  cartController.addToCart(req, res, next)
 );
-router.get("/get_checkout_details", protect, (req, res) =>
-  cartController.getCheckoutDetails(req, res)
+router.get("/get_checkout_details", protect, (req, res, next) =>
+  cartController.getCheckoutDetails(req, res, next)
 );
-router.post("/add_new_subscription", protect, (req, res) =>
-  subscriptionController.addNewSubscription(req, res)
+router.post("/add_new_subscription", protect, (req, res, next) =>
+  subscriptionController.addNewSubscription(req, res, next)
 );
-router.post("/validate_coupon", protect, (req, res) =>
-  couponController.validateCoupon(req, res)
+router.post("/validate_coupon", protect, (req, res, next) =>
+  couponController.validateCoupon(req, res, next)
 );
-router.get("/user_details", protect, (req, res) =>
-  userController.getUserDetails(req, res)
+router.get("/user_details", protect, (req, res, next) =>
+  userController.getUserDetails(req, res, next)
 );
-router.post("/add_money_wallet", protect, (req, res) =>
-  userController.addMoneyToWallet(req, res)
+router.post("/add_money_wallet", protect, (req, res, next) =>
+  userController.addMoneyToWallet(req, res, next)
 );
-router.get("/fetch_subscriptions", protect, (req, res) =>
-  userController.getSubscription(req, res)
+router.get("/fetch_subscriptions", protect, (req, res, next) =>
+  userController.getSubscription(req, res, next)
 );
-router.post("/book_trainer", protect, (req, res) =>
-  bookTrainerController.bookTrainer(req, res)
+router.post("/book_trainer", protect, (req, res, next) =>
+  bookTrainerController.bookTrainer(req, res, next)
 );
-router.get("/fetch_booked_trainers", protect, (req, res) =>
-  userController.getBookedTrainers(req, res)
+router.get("/fetch_booked_trainers", protect, (req, res, next) =>
+  userController.getBookedTrainers(req, res, next)
 );
-router.get("/trainer_details/:trainerId", protect, (req, res) =>
-  userController.getTrainerDetails(req, res)
+router.get("/trainer_details/:trainerId", protect, (req, res, next) =>
+  userController.getTrainerDetails(req, res, next)
 );
 router.post(
   "/edit_profile",
   ImageUpload.single("profilePic"),
   protect,
-  (req, res) => userController.editProfile(req, res)
+  (req, res, next) => userController.editProfile(req, res, next)
 );
 
-router.post("/add_review", protect, (req, res) =>
-  userController.addGymReview(req, res)
+router.post("/add_review", protect, (req, res, next) =>
+  userController.addGymReview(req, res, next)
 );
-router.get("/fetch_gym_reviews/:gymId", (req, res) =>
-  userController.getGymReviews(req, res)
+router.get("/fetch_gym_reviews/:gymId", (req, res, next) =>
+  userController.getGymReviews(req, res, next)
 );
-router.post("/update_rating", protect, (req, res) =>
-  userController.updateRatingGym(req, res)
+router.post("/update_rating", protect, (req, res, next) =>
+  userController.updateRatingGym(req, res, next)
 );
-router.get("/workouts_body_list", (req, res) =>
-  userController.getWorkoutsList(req, res)
+router.get("/workouts_body_list", (req, res, next) =>
+  userController.getWorkoutsList(req, res, next)
 );
-router.get("/exercises/:body", (req, res) =>
-  userController.getExercisesDetails(req, res)
+router.get("/exercises/:body", (req, res, next) =>
+  userController.getExercisesDetails(req, res, next)
 );
-router.get("/fetch_banners", (req, res) =>
-  bannerController.fetchBanners(req, res)
+router.get("/fetch_banners", (req, res, next) =>
+  bannerController.fetchBanners(req, res, next)
 );
-router.post("/send_chatbot_message", (req, res) =>
-  userController.sendChatbotMessage(req, res))
+router.post("/send_chatbot_message", (req, res, next) =>
+  userController.sendChatbotMessage(req, res, next)
+);
 
 //Chatting
-router.post("/chat/create", protect, (req, res) =>
-  messageController.createMessage(req, res)
+router.post("/chat/create", protect, (req, res, next) =>
+  messageController.createMessage(req, res, next)
 );
-router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res) =>
-  messageController.getConversationData(req, res)
+router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res, next) =>
+  messageController.getConversationData(req, res, next)
 );
 router.post(
   "/upload_chat_files",
   ImageUpload.array("files", 5),
   protect,
-  (req, res) => messageController.uploadChatFiles(req, res)
+  (req, res, next) => messageController.uploadChatFiles(req, res, next)
 );
-router.post("/set_client_token", protect, (req, res) =>
-  userController.setBrowserToken(req, res)
+router.post("/set_client_token", protect, (req, res, next) =>
+  userController.setBrowserToken(req, res, next)
 );
 
 export default router;
