@@ -11,7 +11,7 @@ import UserRepository from "../infrastructure/repository/userRepository";
 import EncryptPassword from "../infrastructure/services/bcryptPassword";
 import JWTToken from "../infrastructure/services/generateToken";
 import SharpImages from "../infrastructure/services/sharpImages";
-import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import CloudinaryUpload from "../infrastructure/services/cloudinaryUpload";
 import fs from "fs";
 import path from "path";
 import GeminiChatbot from "../infrastructure/services/chatbot";

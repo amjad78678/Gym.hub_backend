@@ -7,7 +7,7 @@ import JWTToken from "../infrastructure/services/generateToken";
 import { consumers } from "stream";
 import TrainerRepository from "../infrastructure/repository/trainerRepository";
 import Trainer from "../domain/trainer";
-import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import CloudinaryUpload from "../infrastructure/services/cloudinaryUpload";
 import SharpImages from "../infrastructure/services/sharpImages";
 import SubscriptionRepository from "../infrastructure/repository/subscriptionRepository";
 

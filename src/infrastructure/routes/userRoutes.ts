@@ -26,7 +26,7 @@ import GenerateQrCode from "../services/generateQrCode";
 import MessageUseCase from "../../useCase/messageUseCase";
 import MessageController from "../../adapters/controllers/messageController";
 import MessageRepository from "../repository/messageRepository";
-import CloudinaryUpload from "../utils/cloudinaryUpload";
+import CloudinaryUpload from "../services/cloudinaryUpload";
 import SharpImages from "../services/sharpImages";
 import { ImageUpload } from "../middleware/multer";
 import GymReviewsRepository from "../repository/gymReviewsRepository";

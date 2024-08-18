@@ -9,7 +9,7 @@ import JWTToken from '../services/generateToken';
 import { protect } from '../middleware/gymAuth';
 import TrainerRepository from '../repository/trainerRepository';
 import { ImageUpload } from '../middleware/multer';
-import CloudinaryUpload from '../utils/cloudinaryUpload';
+import CloudinaryUpload from '../services/cloudinaryUpload';
 import SharpImages from '../services/sharpImages';
 import CouponController from '../../adapters/controllers/couponController';
 import CouponUseCase from '../../useCase/couponUseCase';

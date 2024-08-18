@@ -1,6 +1,6 @@
 import sharp from "sharp";
 import iSharpen from "../../useCase/interface/sharpen";
-import CloudinaryUpload from "../utils/cloudinaryUpload";
+import CloudinaryUpload from "./cloudinaryUpload";
 
 
 const cloudinaryUpload=new CloudinaryUpload()

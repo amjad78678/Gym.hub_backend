@@ -1,5 +1,5 @@
 import MessageRepository from "../infrastructure/repository/messageRepository";
-import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import CloudinaryUpload from "../infrastructure/services/cloudinaryUpload";
 import iMessageTrainer from "./interface/messageTrainer";
 import PushNotificationRepository from "../infrastructure/repository/pushNotificationRepository";
 

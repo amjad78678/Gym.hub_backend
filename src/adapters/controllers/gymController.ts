@@ -1,7 +1,7 @@
 import GenerateOtp from "../../infrastructure/services/generateOtp";
 import GenerateEmail from "../../infrastructure/services/sendEmail";
 import SharpImages from "../../infrastructure/services/sharpImages";
-import CloudinaryUpload from "../../infrastructure/utils/cloudinaryUpload";
+import CloudinaryUpload from "../../infrastructure/services/cloudinaryUpload";
 import GymUseCase from "../../useCase/gymUseCase";
 import { Request, Response } from "express";
 

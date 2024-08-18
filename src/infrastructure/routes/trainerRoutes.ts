@@ -11,7 +11,7 @@ import MessageController from "../../adapters/controllers/messageController";
 import MessageUseCase from "../../useCase/messageUseCase";
 import MessageRepository from "../repository/messageRepository";
 import UserRepository from "../repository/userRepository";
-import CloudinaryUpload from "../utils/cloudinaryUpload";
+import CloudinaryUpload from "../services/cloudinaryUpload";
 import { ImageUpload } from "../middleware/multer";
 import SharpImages from "../services/sharpImages";
 import BookTrainerRepository from "../repository/bookTrainerRepository";

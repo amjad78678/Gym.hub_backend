@@ -1,7 +1,7 @@
 import Banner from "../domain/banner";
 import BannerRepository from "../infrastructure/repository/bannerRepository";
 import SharpImages from "../infrastructure/services/sharpImages";
-import CloudinaryUpload from "../infrastructure/utils/cloudinaryUpload";
+import CloudinaryUpload from "../infrastructure/services/cloudinaryUpload";
 
 class BannerUseCase {
   private _BannerRepository: BannerRepository;

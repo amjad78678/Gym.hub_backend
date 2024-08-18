@@ -12,6 +12,7 @@ import gymRoutes from "../routes/gymRoutes";
 import adminRoutes from "../routes/adminRoutes";
 import trainerRoutes from "../routes/trainerRoutes";
 import paymentRoutes from "../routes/paymentRoutes";
+import { AppError, globalErrorHandler } from "../utils/globalErrorHandler";
 
 export const createServer = () => {
   try {
@@ -34,13 +35,17 @@ export const createServer = () => {
     app.use("/api/admin", adminRoutes);
     app.use("/api/trainer", trainerRoutes);
     app.use("/api/payment", paymentRoutes);
-    app.use((req, res) =>
-      res.status(404).json({ success: false, message: "Not Found" })
-    );
+    app.use("*", (req, res, next) => {
+      const err = new AppError(
+        `Can't find ${req.originalUrl} on the server`,
+        404
+      );
+      next(err);
+    });
+    app.use(globalErrorHandler);
 
     return httpServer;
   } catch (error) {
     const err: Error = error as Error;
-    
   }
 };

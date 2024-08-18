@@ -12,7 +12,7 @@ import BannerController from '../../adapters/controllers/bannerController';
 import BannerUseCase from '../../useCase/bannerUseCase';
 import BannerRepository from '../repository/bannerRepository';
 import SharpImages from '../services/sharpImages';
-import CloudinaryUpload from '../utils/cloudinaryUpload';
+import CloudinaryUpload from '../services/cloudinaryUpload';
 import UserController from '../../adapters/controllers/userController';
 import BookTrainerRepository from '../repository/bookTrainerRepository';
 import CartRepository from '../repository/cartRepository';
