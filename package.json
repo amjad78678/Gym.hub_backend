@@ -35,7 +35,7 @@
     "@types/nodemailer": "^6.4.13",
     "@types/qrcode": "^1.5.5",
     "morgan": "^1.10.0",
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.4",
     "prettier": "^3.2.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
