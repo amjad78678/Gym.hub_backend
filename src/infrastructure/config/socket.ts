@@ -1,5 +1,4 @@
-import { Socket } from "socket.io";
-import { Server } from "socket.io";
+import { Socket, Server } from "socket.io";
 
 function socketServer(server: any) {
   const io = new Server(server, {
@@ -19,11 +18,14 @@ function socketServer(server: any) {
     const userExists = users.find((user) => user.userId === userId);
     if (userExists) {
       userExists.socketId = socketId;
-      userExists.online = true
+      userExists.online = true;
     } else {
-      users.push({ userId, socketId,online:true });
+      users.push({ userId, socketId, online: true });
     }
-    io.emit('onlined_users',users.filter((user)=>user.online))
+    io.emit(
+      "onlined_users",
+      users.filter((user) => user.online)
+    );
   };
 
   const removeUser = (socketId: string) => {
@@ -39,19 +41,17 @@ function socketServer(server: any) {
       io.emit("connected");
     });
 
- 
-    socket.on("send_message", ({ sender, receiver, content,createdAt }) => {
+    socket.on("send_message", ({ sender, receiver, content, createdAt }) => {
       const receiverData = getUser(receiver);
       const senderData = getUser(sender);
       if (senderData?.socketId === receiverData?.socketId) {
-        
       }
       if (receiverData) {
         io.to(receiverData.socketId).emit("message", {
           sender,
           receiver,
           content,
-          createdAt
+          createdAt,
         });
       }
     });
@@ -70,6 +70,19 @@ function socketServer(server: any) {
       const receiverData = getUser(receiver);
       if (receiverData) {
         io.to(receiverData.socketId).emit("call:start", sender);
+      }
+    });
+
+    socket.on("sended_message", ({ typeTo, name, profilePic, message }) => {
+      console.log("sending message to user");
+      const user = getUser(typeTo);
+      console.log("iam recieving user", user, name, profilePic);
+      if (user) {
+        io.to(user.socketId).emit("message_received", {
+          name,
+          profilePic,
+          message,
+        });
       }
     });
 
