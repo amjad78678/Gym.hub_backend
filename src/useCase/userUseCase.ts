@@ -95,12 +95,10 @@ class UserUseCase {
     );
 
     const newUser = { ...user, password: hashedPassword };
-
     const userData = await this.UserRepository.save(newUser);
 
     if (user.isGoogle) {
       const userId = userData._id;
-
       let token = this.JwtToken.generateToken(userId, "user");
       let refreshToken = this.JwtToken.generateRefreshToken(userId, "user");
 
@@ -127,55 +125,20 @@ class UserUseCase {
     }
   }
 
-  async login(email: string, password: string) {
+  async login({
+    email,
+    password,
+    isGoogle,
+  }: {
+    email: string;
+    password: string;
+    isGoogle: boolean;
+  }) {
     const user = await this.UserRepository.findByEmail(email);
     let token = "";
     let refreshToken = "";
 
-    if (user) {
-      if (user.isBlocked) {
-        return {
-          status: 200,
-          data: {
-            success: false,
-            token: "",
-            refreshToken: "",
-          },
-        };
-      }
-
-      const isPasswordMatch = await this.EncryptPassword.compare(
-        password,
-        user.password
-      );
-
-      if (isPasswordMatch) {
-        const userId = user._id;
-
-        token = this.JwtToken.generateToken(userId, "user");
-        refreshToken = this.JwtToken.generateRefreshToken(userId, "user");
-
-        return {
-          status: 200,
-          data: {
-            success: true,
-            message: user,
-            token,
-            refreshToken,
-          },
-        };
-      } else {
-        return {
-          status: 400,
-          data: {
-            success: false,
-            message: "Invalid email or password!",
-            token: "",
-            refreshToken: "",
-          },
-        };
-      }
-    } else {
+    if (!user) {
       return {
         status: 400,
         data: {
@@ -186,6 +149,61 @@ class UserUseCase {
         },
       };
     }
+    if (user.isBlocked) {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "Your account has been blocked",
+          token: "",
+          refreshToken: "",
+        },
+      };
+    }
+
+    const isPasswordMatch = await this.EncryptPassword.compare(
+      password,
+      user.password
+    );
+
+    if (isGoogle && !isPasswordMatch) {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message:
+            "This email is already registered. Please log in with your email and password instead of using Google.",
+          token: "",
+          refreshToken: "",
+        },
+      };
+    }
+
+    if (!isPasswordMatch) {
+      return {
+        status: 400,
+        data: {
+          success: false,
+          message: "Invalid email or password!",
+          token: "",
+          refreshToken: "",
+        },
+      };
+    }
+
+    const userId = user._id;
+    token = this.JwtToken.generateToken(userId, "user");
+    refreshToken = this.JwtToken.generateRefreshToken(userId, "user");
+
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: user,
+        token,
+        refreshToken,
+      },
+    };
   }
 
   async getGymList(

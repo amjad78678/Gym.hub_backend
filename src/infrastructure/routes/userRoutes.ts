@@ -126,14 +126,22 @@ const bannerController = new BannerController(bannerUseCase);
 
 const router = express.Router();
 
-router.post("/sign_up", (req, res, next) => userController.signUp(req, res, next));
+router.post("/sign_up", (req, res, next) =>
+  userController.signUp(req, res, next)
+);
 router.post("/verify", (req, res, next) =>
   userController.userOtpVerification(req, res, next)
 );
-router.post("/resend_otp", (req, res, next) => userController.resendOtp(req, res, next));
+router.post("/resend_otp", (req, res, next) =>
+  userController.resendOtp(req, res, next)
+);
 router.post("/login", (req, res, next) => userController.login(req, res, next));
-router.post("/logout", (req, res, next) => userController.logout(req, res, next));
-router.get("/gym_list", (req, res, next) => userController.getGymList(req, res, next));
+router.post("/logout", (req, res, next) =>
+  userController.logout(req, res, next)
+);
+router.get("/gym_list", (req, res, next) =>
+  userController.getGymList(req, res, next)
+);
 router.get("/max_price_gym", (req, res, next) =>
   userController.getMaxPriceGym(req, res, next)
 );
@@ -227,8 +235,10 @@ router.post("/send_chatbot_message", (req, res, next) =>
 router.post("/chat/create", protect, (req, res, next) =>
   messageController.createMessage(req, res, next)
 );
-router.get("/chat/user_chat_data/:sender/:receiver", protect, (req, res, next) =>
-  messageController.getConversationData(req, res, next)
+router.get(
+  "/chat/user_chat_data/:sender/:receiver",
+  protect,
+  (req, res, next) => messageController.getConversationData(req, res, next)
 );
 router.post(
   "/upload_chat_files",

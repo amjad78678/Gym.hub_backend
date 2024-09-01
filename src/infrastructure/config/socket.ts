@@ -36,7 +36,7 @@ function socketServer(server: any) {
     users.find((user) => user.userId === userId);
 
   io.on("connection", (socket: Socket) => {
-    socket.on("add_user", (userId: string) => {
+    socket.on("add_user", (userId: string) => { 
       addUser(userId, socket.id);
       io.emit("connected");
     });

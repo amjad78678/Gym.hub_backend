@@ -82,8 +82,8 @@ class UserController {
   );
 
   login = asyncErrorHandler(async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    const user = await this.userUseCase.login(email, password);
+  
+    const user = await this.userUseCase.login(req.body);
     if (user.data.token != "" && user.data.refreshToken != "") {
       res
         .cookie("user_access_token", user.data.token, {
